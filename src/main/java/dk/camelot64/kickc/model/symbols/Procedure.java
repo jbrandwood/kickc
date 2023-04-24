@@ -33,14 +33,19 @@ public class Procedure extends Scope {
    private List<Comment> comments;
    /** Reserved zeropage addresses. */
    private List<Integer> reservedZps;
-   /** The code segment to put the procedure into. */
-   private String codeSegment;
+   /** The code segment to put the procedure code into. When null the procedure is not assigned to the code segment. */
+   private String segmentCode;
    /** The list of constructor procedures for this procedure. The constructor procedures are called during program initialization. */
    private final List<ProcedureRef> constructorRefs;
    /** Is this procedure declared as a constructor procedure. */
    private boolean isConstructor;
    /** The source of the procedure definition. */
    private StatementSource definitionSource;
+   /**
+    * The bank that the procedure code is placed in.
+    * Used to decide whether to produce near, close or far call code when generating calls.
+    */
+   private Bank bank;
 
    /** The names of all legal intrinsic procedures. */
    final public static List<String> INTRINSIC_PROCEDURES = Arrays.asList(
@@ -50,25 +55,40 @@ public class Procedure extends Scope {
          Pass1ByteXIntrinsicRewrite.INTRINSIC_MAKELONG4
    );
 
+   public Bank getBank() {
+      return bank;
+   }
+
+   public void setBank(Bank bank) {
+      this.bank = Objects.requireNonNull(bank);
+   }
+
    /** The method for passing parameters and return value to the procedure. */
    public enum CallingConvention {
       /** Parameters and return value handled through PHI-transitions. */
-      PHI_CALL("__phicall"),
+      PHI_CALL("__phicall", "phi"),
       /** Parameters and return value over the stack. */
-      STACK_CALL("__stackcall"),
+      STACK_CALL("__stackcall", "stack"),
       /** Parameters and return value handled through shared variables. */
-      VAR_CALL("__varcall"),
+      VAR_CALL("__varcall", "var"),
       /** Intrinsic calling. Will be converted to intrinsic ASM late in the compile. */
-      INTRINSIC_CALL("__intrinsiccall");
+      INTRINSIC_CALL("__intrinsiccall", "intrinsic");
 
       private final String name;
 
-      CallingConvention(String name) {
+      private final String shortName;
+
+      CallingConvention(String name, String shortName) {
          this.name = name;
+         this.shortName = shortName;
       }
 
       public String getName() {
          return name;
+      }
+
+      public String getShortName() {
+         return shortName;
       }
 
       /** Get a calling convention by name. */
@@ -85,13 +105,14 @@ public class Procedure extends Scope {
    /** The calling convention used for this procedure. */
    private CallingConvention callingConvention;
 
-   public Procedure(String name, SymbolTypeProcedure procedureType, Scope parentScope, String codeSegment, String dataSegment, CallingConvention callingConvention) {
-      super(name, parentScope, dataSegment);
+   public Procedure(String name, SymbolTypeProcedure procedureType, Scope parentScope, String segmentCode, String segmentData, CallingConvention callingConvention, Bank bank) {
+      super(name, parentScope, segmentData);
       this.procedureType = procedureType;
       this.declaredInline = false;
+      this.bank = Objects.requireNonNull(bank);
       this.interruptType = null;
       this.comments = new ArrayList<>();
-      this.codeSegment = codeSegment;
+      this.segmentCode = Objects.requireNonNull(segmentCode);
       this.callingConvention = callingConvention;
       this.constructorRefs = new ArrayList<>();
       this.isConstructor = false;
@@ -113,12 +134,12 @@ public class Procedure extends Scope {
       this.callingConvention = callingConvention;
    }
 
-   public String getCodeSegment() {
-      return codeSegment;
+   public String getSegmentCode() {
+      return segmentCode;
    }
 
-   public void setCodeSegment(String codeSegment) {
-      this.codeSegment = codeSegment;
+   public void setSegmentCode(String segmentCode) {
+      this.segmentCode = segmentCode;
    }
 
    public List<String> getParameterNames() {
@@ -262,6 +283,7 @@ public class Procedure extends Scope {
       if(declaredIntrinsic) {
          res.append("__intrinsic ");
       }
+      res.append(bank.toString());
       if(!callingConvention.equals(CallingConvention.PHI_CALL)) {
          res.append(getCallingConvention().getName()).append(" ");
       }
@@ -307,13 +329,14 @@ public class Procedure extends Scope {
             Objects.equals(interruptType, procedure.interruptType) &&
             Objects.equals(comments, procedure.comments) &&
             Objects.equals(reservedZps, procedure.reservedZps) &&
-            Objects.equals(codeSegment, procedure.codeSegment) &&
+            Objects.equals(segmentCode, procedure.segmentCode) &&
             Objects.equals(constructorRefs, procedure.constructorRefs) &&
+            Objects.equals(bank, procedure.bank) &&
             callingConvention == procedure.callingConvention;
    }
 
    @Override
    public int hashCode() {
-      return Objects.hash(super.hashCode(), procedureType, parameterNames, variableLengthParameterList, declaredInline, declaredIntrinsic, interruptType, comments, reservedZps, codeSegment, constructorRefs, isConstructor, callingConvention);
+      return Objects.hash(super.hashCode(), procedureType, parameterNames, variableLengthParameterList, declaredInline, declaredIntrinsic, interruptType, comments, reservedZps, segmentCode, constructorRefs, isConstructor, bank, callingConvention);
    }
 }

@@ -4,6 +4,7 @@
 #pragma target(cx16) 
 #include <cx16.h>
 #include <6502.h>
+#include <cx16-vera.h>
 
 #define NUM_SPRITES 32
 
@@ -53,15 +54,15 @@ struct VERA_SPRITE SPRITE_ATTR = { WORD0(SPRITE_PIXELS_VRAM/32)|VERA_SPRITE_8BPP
 
 void main() {
     // Copy sprite data to VRAM
-    memcpy_to_vram(BYTE2(SPRITE_PIXELS_VRAM), (char*)WORD0(SPRITE_PIXELS_VRAM), SPRITE_PIXELS, 64*64);
+    memcpy_vram_ram((vram_bank_t)BYTE2(SPRITE_PIXELS_VRAM), (vram_offset_t)WORD0(SPRITE_PIXELS_VRAM), (ram_ptr_t)SPRITE_PIXELS, 64*64);
     // Copy sprite palette to VRAM
-    memcpy_to_vram(BYTE2(VERA_PALETTE), (char*)WORD0(VERA_PALETTE), SPRITE_PIXELS+64*64, 0x200);
+    memcpy_vram_ram((vram_bank_t)BYTE2(VERA_PALETTE), (vram_offset_t)WORD0(VERA_PALETTE), (ram_ptr_t)SPRITE_PIXELS+64*64, 0x200);
     // Copy 8* sprite attributes to VRAM    
     char* vram_sprite_attr = (char*)WORD0(VERA_SPRITE_ATTR);
     for(char s=0;s<NUM_SPRITES;s++) {
         SPRITE_ATTR.X += 10;
         SPRITE_ATTR.Y += 10;
-        memcpy_to_vram((char)WORD1(VERA_SPRITE_ATTR), vram_sprite_attr, &SPRITE_ATTR, sizeof(SPRITE_ATTR));
+        memcpy_vram_ram((vram_bank_t)(char)WORD1(VERA_SPRITE_ATTR), (vram_offset_t)vram_sprite_attr, (ram_ptr_t)&SPRITE_ATTR, sizeof(SPRITE_ATTR));
         vram_sprite_attr += sizeof(SPRITE_ATTR);
     }    
     // Enable sprites
@@ -104,7 +105,7 @@ __interrupt(rom_sys_cx16) void irq_vsync() {
         SPRITE_ATTR.X = SINX[i_x];
         SPRITE_ATTR.Y = SINY[i_y];
         // Copy sprite positions to VRAM (the 4 relevant bytes in VERA_SPRITE_ATTR)
-        memcpy_to_vram(vram_sprite_attr_bank, vram_sprite_pos, &SPRITE_ATTR+2, 4);
+        memcpy_vram_ram((vram_bank_t)vram_sprite_attr_bank, (vram_offset_t)vram_sprite_pos, (ram_ptr_t)&SPRITE_ATTR+2, 4);
         vram_sprite_pos += sizeof(SPRITE_ATTR);
         i_x += 25; if(i_x>=SINX_LEN) i_x -= SINX_LEN;
         i_y += 19; if(i_y>=SINY_LEN) i_y -= SINY_LEN;

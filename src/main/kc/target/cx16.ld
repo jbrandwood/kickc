@@ -1,4 +1,4 @@
-// Commodore 64 PRG executable file
+// Commander X16 PRG executable file
 .file [name="%O", type="prg", segments="Program"]
 .segmentdef Program [segments="Basic, Code, Data"]
 .segmentdef Basic [start=$0801]

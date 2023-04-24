@@ -8,15 +8,15 @@ struct Cols {
 
 struct Cols * const COLS = (struct Cols *)0xd020;
 
-void main() {
-    struct Cols a = { 1, 2 };
-    //*COLS = a;
-    a = plus(a, { 2, 3 } );
-    *COLS = a;
-    //a = plus(a, a);
-    //*COLS = a;
-}
-
 __varcall struct Cols plus(struct Cols a, struct Cols b) {
     return { a.border+b.border,  a.bg+b.bg };
+}
+
+
+void main() {
+    struct Cols a = { 1, 2 };
+    struct Cols c = plus(a, { 2, 3 });
+    *COLS = c;
+    c = plus(c, a);
+    *COLS = c;
 }

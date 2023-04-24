@@ -1,7 +1,7 @@
 // Example program for the Commander X16
 // Displays raster bars in the border
 .cpu _65c02
-  // Commodore 64 PRG executable file
+  // Commander X16 PRG executable file
 .file [name="cx16-rasterbars.prg", type="prg", segments="Program"]
 .segmentdef Program [segments="Basic, Code, Data"]
 .segmentdef Basic [start=$0801]
@@ -9,9 +9,13 @@
 .segmentdef Data [startAfter="Code"]
 .segment Basic
 :BasicUpstart(__start)
+
   .const VERA_DCSEL = 2
   .const VERA_LINE = 2
+  .const isr_vsync = $314
   .const SIZEOF_CHAR = 1
+  /// $0314	(RAM) IRQ vector - The vector used when the KERNAL serves IRQ interrupts
+  .label KERNEL_IRQ = $314
   /// $9F25	CTRL Control
   /// Bit 7: Reset
   /// Bit 1: DCSEL
@@ -48,22 +52,28 @@
   .label VERA_DC_VSTART = $9f2b
   /// $9F2C	DC_VSTOP (DCSEL=1)	Active Display V-Stop (8:1)
   .label VERA_DC_VSTOP = $9f2c
-  /// $0314	(RAM) IRQ vector - The vector used when the KERNAL serves IRQ interrupts
-  .label KERNEL_IRQ = $314
+  .label BRAM = 0
+  .label BROM = 1
   // The horizontal start
-  .label hstart = 6
+  .label hstart = $26
   // The horizontal stop
-  .label hstop = 7
+  .label hstop = $27
   // The vertical start
-  .label vstart = 8
+  .label vstart = $28
   // The vertical stop
-  .label vstop = 9
+  .label vstop = $29
   // The countdown
-  .label cnt = 5
+  .label cnt = $25
   // The sin idx
-  .label sin_idx = $a
+  .label sin_idx = $2a
 .segment Code
 __start: {
+    // __export volatile __address(0x00) unsigned char BRAM = 0
+    lda #0
+    sta.z BRAM
+    // __export volatile __address(0x01) unsigned char BROM = 4
+    lda #4
+    sta.z BROM
     // volatile char hstart = 0/4
     lda #0
     sta.z hstart
@@ -87,8 +97,8 @@ __start: {
 }
 // LINE Interrupt Routine
 irq_line: {
-    .label idx = 4
-    .label bar = 2
+    .label idx = $24
+    .label bar = $22
     // *VERA_CTRL |= VERA_DCSEL
     // Update the border
     lda #VERA_DCSEL
@@ -243,7 +253,7 @@ memset: {
     .const c = 0
     .label str = BARS
     .label end = str+num
-    .label dst = 2
+    .label dst = $22
     lda #<str
     sta.z dst
     lda #>str

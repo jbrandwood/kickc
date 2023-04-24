@@ -136,7 +136,7 @@ parameterDecl
     ;
 
 pragma
-    : PRAGMA NAME PAR_BEGIN pragmaParam (COMMA pragmaParam)* PAR_END
+    : PRAGMA NAME PAR_BEGIN (pragmaParam (COMMA pragmaParam)* )? PAR_END
     ;
 
 pragmaParam
@@ -161,6 +161,7 @@ directive
     | EXTERN #directiveExtern
     | EXPORT #directiveExport
     | INLINE #directiveInline
+    | BANK PAR_BEGIN NAME COMMA NUMBER PAR_END #directiveBank
     | INTRINSIC #directiveIntrinsic
     | INTERRUPT ( PAR_BEGIN NAME PAR_END )? #directiveInterrupt
     | LOCAL_RESERVE PAR_BEGIN pragmaParam ( COMMA pragmaParam )* PAR_END  #directiveReserveZp
@@ -243,9 +244,10 @@ expr
     | expr ( '&&' )  expr #exprBinary
     | expr ( '||' )  expr #exprBinary
     | expr '?'   expr COLON expr #exprTernary
-    | <assoc=right> expr '=' expr  #exprAssignment
+    | <assoc=right> expr ASSIGN expr  #exprAssignment
     | <assoc=right> expr ASSIGN_COMPOUND expr  #exprAssignmentCompound
     | CURLY_BEGIN expr (COMMA expr )* COMMA? CURLY_END #initList
+    | CURLY_BEGIN DOT NAME ASSIGN expr CURLY_END #initUnion
     | NAME  #exprId
     | NUMBER #exprNumber
     | STRING+ #exprString

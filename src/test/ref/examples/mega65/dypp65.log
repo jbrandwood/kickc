@@ -42,6 +42,7 @@ Setting inferred volatile on symbol affected by address-of: memoryRemap256M::yVa
 Setting inferred volatile on symbol affected by address-of: memoryRemap256M::zVal in asm { ldalMb ldx#$0f ldyuMb ldz#$0f map ldaaVal ldxxVal ldyyVal ldzzVal map eom  }
 Inlined call vicSelectGfxBank::$0 = call toDd00(vicSelectGfxBank::gfx)
 Inlined call call SEI
+Inlined call call __init
 Eliminating unused variable with no statement memoryRemap::$0
 Eliminating unused variable with no statement memoryRemap::$4
 Eliminating unused variable with no statement memoryRemap::$5
@@ -129,7 +130,7 @@ memset_dma256::@return: scope:[memset_dma256]  from memset_dma256
   to:@return
 
 void main()
-main: scope:[main]  from __start
+main: scope:[main]  from __start::@1
   to:main::SEI1
 main::SEI1: scope:[main]  from main
   asm { sei  }
@@ -276,11 +277,15 @@ main::@return: scope:[main]  from
 
 void __start()
 __start: scope:[__start]  from
-  call main
+  to:__start::__init1
+__start::__init1: scope:[__start]  from __start
   to:__start::@1
-__start::@1: scope:[__start]  from __start
+__start::@1: scope:[__start]  from __start::__init1
+  call main
+  to:__start::@2
+__start::@2: scope:[__start]  from __start::@1
   to:__start::@return
-__start::@return: scope:[__start]  from __start::@1
+__start::@return: scope:[__start]  from __start::@2
   return 
   to:@return
 
@@ -756,7 +761,9 @@ Eliminating unused constant OFFSET_STRUCT_F018_DMAGIC_ADDRLSBTRIG
 Successful SSA optimization PassNEliminateUnusedVars
 Removing unused procedure __start
 Removing unused procedure block __start
+Removing unused procedure block __start::__init1
 Removing unused procedure block __start::@1
+Removing unused procedure block __start::@2
 Removing unused procedure block __start::@return
 Successful SSA optimization PassNEliminateEmptyStart
 Constant right-side identified [0] memoryRemap::aVal = byte0  memoryRemap::lowerPageOffset#0

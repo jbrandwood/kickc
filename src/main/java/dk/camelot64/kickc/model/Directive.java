@@ -43,6 +43,29 @@ public class Directive {
       public Inline() { super("inline"); }
    }
 
+   /**
+    * Bank to place code into. Used for determining call distance.
+    */
+   static public class Bank extends Directive {
+
+      private String bankArea;
+      private Long bankNumber;
+
+      public Bank(String bankArea, Long bankNumber) {
+         super("bank" );
+         this.bankArea = bankArea;
+         this.bankNumber = bankNumber;
+      }
+
+      public String getBankArea() {
+         return bankArea;
+      }
+
+      public Long getBankNumber() {
+         return bankNumber;
+      }
+   }
+
    /** Function declared intrinsic. */
    public static class Intrinsic extends Directive {
       public Intrinsic() { super("intrinsic"); }

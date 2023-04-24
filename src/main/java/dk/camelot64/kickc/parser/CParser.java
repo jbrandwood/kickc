@@ -106,6 +106,14 @@ public class CParser {
      * The resource-file is copied to the output directory when compiling.
      */
     public static final String PRAGMA_RESOURCE = "resource";
+    /**
+     * #pragma bank(...) changes the current bank. Functions and variables will be placed in the specified bank.
+     */
+    public static final String PRAGMA_BANK = "bank";
+    /**
+     * #pragma nobank Changes the current bank to the default/common/shared bank.
+     */
+    public static final String PRAGMA_NOBANK = "nobank";
 
     /**
      * The Program.

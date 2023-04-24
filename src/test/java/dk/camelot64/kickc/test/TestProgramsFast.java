@@ -374,17 +374,33 @@ public class TestProgramsFast extends TestPrograms {
    public void testStructUnwinding2() throws IOException {
       compileAndCompare("struct-unwinding-2.c");
    }
-
    @Test
    public void testStructUnwinding1() throws IOException {
       compileAndCompare("struct-unwinding-1.c");
    }
 
-   //@Test
-   //public void testVarCall5() throws IOException {
-   //   compileAndCompare("varcall-5.c", log().verboseCreateSsa().verboseStructUnwind());
-   //}
+   @Test
+   public void testVarCall9() throws IOException {
+      compileAndCompare("varcall-9.c");
+   }
 
+   @Test
+   public void testVarCall8() throws IOException {
+      compileAndCompare("varcall-8.c");
+   }
+
+   @Test
+   public void testVarCall7() throws IOException {
+      compileAndCompare("varcall-7.c");
+   }
+   @Test
+   public void testVarCall6() throws IOException {
+      compileAndCompare("varcall-6.c");
+   }
+   @Test
+   public void testVarCall5() throws IOException {
+      compileAndCompare("varcall-5.c");
+   }
    @Test
    public void testVarCall4() throws IOException {
       compileAndCompare("varcall-4.c");
@@ -528,6 +544,11 @@ public class TestProgramsFast extends TestPrograms {
    @Test
    public void testPragmaUnknown() throws IOException {
       compileAndCompare("pragma-unknown.c");
+   }
+
+   @Test
+   public void testPragmaNoParametersNoParenthesis() throws IOException {
+      compileAndCompare("pragma-noparam-noparen.c");
    }
 
    @Test
@@ -736,6 +757,11 @@ public class TestProgramsFast extends TestPrograms {
    }
 
    @Test
+   public void testMemFast() throws IOException {
+      compileAndCompare("examples/memfast/memfast.c");
+   }
+
+   @Test
    public void testNesDxycp() throws IOException {
       compileAndCompare("examples/nes/nes-dxycp.c");
    }
@@ -745,6 +771,11 @@ public class TestProgramsFast extends TestPrograms {
    public void testCx16Rasterbars() throws IOException {
       compileAndCompare("examples/cx16/cx16-rasterbars.c");
    }
+
+   //@Test
+   //public void testCx16Banking() throws IOException {
+   //   compileAndCompare("examples/cx16/banking/cx16-banking.c");
+   //}
 
    @Test
    public void testMega65Camelot1536Dots() throws IOException {
@@ -1494,6 +1525,83 @@ public class TestProgramsFast extends TestPrograms {
    public void testDeclaredMemoryVar0() throws IOException {
       compileAndCompare("declared-memory-var-0.c");
    }
+
+   @Test
+   public void testBankedPhiCase1Near0() throws IOException {
+      compileAndCompare("call-banked-phi-case-1-near-0.c");
+   }
+
+   @Test
+   public void testBankedPhiCase1Near1() throws IOException {
+      compileAndCompare("call-banked-phi-case-1-near-1.c");
+   }
+
+   @Test
+   public void testBankedPhiCase2Close0() throws IOException {
+      compileAndCompare("call-banked-phi-case-2-close-0.c");
+   }
+
+   @Test
+   public void testBankedPhiCase2Close1() throws IOException {
+      compileAndCompare("call-banked-phi-case-2-close-1.c");
+   }
+
+   @Test
+   public void testBankedPhiCase3Near0() throws IOException {
+      compileAndCompare("call-banked-phi-case-3-near-0.c");
+   }
+
+   @Test
+   public void testBankedPhiCase3Near1() throws IOException {
+      compileAndCompare("call-banked-phi-case-3-near-1.c");
+   }
+
+   @Test
+   public void testBankedPhiCase4Near0() throws IOException {
+      compileAndCompare("call-banked-phi-case-4-near-0.c");
+   }
+
+   @Test
+   public void testBankedPhiCase4Near1() throws IOException {
+      compileAndCompare("call-banked-phi-case-4-near-1.c");
+   }
+
+   @Test
+   public void testBankedPhiCase5Far0() throws IOException {
+      compileAndCompare("call-banked-phi-case-5-far-0.c");
+   }
+
+   @Test
+   public void testBankedPhiCase5Far1() throws IOException {
+      compileAndCompare("call-banked-phi-case-5-far-1.c");
+   }
+
+   @Test
+   public void testBankedPhiCase6Close0() throws IOException {
+      compileAndCompare("call-banked-phi-case-6-close-0.c");
+   }
+
+   @Test
+   public void testBankedPhiCase6Close1() throws IOException {
+      compileAndCompare("call-banked-phi-case-6-close-1.c");
+   }
+
+   @Test
+   public void testBankedPhiMemvars() throws IOException {
+      compileAndCompare("call-banked-phi-memvars.c");
+   }
+
+
+   @Test
+   public void testBankedStackCase2Close0() throws IOException {
+      assertError("call-banked-stack-case-2-close-0.c", "Stack Call procedure not supported in banked mode");
+   }
+
+   @Test
+   public void testBankedStackCase5Far0() throws IOException {
+      assertError("call-banked-stack-case-5-far-0.c", "Stack Call procedure not supported in banked mode");
+   }
+
 
    @Test
    public void testProcedureCallingConventionStack13() throws IOException {
@@ -2539,6 +2647,31 @@ public class TestProgramsFast extends TestPrograms {
    @Test
    public void testWeeipBbbsList() throws IOException {
       compileAndCompare("weeip-bbslist.c");
+   }
+
+   @Test
+   public void testUnion13() throws IOException {
+      compileAndCompare("union-13.c");
+   }
+
+   @Test
+   public void testUnion12() throws IOException {
+      compileAndCompare("union-12.c");
+   }
+
+   @Test
+   public void testUnion11() throws IOException {
+      compileAndCompare("union-11.c");
+   }
+
+   @Test
+   public void testUnion10() throws IOException {
+      compileAndCompare("union-10.c");
+   }
+
+   @Test
+   public void testUnion9() throws IOException {
+      compileAndCompare("union-9.c");
    }
 
    @Test

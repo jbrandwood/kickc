@@ -1,3 +1,4 @@
+Inlined call call __init
 Eliminating unused variable with no statement memset::$2
 Eliminating unused variable with no statement main::$4
 
@@ -47,7 +48,7 @@ memset::@return: scope:[memset]  from memset::@1
   to:@return
 
 void main()
-main: scope:[main]  from __start
+main: scope:[main]  from __start::@1
   asm { sei  }
   memset::str#0 = (void *)DEFAULT_SCREEN
   memset::c#0 = ' '
@@ -126,11 +127,15 @@ main::@return: scope:[main]  from main::@1
 
 void __start()
 __start: scope:[__start]  from
-  call main
+  to:__start::__init1
+__start::__init1: scope:[__start]  from __start
   to:__start::@1
-__start::@1: scope:[__start]  from __start
+__start::@1: scope:[__start]  from __start::__init1
+  call main
+  to:__start::@2
+__start::@2: scope:[__start]  from __start::@1
   to:__start::@return
-__start::@return: scope:[__start]  from __start::@1
+__start::@return: scope:[__start]  from __start::@2
   return 
   to:@return
 
@@ -332,7 +337,9 @@ Eliminating unused constant memset::return#2
 Successful SSA optimization PassNEliminateUnusedVars
 Removing unused procedure __start
 Removing unused procedure block __start
+Removing unused procedure block __start::__init1
 Removing unused procedure block __start::@1
+Removing unused procedure block __start::@2
 Removing unused procedure block __start::@return
 Successful SSA optimization PassNEliminateEmptyStart
 Constant right-side identified [0] memset::end#0 = memset::$4 + memset::num#0

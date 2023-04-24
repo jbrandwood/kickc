@@ -1,62 +1,67 @@
+/**
+ * @file cx16-kernal.c
+ * @author Sven Van de Velde (sven.van.de.velde@telenet.be)
+ * @brief 
+ * Please refer to http://sta.c64.org/cbm64krnfunc.html for the list of standard CBM C64 kernal functions.
+ * Please refer to https://github.com/commanderx16/x16-docs/blob/master/Commander%20X16%20Programmer's%20Reference%20Guide.md for the detailed list
+ * of APIs backward compatible with the C64.
+
+ * @version 0.1
+ * @date 2022-01-29
+ * 
+ * @copyright Copyright (c) 2022
+ * 
+ */
+
+#include <cx16.h>
 #include <cx16-kernal.h>
-#include <string.h>
 
-// Kernal SETNAM function
-// SETNAM. Set file name parameters.
-void setnam(char* filename) {
-    char filename_len = (char)strlen(filename);
-    asm {
-        // Kernal SETNAM function
-        // SETNAM. Set file name parameters.
-        // Input: A = File name length; X/Y = Pointer to file name.
-        lda filename_len
-        ldx filename
-        ldy filename+1
-        jsr $ffbd
-    }
+
+/**
+ * @brief Read a number of bytes from the sdcard using kernal macptr call.
+ * BRAM bank needs to be set properly before the load between adressed A000 and BFFF.
+ *
+ * @return x the size of bytes read
+ * @return y the size of bytes read
+ * @return if carry is set there is an error
+ */
+unsigned int cx16_k_macptr(unsigned char bytes, void* buffer)
+{
+    unsigned int bytes_read;
+    {asm {
+        lda bytes
+        ldx buffer
+        ldy buffer+1
+
+        clc  // needed from R42 of the CX16 commander rom to ensure MACPTR is progressing the read address.
+        // .byte $db
+        jsr CX16_MACPTR
+        stx bytes_read
+        sty bytes_read+1
+        bcc !+
+        lda #$FF
+        sta bytes_read
+        sta bytes_read+1
+        !:
+    }}
+    return bytes_read;
 }
 
-// SETLFS. Set file parameters.
-void setlfs(char device) {
-    asm {
-        // SETLFS. Set file parameters.
-        // Input: A = Logical number; X = Device number; Y = Secondary address.
-        ldx device
-        lda #1
-        ldy #0
-        jsr $ffba
-    }
-}
 
-// LOAD. Load or verify file. (Must call SETLFS and SETNAM beforehands.)
-// - verify: 0 = Load, 1-255 = Verify
-//
-// Returns a status, 0xff: Success other: Kernal Error Code
-char load(char* address, char verify) {
-    char status;
-    asm {
-        //LOAD. Load or verify file. (Must call SETLFS and SETNAM beforehands.)
-        // Input: A: 0 = Load, 1-255 = Verify; X/Y = Load address (if secondary address = 0).
-        // Output: Carry: 0 = No errors, 1 = Error; A = KERNAL error code (if Carry = 1); X/Y = Address of last byte loaded/verified (if Carry = 0).
-        ldx address
-        ldy address+1
-        lda verify
-        jsr $ffd5
-        bcs error
-        lda #$ff
-        error:
-        sta status
-    }
-    return status;
-}
 
-// GETIN. Read a byte from the input channel
-// return: next byte in buffer or 0 if buffer is empty.
-char getin() {
-    char ch;
-    asm {
-        jsr $ffe4
-        sta ch
-    }
-    return ch;
+/**
+ * @brief Sets the [character set](https://github.com/commanderx16/x16-docs/blob/master/X16%20Reference%20-%2004%20-%20KERNAL.md#function-name-screen_set_charset).
+ * 
+ * @param charset The code of the charset to copy.
+ * @param offset The offset of the character set in ram.
+ */
+inline void cx16_k_screen_set_charset(char charset, char *offset) {
+
+    
+    {asm {
+        lda charset
+        ldx <offset
+        ldy >offset
+        jsr CX16_SCREEN_SET_CHARSET
+    }}
 }

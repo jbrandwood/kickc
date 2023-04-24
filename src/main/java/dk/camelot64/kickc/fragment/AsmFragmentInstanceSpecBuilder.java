@@ -13,7 +13,9 @@ import dk.camelot64.kickc.model.operators.OperatorBinary;
 import dk.camelot64.kickc.model.operators.OperatorUnary;
 import dk.camelot64.kickc.model.operators.Operators;
 import dk.camelot64.kickc.model.statements.*;
+import dk.camelot64.kickc.model.symbols.Bank;
 import dk.camelot64.kickc.model.symbols.Label;
+import dk.camelot64.kickc.model.symbols.Procedure;
 import dk.camelot64.kickc.model.symbols.Symbol;
 import dk.camelot64.kickc.model.types.SymbolType;
 import dk.camelot64.kickc.model.types.SymbolTypeInference;
@@ -38,6 +40,27 @@ final public class AsmFragmentInstanceSpecBuilder {
         RValue procedureRVal = call.getProcedureRVal();
         AsmFragmentSignature signature = new AsmFragmentSignature.Call(bindings.bind(procedureRVal));
         bindings.bind("la1", new LabelRef(codeScope.getFullName() + "::" + "icall" + indirectCallId));
+        return new AsmFragmentInstanceSpec(program, signature, bindings, codeScope);
+    }
+
+    /**
+     * Create a fragment instance spec factory for a banked call
+     *
+     * @param toProcedure The procedure being called
+     * @param callingDistance The calling distance of the call
+     * @param program The program
+     * @return the fragment instance spec factory
+     */
+    public static AsmFragmentInstanceSpec callBanked(Procedure toProcedure, Bank.CallingDistance callingDistance, Program program) {
+        final Bank toBank = toProcedure.getBank();
+        AsmFragmentBindings bindings = new AsmFragmentBindings(program);
+        AsmFragmentSignature signature = new AsmFragmentSignature.CallBanked(
+              toProcedure.getCallingConvention().getShortName(),
+              callingDistance.toString(),
+              (callingDistance.equals(Bank.CallingDistance.NEAR)?null:toBank.bankArea()));
+        ScopeRef codeScope = program.getScope().getRef();
+        bindings.bind("c1", new ConstantInteger(toBank.bankNumber()));
+        bindings.bind("la1", new LabelRef(toProcedure.getFullName()));
         return new AsmFragmentInstanceSpec(program, signature, bindings, codeScope);
     }
 

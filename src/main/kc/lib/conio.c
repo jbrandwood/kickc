@@ -7,6 +7,8 @@
 
 #if defined(__C64__)
 #include "conio-c64.c"
+#elif defined(__C128__)
+#include "conio-c128.c"
 #elif defined(__PLUS4__)
 #include "conio-plus4.c"
 #elif defined(__VIC20__)
@@ -18,7 +20,9 @@
 #elif defined(__ATARIXL__)
 #include "conio-atarixl.c"
 #elif defined(__CX16__)
-#include "conio-cx16.c"
+#include "cx16-conio.c"
+#elif defined(__PET8032__)
+#include "pet-conio.c"
 #else
 #error "Target platform does not support conio.h"
 #endif

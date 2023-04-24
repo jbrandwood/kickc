@@ -1,0 +1,496 @@
+Converting parameter in __varcall procedure to load/store make::v
+Converting return in __varcall procedure to load/store make::return
+Eliminating unused variable with no statement main::$0
+Eliminating unused variable with no statement main::$1
+Calling convention __varcall adding prepare/execute/finalize for { main::$0_border, main::$0_bg } = call make(1)
+Calling convention __varcall adding prepare/execute/finalize for { main::$1_border, main::$1_bg } = call make(2)
+Removing C-classic struct-unwound assignment a = struct-unwound {*((char *)&a+OFFSET_STRUCT_COLS_BORDER), *((char *)&a+OFFSET_STRUCT_COLS_BG)}
+Removing C-classic struct-unwound assignment a = struct-unwound {*((char *)&a+OFFSET_STRUCT_COLS_BORDER), *((char *)&a+OFFSET_STRUCT_COLS_BG)}
+
+CONTROL FLOW GRAPH SSA
+
+__varcall struct Cols make(char v)
+make: scope:[make]  from
+  make::c_border#0 = 0
+  make::c_bg#0 = 0
+  make::c_border#1 = make::v
+  make::$0 = make::v + make::v
+  make::c_bg#1 = make::$0
+  make::return_border = make::c_border#1
+  make::return_bg = make::c_bg#1
+  make::return = struct-unwound {make::return_border, make::return_bg}
+  to:make::@return
+make::@return: scope:[make]  from make
+  return 
+  to:@return
+
+void main()
+main: scope:[main]  from __start
+  make::v = 1
+  callexecute make 
+  main::$0_border = make::return_border
+  main::$0_bg = make::return_bg
+  *((char *)&a+OFFSET_STRUCT_COLS_BORDER) = main::$0_border
+  *((char *)&a+OFFSET_STRUCT_COLS_BG) = main::$0_bg
+  *COLS = memcpy(*(&a), struct Cols, SIZEOF_STRUCT_COLS)
+  make::v = 2
+  callexecute make 
+  main::$1_border = make::return_border
+  main::$1_bg = make::return_bg
+  *((char *)&a+OFFSET_STRUCT_COLS_BORDER) = main::$1_border
+  *((char *)&a+OFFSET_STRUCT_COLS_BG) = main::$1_bg
+  *COLS = memcpy(*(&a), struct Cols, SIZEOF_STRUCT_COLS)
+  to:main::@return
+main::@return: scope:[main]  from main
+  return 
+  to:@return
+
+void __start()
+__start: scope:[__start]  from
+  call main
+  to:__start::@1
+__start::@1: scope:[__start]  from __start
+  to:__start::@return
+__start::@return: scope:[__start]  from __start::@1
+  return 
+  to:@return
+
+SYMBOL TABLE SSA
+__constant struct Cols * const COLS = (struct Cols * const )$d020
+__constant char OFFSET_STRUCT_COLS_BG = 1
+__constant char OFFSET_STRUCT_COLS_BORDER = 0
+__constant char SIZEOF_STRUCT_COLS = 2
+void __start()
+__loadstore struct Cols a = {}
+void main()
+char main::$0_bg
+char main::$0_border
+char main::$1_bg
+char main::$1_border
+__varcall struct Cols make(char v)
+char make::$0
+char make::c_bg
+char make::c_bg#0
+char make::c_bg#1
+char make::c_border
+char make::c_border#0
+char make::c_border#1
+__loadstore struct Cols make::return
+__loadstore char make::return_bg
+__loadstore char make::return_border
+__loadstore char make::v
+
+Adding number conversion cast (unumber) 1 in make::v = 1
+Adding number conversion cast (unumber) 2 in make::v = 2
+Successful SSA optimization PassNAddNumberTypeConversions
+Inlining cast make::v = (unumber)1
+Inlining cast make::v = (unumber)2
+Successful SSA optimization Pass2InlineCast
+Simplifying constant pointer cast (struct Cols *) 53280
+Simplifying constant integer cast 1
+Simplifying constant integer cast 2
+Successful SSA optimization PassNCastSimplification
+Finalized unsigned number type (char) 1
+Finalized unsigned number type (char) 2
+Successful SSA optimization PassNFinalizeNumberTypeConversions
+Alias candidate removed (volatile)make::c_bg#1 = make::$0 make::return_bg 
+Alias candidate removed (volatile)make::c_border#1 = make::return_border 
+Constant make::c_border#0 = 0
+Constant make::c_bg#0 = 0
+Successful SSA optimization Pass2ConstantIdentification
+Simplifying expression containing zero (char *)&a in [13] *((char *)&a+OFFSET_STRUCT_COLS_BORDER) = main::$0_border
+Simplifying expression containing zero (char *)&a in [20] *((char *)&a+OFFSET_STRUCT_COLS_BORDER) = main::$1_border
+Successful SSA optimization PassNSimplifyExpressionWithZero
+Eliminating unused variable make::return and assignment [5] make::return = struct-unwound {make::return_border, make::return_bg}
+Eliminating unused constant make::c_border#0
+Eliminating unused constant make::c_bg#0
+Eliminating unused constant OFFSET_STRUCT_COLS_BORDER
+Successful SSA optimization PassNEliminateUnusedVars
+Removing unused procedure __start
+Removing unused procedure block __start
+Removing unused procedure block __start::@1
+Removing unused procedure block __start::@return
+Successful SSA optimization PassNEliminateEmptyStart
+Alias candidate removed (volatile)make::c_bg#1 = make::$0 make::return_bg 
+Alias candidate removed (volatile)make::c_border#1 = make::return_border 
+Alias candidate removed (volatile)make::c_bg#1 = make::$0 make::return_bg 
+Alias candidate removed (volatile)make::c_border#1 = make::return_border 
+Alias candidate removed (volatile)make::c_bg#1 = make::$0 make::return_bg 
+Alias candidate removed (volatile)make::c_border#1 = make::return_border 
+CALL GRAPH
+Calls in [main] to make:1 make:8 
+
+Created 0 initial phi equivalence classes
+Coalesced down to 0 phi equivalence classes
+
+FINAL CONTROL FLOW GRAPH
+
+void main()
+main: scope:[main]  from
+  [0] make::v = 1
+  [1] callexecute make 
+  [2] main::$0_border = make::return_border
+  [3] main::$0_bg = make::return_bg
+  [4] *((char *)&a) = main::$0_border
+  [5] *((char *)&a+OFFSET_STRUCT_COLS_BG) = main::$0_bg
+  [6] *COLS = memcpy(*(&a), struct Cols, SIZEOF_STRUCT_COLS)
+  [7] make::v = 2
+  [8] callexecute make 
+  [9] main::$1_border = make::return_border
+  [10] main::$1_bg = make::return_bg
+  [11] *((char *)&a) = main::$1_border
+  [12] *((char *)&a+OFFSET_STRUCT_COLS_BG) = main::$1_bg
+  [13] *COLS = memcpy(*(&a), struct Cols, SIZEOF_STRUCT_COLS)
+  to:main::@return
+main::@return: scope:[main]  from main
+  [14] return 
+  to:@return
+
+__varcall struct Cols make(char v)
+make: scope:[make]  from
+  [15] make::c_border#1 = make::v
+  [16] make::$0 = make::v + make::v
+  [17] make::c_bg#1 = make::$0
+  [18] make::return_border = make::c_border#1
+  [19] make::return_bg = make::c_bg#1
+  to:make::@return
+make::@return: scope:[make]  from make
+  [20] return 
+  to:@return
+
+
+VARIABLE REGISTER WEIGHTS
+__loadstore struct Cols a = {}
+void main()
+char main::$0_bg // 2.0
+char main::$0_border // 2.0
+char main::$1_bg // 2.0
+char main::$1_border // 2.0
+__varcall struct Cols make(char v)
+char make::$0 // 22.0
+char make::c_bg
+char make::c_bg#1 // 11.0
+char make::c_border
+char make::c_border#1 // 7.333333333333333
+__loadstore char make::return_bg // 2.5
+__loadstore char make::return_border // 3.0
+__loadstore char make::v // 12.333333333333332
+
+Initial phi equivalence classes
+Added variable make::v to live range equivalence class [ make::v ]
+Added variable main::$0_border to live range equivalence class [ main::$0_border ]
+Added variable main::$0_bg to live range equivalence class [ main::$0_bg ]
+Added variable main::$1_border to live range equivalence class [ main::$1_border ]
+Added variable main::$1_bg to live range equivalence class [ main::$1_bg ]
+Added variable make::c_border#1 to live range equivalence class [ make::c_border#1 ]
+Added variable make::$0 to live range equivalence class [ make::$0 ]
+Added variable make::c_bg#1 to live range equivalence class [ make::c_bg#1 ]
+Added variable make::return_border to live range equivalence class [ make::return_border ]
+Added variable make::return_bg to live range equivalence class [ make::return_bg ]
+Added variable a to live range equivalence class [ a ]
+Complete equivalence classes
+[ make::v ]
+[ main::$0_border ]
+[ main::$0_bg ]
+[ main::$1_border ]
+[ main::$1_bg ]
+[ make::c_border#1 ]
+[ make::$0 ]
+[ make::c_bg#1 ]
+[ make::return_border ]
+[ make::return_bg ]
+[ a ]
+Allocated zp[1]:2 [ make::$0 ]
+Allocated zp[1]:3 [ make::v ]
+Allocated zp[1]:4 [ make::c_bg#1 ]
+Allocated zp[1]:5 [ make::c_border#1 ]
+Allocated zp[1]:6 [ make::return_border ]
+Allocated zp[1]:7 [ make::return_bg ]
+Allocated zp[1]:8 [ main::$0_border ]
+Allocated zp[1]:9 [ main::$0_bg ]
+Allocated zp[1]:10 [ main::$1_border ]
+Allocated zp[1]:11 [ main::$1_bg ]
+Allocated mem[2] [ a ]
+REGISTER UPLIFT POTENTIAL REGISTERS
+Statement [0] make::v = 1 [ make::v a ] (  [ make::v a ] { }  ) always clobbers reg byte a 
+Statement [6] *COLS = memcpy(*(&a), struct Cols, SIZEOF_STRUCT_COLS) [ a ] (  [ a ] { }  ) always clobbers reg byte a reg byte y 
+Statement [7] make::v = 2 [ make::v a ] (  [ make::v a ] { }  ) always clobbers reg byte a 
+Statement [13] *COLS = memcpy(*(&a), struct Cols, SIZEOF_STRUCT_COLS) [ ] (  [ ] { }  ) always clobbers reg byte a reg byte y 
+Statement [16] make::$0 = make::v + make::v [ make::c_border#1 make::$0 ] ( make:1 [ a make::c_border#1 make::$0 ] { }  make:8 [ a make::c_border#1 make::$0 ] { }  ) always clobbers reg byte a 
+Removing always clobbered register reg byte a as potential for zp[1]:5 [ make::c_border#1 ]
+Statement [0] make::v = 1 [ make::v a ] (  [ make::v a ] { }  ) always clobbers reg byte a 
+Statement [6] *COLS = memcpy(*(&a), struct Cols, SIZEOF_STRUCT_COLS) [ a ] (  [ a ] { }  ) always clobbers reg byte a reg byte y 
+Statement [7] make::v = 2 [ make::v a ] (  [ make::v a ] { }  ) always clobbers reg byte a 
+Statement [13] *COLS = memcpy(*(&a), struct Cols, SIZEOF_STRUCT_COLS) [ ] (  [ ] { }  ) always clobbers reg byte a reg byte y 
+Statement [16] make::$0 = make::v + make::v [ make::c_border#1 make::$0 ] ( make:1 [ a make::c_border#1 make::$0 ] { }  make:8 [ a make::c_border#1 make::$0 ] { }  ) always clobbers reg byte a 
+Potential registers zp[1]:3 [ make::v ] : zp[1]:3 , 
+Potential registers zp[1]:8 [ main::$0_border ] : zp[1]:8 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:9 [ main::$0_bg ] : zp[1]:9 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:10 [ main::$1_border ] : zp[1]:10 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:11 [ main::$1_bg ] : zp[1]:11 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:5 [ make::c_border#1 ] : zp[1]:5 , reg byte x , reg byte y , 
+Potential registers zp[1]:2 [ make::$0 ] : zp[1]:2 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:4 [ make::c_bg#1 ] : zp[1]:4 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:6 [ make::return_border ] : zp[1]:6 , 
+Potential registers zp[1]:7 [ make::return_bg ] : zp[1]:7 , 
+Potential registers mem[2] [ a ] : mem[2] , 
+
+REGISTER UPLIFT SCOPES
+Uplift Scope [make] 22: zp[1]:2 [ make::$0 ] 12.33: zp[1]:3 [ make::v ] 11: zp[1]:4 [ make::c_bg#1 ] 7.33: zp[1]:5 [ make::c_border#1 ] 3: zp[1]:6 [ make::return_border ] 2.5: zp[1]:7 [ make::return_bg ] 
+Uplift Scope [main] 2: zp[1]:8 [ main::$0_border ] 2: zp[1]:9 [ main::$0_bg ] 2: zp[1]:10 [ main::$1_border ] 2: zp[1]:11 [ main::$1_bg ] 
+Uplift Scope [Cols] 
+Uplift Scope [] 0: mem[2] [ a ] 
+
+Uplifting [make] best 138 combination reg byte a [ make::$0 ] zp[1]:3 [ make::v ] reg byte a [ make::c_bg#1 ] reg byte x [ make::c_border#1 ] zp[1]:6 [ make::return_border ] zp[1]:7 [ make::return_bg ] 
+Uplifting [main] best 120 combination reg byte x [ main::$0_border ] reg byte a [ main::$0_bg ] reg byte x [ main::$1_border ] zp[1]:11 [ main::$1_bg ] 
+Limited combination testing to 100 combinations of 256 possible.
+Uplifting [Cols] best 120 combination 
+Uplifting [] best 120 combination mem[2] [ a ] 
+Attempting to uplift remaining variables inzp[1]:3 [ make::v ]
+Uplifting [make] best 120 combination zp[1]:3 [ make::v ] 
+Attempting to uplift remaining variables inzp[1]:6 [ make::return_border ]
+Uplifting [make] best 120 combination zp[1]:6 [ make::return_border ] 
+Attempting to uplift remaining variables inzp[1]:7 [ make::return_bg ]
+Uplifting [make] best 120 combination zp[1]:7 [ make::return_bg ] 
+Attempting to uplift remaining variables inzp[1]:11 [ main::$1_bg ]
+Uplifting [main] best 114 combination reg byte a [ main::$1_bg ] 
+Allocated (was zp[1]:3) zp[1]:2 [ make::v ]
+Allocated (was zp[1]:6) zp[1]:3 [ make::return_border ]
+Allocated (was zp[1]:7) zp[1]:4 [ make::return_bg ]
+
+ASSEMBLER BEFORE OPTIMIZATION
+  // File Comments
+// Test __varcall calling convention
+// Struct return value
+  // Upstart
+  // Commodore 64 PRG executable file
+.file [name="varcall-5.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
+:BasicUpstart(main)
+  // Global Constants & labels
+  .const OFFSET_STRUCT_COLS_BG = 1
+  .const SIZEOF_STRUCT_COLS = 2
+  .label COLS = $d020
+.segment Code
+  // main
+main: {
+    // [0] make::v = 1 -- vbuz1=vbuc1 
+    lda #1
+    sta.z make.v
+    // [1] callexecute make  -- call_vprc1 
+    jsr make
+    // [2] main::$0_border = make::return_border -- vbuxx=vbuz1 
+    ldx.z make.return_border
+    // [3] main::$0_bg = make::return_bg -- vbuaa=vbuz1 
+    lda.z make.return_bg
+    // [4] *((char *)&a) = main::$0_border -- _deref_pbuc1=vbuxx 
+    stx a
+    // [5] *((char *)&a+OFFSET_STRUCT_COLS_BG) = main::$0_bg -- _deref_pbuc1=vbuaa 
+    sta a+OFFSET_STRUCT_COLS_BG
+    // [6] *COLS = memcpy(*(&a), struct Cols, SIZEOF_STRUCT_COLS) -- _deref_pssc1=_deref_pssc2_memcpy_vbuc3 
+    ldy #SIZEOF_STRUCT_COLS
+  !:
+    lda a-1,y
+    sta COLS-1,y
+    dey
+    bne !-
+    // [7] make::v = 2 -- vbuz1=vbuc1 
+    lda #2
+    sta.z make.v
+    // [8] callexecute make  -- call_vprc1 
+    jsr make
+    // [9] main::$1_border = make::return_border -- vbuxx=vbuz1 
+    ldx.z make.return_border
+    // [10] main::$1_bg = make::return_bg -- vbuaa=vbuz1 
+    lda.z make.return_bg
+    // [11] *((char *)&a) = main::$1_border -- _deref_pbuc1=vbuxx 
+    stx a
+    // [12] *((char *)&a+OFFSET_STRUCT_COLS_BG) = main::$1_bg -- _deref_pbuc1=vbuaa 
+    sta a+OFFSET_STRUCT_COLS_BG
+    // [13] *COLS = memcpy(*(&a), struct Cols, SIZEOF_STRUCT_COLS) -- _deref_pssc1=_deref_pssc2_memcpy_vbuc3 
+    ldy #SIZEOF_STRUCT_COLS
+  !:
+    lda a-1,y
+    sta COLS-1,y
+    dey
+    bne !-
+    jmp __breturn
+    // main::@return
+  __breturn:
+    // [14] return 
+    rts
+}
+  // make
+// struct Cols make(__zp(2) char v)
+make: {
+    .label v = 2
+    .label return_border = 3
+    .label return_bg = 4
+    // [15] make::c_border#1 = make::v -- vbuxx=vbuz1 
+    ldx.z v
+    // [16] make::$0 = make::v + make::v -- vbuaa=vbuz1_plus_vbuz1 
+    lda.z v
+    asl
+    // [17] make::c_bg#1 = make::$0
+    // [18] make::return_border = make::c_border#1 -- vbuz1=vbuxx 
+    stx.z return_border
+    // [19] make::return_bg = make::c_bg#1 -- vbuz1=vbuaa 
+    sta.z return_bg
+    jmp __breturn
+    // make::@return
+  __breturn:
+    // [20] return 
+    rts
+}
+  // File Data
+.segment Data
+  a: .fill SIZEOF_STRUCT_COLS, 0
+
+ASSEMBLER OPTIMIZATIONS
+Removing instruction jmp __breturn
+Removing instruction jmp __breturn
+Succesful ASM optimization Pass5NextJumpElimination
+Replacing instruction lda.z v with TXA
+Removing instruction __breturn:
+Removing instruction __breturn:
+Succesful ASM optimization Pass5UnusedLabelElimination
+
+FINAL SYMBOL TABLE
+__constant struct Cols * const COLS = (struct Cols *) 53280
+__constant char OFFSET_STRUCT_COLS_BG = 1
+__constant char SIZEOF_STRUCT_COLS = 2
+__loadstore struct Cols a = {} // mem[2]
+void main()
+char main::$0_bg // reg byte a 2.0
+char main::$0_border // reg byte x 2.0
+char main::$1_bg // reg byte a 2.0
+char main::$1_border // reg byte x 2.0
+__varcall struct Cols make(char v)
+char make::$0 // reg byte a 22.0
+char make::c_bg
+char make::c_bg#1 // reg byte a 11.0
+char make::c_border
+char make::c_border#1 // reg byte x 7.333333333333333
+__loadstore char make::return_bg // zp[1]:4 2.5
+__loadstore char make::return_border // zp[1]:3 3.0
+__loadstore char make::v // zp[1]:2 12.333333333333332
+
+zp[1]:2 [ make::v ]
+reg byte x [ main::$0_border ]
+reg byte a [ main::$0_bg ]
+reg byte x [ main::$1_border ]
+reg byte a [ main::$1_bg ]
+reg byte x [ make::c_border#1 ]
+reg byte a [ make::$0 ]
+reg byte a [ make::c_bg#1 ]
+zp[1]:3 [ make::return_border ]
+zp[1]:4 [ make::return_bg ]
+mem[2] [ a ]
+
+
+FINAL ASSEMBLER
+Score: 107
+
+  // File Comments
+// Test __varcall calling convention
+// Struct return value
+  // Upstart
+  // Commodore 64 PRG executable file
+.file [name="varcall-5.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
+:BasicUpstart(main)
+  // Global Constants & labels
+  .const OFFSET_STRUCT_COLS_BG = 1
+  .const SIZEOF_STRUCT_COLS = 2
+  .label COLS = $d020
+.segment Code
+  // main
+main: {
+    // make(1)
+    // [0] make::v = 1 -- vbuz1=vbuc1 
+    lda #1
+    sta.z make.v
+    // [1] callexecute make  -- call_vprc1 
+    jsr make
+    // [2] main::$0_border = make::return_border -- vbuxx=vbuz1 
+    ldx.z make.return_border
+    // [3] main::$0_bg = make::return_bg -- vbuaa=vbuz1 
+    lda.z make.return_bg
+    // a = make(1)
+    // [4] *((char *)&a) = main::$0_border -- _deref_pbuc1=vbuxx 
+    stx a
+    // [5] *((char *)&a+OFFSET_STRUCT_COLS_BG) = main::$0_bg -- _deref_pbuc1=vbuaa 
+    sta a+OFFSET_STRUCT_COLS_BG
+    // *COLS = a
+    // [6] *COLS = memcpy(*(&a), struct Cols, SIZEOF_STRUCT_COLS) -- _deref_pssc1=_deref_pssc2_memcpy_vbuc3 
+    ldy #SIZEOF_STRUCT_COLS
+  !:
+    lda a-1,y
+    sta COLS-1,y
+    dey
+    bne !-
+    // make(2)
+    // [7] make::v = 2 -- vbuz1=vbuc1 
+    lda #2
+    sta.z make.v
+    // [8] callexecute make  -- call_vprc1 
+    jsr make
+    // [9] main::$1_border = make::return_border -- vbuxx=vbuz1 
+    ldx.z make.return_border
+    // [10] main::$1_bg = make::return_bg -- vbuaa=vbuz1 
+    lda.z make.return_bg
+    // a = make(2)
+    // [11] *((char *)&a) = main::$1_border -- _deref_pbuc1=vbuxx 
+    stx a
+    // [12] *((char *)&a+OFFSET_STRUCT_COLS_BG) = main::$1_bg -- _deref_pbuc1=vbuaa 
+    sta a+OFFSET_STRUCT_COLS_BG
+    // *COLS = a
+    // [13] *COLS = memcpy(*(&a), struct Cols, SIZEOF_STRUCT_COLS) -- _deref_pssc1=_deref_pssc2_memcpy_vbuc3 
+    ldy #SIZEOF_STRUCT_COLS
+  !:
+    lda a-1,y
+    sta COLS-1,y
+    dey
+    bne !-
+    // main::@return
+    // }
+    // [14] return 
+    rts
+}
+  // make
+// struct Cols make(__zp(2) char v)
+make: {
+    .label v = 2
+    .label return_border = 3
+    .label return_bg = 4
+    // c.border = v
+    // [15] make::c_border#1 = make::v -- vbuxx=vbuz1 
+    ldx.z v
+    // v+v
+    // [16] make::$0 = make::v + make::v -- vbuaa=vbuz1_plus_vbuz1 
+    txa
+    asl
+    // c.bg = v+v
+    // [17] make::c_bg#1 = make::$0
+    // return c;
+    // [18] make::return_border = make::c_border#1 -- vbuz1=vbuxx 
+    stx.z return_border
+    // [19] make::return_bg = make::c_bg#1 -- vbuz1=vbuaa 
+    sta.z return_bg
+    // make::@return
+    // }
+    // [20] return 
+    rts
+}
+  // File Data
+.segment Data
+  a: .fill SIZEOF_STRUCT_COLS, 0
+

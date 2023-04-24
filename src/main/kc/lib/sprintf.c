@@ -23,10 +23,10 @@ __intrinsic int sprintf( char * s, const char * format, ... );
 
 /// The capacity of the buffer (n passed to snprintf())
 /// Used to hold state while printing
-volatile size_t __snprintf_capacity;
+__mem volatile size_t __snprintf_capacity;
 // The number of chars that would have been filled when printing without capacity. Grows even after size>capacity.
 /// Used to hold state while printing
-volatile size_t __snprintf_size;
+__mem volatile size_t __snprintf_size;
 /// Current position in the buffer being filled ( initially *s passed to snprintf()
 /// Used to hold state while printing
 char * __snprintf_buffer;

@@ -16,7 +16,6 @@ import dk.camelot64.kickc.parser.KickCParserBaseVisitor;
 import dk.camelot64.kickc.passes.utils.SizeOfConstants;
 import org.antlr.v4.runtime.BufferedTokenStream;
 import org.antlr.v4.runtime.ParserRuleContext;
-import org.antlr.v4.runtime.RuleContext;
 import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.TerminalNode;
@@ -131,12 +130,12 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       Procedure initProc = program.getScope().getLocalProcedure(SymbolRef.INIT_PROC_NAME);
       if(initProc == null) {
          // Create the _init() procedure
-         initProc = new Procedure(SymbolRef.INIT_PROC_NAME, new SymbolTypeProcedure(SymbolType.VOID, new ArrayList<>()), program.getScope(), Scope.SEGMENT_CODE_DEFAULT, Scope.SEGMENT_DATA_DEFAULT, Procedure.CallingConvention.PHI_CALL);
+         initProc = new Procedure(SymbolRef.INIT_PROC_NAME, new SymbolTypeProcedure(SymbolType.VOID, new ArrayList<>()), program.getScope(), Scope.SEGMENT_CODE_DEFAULT, Scope.SEGMENT_DATA_DEFAULT, Procedure.CallingConvention.PHI_CALL, Bank.COMMON);
          initProc.setDeclaredInline(true);
          initProc.setParameters(new ArrayList<>());
          program.getScope().add(initProc);
          program.createProcedureCompilation(initProc.getRef());
-         program.getProcedureCompilation(initProc.getRef()).getStatementSequence().addStatement(new StatementProcedureBegin(initProc.getRef(), new StatementSource(RuleContext.EMPTY), Comment.NO_COMMENTS));
+         program.getProcedureCompilation(initProc.getRef()).getStatementSequence().addStatement(new StatementProcedureBegin(initProc.getRef(), StatementSource.NONE, Comment.NO_COMMENTS));
       }
       return initProc;
    }
@@ -180,29 +179,29 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       if(initCompilation != null) {
          final StatementSequence initSequence = initCompilation.getStatementSequence();
          final Label initReturnLabel = program.getScope().getProcedure(initProcedureRef).addLabel(SymbolRef.PROCEXIT_BLOCK_NAME);
-         initSequence.addStatement(new StatementLabel(initReturnLabel.getRef(), new StatementSource(RuleContext.EMPTY), Comment.NO_COMMENTS));
-         initSequence.addStatement(new StatementReturn(null, new StatementSource(RuleContext.EMPTY), Comment.NO_COMMENTS));
-         initSequence.addStatement(new StatementProcedureEnd(initProcedureRef, new StatementSource(RuleContext.EMPTY), Comment.NO_COMMENTS));
+         initSequence.addStatement(new StatementLabel(initReturnLabel.getRef(), StatementSource.NONE, Comment.NO_COMMENTS));
+         initSequence.addStatement(new StatementReturn(null, StatementSource.NONE, Comment.NO_COMMENTS));
+         initSequence.addStatement(new StatementProcedureEnd(initProcedureRef, StatementSource.NONE, Comment.NO_COMMENTS));
       }
 
       // Add the _start() procedure to the program
       {
          program.setStartProcedure(new ProcedureRef(SymbolRef.START_PROC_NAME));
-         final Procedure startProcedure = new Procedure(SymbolRef.START_PROC_NAME, new SymbolTypeProcedure(SymbolType.VOID, new ArrayList<>()), program.getScope(), Scope.SEGMENT_CODE_DEFAULT, Scope.SEGMENT_DATA_DEFAULT, Procedure.CallingConvention.PHI_CALL);
+         final Procedure startProcedure = new Procedure(SymbolRef.START_PROC_NAME, new SymbolTypeProcedure(SymbolType.VOID, new ArrayList<>()), program.getScope(), Scope.SEGMENT_CODE_DEFAULT, Scope.SEGMENT_DATA_DEFAULT, Procedure.CallingConvention.PHI_CALL, Bank.COMMON);
          startProcedure.setParameters(new ArrayList<>());
          program.getScope().add(startProcedure);
          final ProcedureCompilation startProcedureCompilation = program.createProcedureCompilation(startProcedure.getRef());
          final StatementSequence startSequence = startProcedureCompilation.getStatementSequence();
-         startSequence.addStatement(new StatementProcedureBegin(startProcedure.getRef(), new StatementSource(RuleContext.EMPTY), Comment.NO_COMMENTS));
+         startSequence.addStatement(new StatementProcedureBegin(startProcedure.getRef(), StatementSource.NONE, Comment.NO_COMMENTS));
          if(initCompilation != null)
-            startSequence.addStatement(new StatementCall(null, SymbolRef.INIT_PROC_NAME, new ArrayList<>(), new StatementSource(RuleContext.EMPTY), Comment.NO_COMMENTS));
+            startSequence.addStatement(new StatementCall(null, SymbolRef.INIT_PROC_NAME, new ArrayList<>(), StatementSource.NONE, Comment.NO_COMMENTS));
          final Procedure mainProc = program.getScope().getLocalProcedure(SymbolRef.MAIN_PROC_NAME);
          if(mainProc == null)
             throw new CompileError("Required main() not defined in program.");
          if(!SymbolType.VOID.equals(mainProc.getReturnType()) && !SymbolType.SWORD.equals(mainProc.getReturnType()))
             throw new CompileError("return of main() must be 'void' or of type 'int'.", mainProc.getDefinitionSource());
          if(mainProc.getParameterNames().size() == 0) {
-            startSequence.addStatement(new StatementCall(null, SymbolRef.MAIN_PROC_NAME, new ArrayList<>(), new StatementSource(RuleContext.EMPTY), Comment.NO_COMMENTS));
+            startSequence.addStatement(new StatementCall(null, SymbolRef.MAIN_PROC_NAME, new ArrayList<>(), StatementSource.NONE, Comment.NO_COMMENTS));
          } else if(mainProc.getParameterNames().size() == 2) {
             final List<Variable> parameters = mainProc.getParameters();
             final Variable argc = parameters.get(0);
@@ -214,15 +213,15 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
             final ArrayList<RValue> params = new ArrayList<>();
             params.add(new ConstantInteger(0L, SymbolType.SWORD));
             params.add(new ConstantPointer(0L, new SymbolTypePointer(SymbolType.BYTE)));
-            startSequence.addStatement(new StatementCall(null, SymbolRef.MAIN_PROC_NAME, params, new StatementSource(RuleContext.EMPTY), Comment.NO_COMMENTS));
+            startSequence.addStatement(new StatementCall(null, SymbolRef.MAIN_PROC_NAME, params, StatementSource.NONE, Comment.NO_COMMENTS));
          } else
             throw new CompileError("main() has wrong number of parameters. It must have zero or 2 parameters.", mainProc.getDefinitionSource());
 
 
          final Label startReturnLabel = startProcedure.addLabel(SymbolRef.PROCEXIT_BLOCK_NAME);
-         startSequence.addStatement(new StatementLabel(startReturnLabel.getRef(), new StatementSource(RuleContext.EMPTY), Comment.NO_COMMENTS));
-         startSequence.addStatement(new StatementReturn(null, new StatementSource(RuleContext.EMPTY), Comment.NO_COMMENTS));
-         startSequence.addStatement(new StatementProcedureEnd(startProcedure.getRef(), new StatementSource(RuleContext.EMPTY), Comment.NO_COMMENTS));
+         startSequence.addStatement(new StatementLabel(startReturnLabel.getRef(), StatementSource.NONE, Comment.NO_COMMENTS));
+         startSequence.addStatement(new StatementReturn(null, StatementSource.NONE, Comment.NO_COMMENTS));
+         startSequence.addStatement(new StatementProcedureEnd(startProcedure.getRef(), StatementSource.NONE, Comment.NO_COMMENTS));
       }
 
    }
@@ -289,10 +288,24 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
             }
             break;
          case CParser.PRAGMA_CODE_SEG:
-            this.currentCodeSegment = pragmaParamName(pragmaParamSingle(ctx));
+            this.currentSegmentCode = pragmaParamName(pragmaParamSingle(ctx));
             break;
          case CParser.PRAGMA_DATA_SEG:
-            this.currentDataSegment = pragmaParamName(pragmaParamSingle(ctx));
+            this.currentSegmentData = pragmaParamName(pragmaParamSingle(ctx));
+            break;
+         case CParser.PRAGMA_BANK:
+            if(ctx.pragmaParam().size() != 2)
+               throw new CompileError("#pragma expects two parameters!", new StatementSource(ctx));
+            try {
+               final String pragmaBankArea = pragmaParamName(ctx.pragmaParam(0));
+               final Number pragmaBank = pragmaParamNumber(ctx.pragmaParam(1));
+               this.currentBank = new Bank(pragmaBankArea, pragmaBank.longValue());
+            } catch(IllegalArgumentException e) {
+               throw new CompileError("Illegal bank parameter " + ctx.getText(), new StatementSource(ctx));
+            }
+            break;
+         case CParser.PRAGMA_NOBANK:
+            this.currentBank = Bank.COMMON; // When the current segment is null, the procedure will not be declared as far.
             break;
          case CParser.PRAGMA_RESOURCE:
             String resourceFileName = pragmaParamString(pragmaParamSingle(ctx));
@@ -431,10 +444,13 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
    private Procedure.CallingConvention currentCallingConvention;
 
    /** The current code segment. */
-   private String currentCodeSegment = Scope.SEGMENT_CODE_DEFAULT;
+   private String currentSegmentCode = Scope.SEGMENT_CODE_DEFAULT;
 
    /** The current data segment. */
-   private String currentDataSegment = Scope.SEGMENT_DATA_DEFAULT;
+   private String currentSegmentData = Scope.SEGMENT_DATA_DEFAULT;
+
+   /** The current far segment. If null, the sequent procedures won't be banked. */
+   private Bank currentBank = Bank.COMMON;
 
    /** The current default interrupt type. */
    private String currentInterruptType;
@@ -491,7 +507,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
     */
    private Procedure declareProcedure(boolean defineProcedure, ParserRuleContext ctx, StatementSource statementSource) {
 
-      Procedure procedure = new Procedure(varDecl.getVarName(), (SymbolTypeProcedure) varDecl.getEffectiveType(), program.getScope(), currentCodeSegment, currentDataSegment, currentCallingConvention);
+      Procedure procedure = new Procedure(varDecl.getVarName(), (SymbolTypeProcedure) varDecl.getEffectiveType(), program.getScope(), currentSegmentCode, currentSegmentData, currentCallingConvention, currentBank);
       addDirectives(procedure, varDecl.getDeclDirectives(), statementSource);
       // Check if the declaration matches any existing declaration!
       final Symbol existingSymbol = program.getScope().getSymbol(procedure.getRef());
@@ -543,15 +559,19 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
             if(parameter.name == null)
                throw new CompileError("Illegal unnamed parameter.", statementSource);
 
-            VariableBuilder varBuilder = new VariableBuilder(parameter.name, getCurrentScope(), true, false, parameter.type, null, currentDataSegment, program.getTargetPlatform().getVariableBuilderConfig());
+            VariableBuilder varBuilder = new VariableBuilder(parameter.name, getCurrentScope(), true, false, parameter.type, null, currentSegmentData, program.getTargetPlatform().getVariableBuilderConfig());
             final Variable paramVar = varBuilder.build();
             parameterList.add(paramVar);
          }
          procedure.setParameters(parameterList);
-         procedure.setCodeSegment(currentCodeSegment); // When a procedure is defined, the currentCodeSegment is to be set.
+         procedure.setSegmentData(currentSegmentData);
+         procedure.setSegmentCode(currentSegmentCode);
+         if(procedure.getBank().isCommon()) {
+            procedure.setBank(currentBank);
+         }
          // Add return variable
          if(!SymbolType.VOID.equals(procedure.getReturnType())) {
-            final VariableBuilder builder = new VariableBuilder("return", procedure, false, false, procedure.getReturnType(), varDecl.getDeclDirectives(), currentDataSegment, program.getTargetPlatform().getVariableBuilderConfig());
+            final VariableBuilder builder = new VariableBuilder("return", procedure, false, false, procedure.getReturnType(), varDecl.getDeclDirectives(), currentSegmentData, program.getTargetPlatform().getVariableBuilderConfig());
             builder.build();
          }
          // exit the procedure
@@ -1026,7 +1046,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
             final List<Directive> effectiveDirectives = varDecl.getDeclDirectives();
             final List<Comment> declComments = varDecl.getDeclComments();
             varDecl.exitVar();
-            VariableBuilder varBuilder = new VariableBuilder(varName, getCurrentScope(), false, false, effectiveType, effectiveDirectives, currentDataSegment, program.getTargetPlatform().getVariableBuilderConfig());
+            VariableBuilder varBuilder = new VariableBuilder(varName, getCurrentScope(), false, false, effectiveType, effectiveDirectives, currentSegmentData, program.getTargetPlatform().getVariableBuilderConfig());
             Variable variable = varBuilder.build();
             if(isStructMember && (initializer != null))
                throw new CompileError("Initializer not supported inside structs " + effectiveType.toCDecl(), declSource);
@@ -1136,7 +1156,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       ConstantArrayKickAsm constantArrayKickAsm = new ConstantArrayKickAsm(((SymbolTypePointer) varDecl.getEffectiveType()).getElementType(), kasm.kickAsmCode, kasm.uses, ((SymbolTypePointer) effectiveType).getArraySpec().getArraySize());
       // Add a constant variable
       Scope scope = getCurrentScope();
-      VariableBuilder varBuilder = new VariableBuilder(varName, scope, false, false, varDecl.getEffectiveType(), varDecl.getDeclDirectives(), currentDataSegment, program.getTargetPlatform().getVariableBuilderConfig());
+      VariableBuilder varBuilder = new VariableBuilder(varName, scope, false, false, varDecl.getEffectiveType(), varDecl.getDeclDirectives(), currentSegmentData, program.getTargetPlatform().getVariableBuilderConfig());
       Variable variable = varBuilder.build();
       // Set constant value
       variable.setInitValue(getConstInitValue(constantArrayKickAsm, null, statementSource));
@@ -1171,6 +1191,9 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
          if(directive instanceof Directive.Inline) {
             procedure.setDeclaredInline(true);
             procedure.setCallingConvention(Procedure.CallingConvention.PHI_CALL);
+         } else if(directive instanceof Directive.Bank directiveBank) {
+            Bank bank = new Bank(directiveBank.getBankArea(), directiveBank.getBankNumber());
+            procedure.setBank(bank);
          } else if(directive instanceof Directive.CallingConvention) {
             procedure.setCallingConvention(((Directive.CallingConvention) directive).callingConvention);
          } else if(directive instanceof Directive.Interrupt) {
@@ -1212,6 +1235,13 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
    @Override
    public Object visitDirectiveInline(KickCParser.DirectiveInlineContext ctx) {
       return new Directive.Inline();
+   }
+
+   @Override
+   public Object visitDirectiveBank(KickCParser.DirectiveBankContext ctx) {
+      String bankArea = ctx.NAME().getText();
+      Number bankNumber = NumberParser.parseLiteral(ctx.NUMBER().getText());
+      return new Directive.Bank(bankArea, bankNumber.longValue());
    }
 
    @Override
@@ -1675,7 +1705,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       String varName = varDecl.getVarName();
       Variable lValue;
       if(varType != null) {
-         VariableBuilder varBuilder = new VariableBuilder(varName, blockScope, false, false, varType, varDecl.getDeclDirectives(), currentDataSegment, program.getTargetPlatform().getVariableBuilderConfig());
+         VariableBuilder varBuilder = new VariableBuilder(varName, blockScope, false, false, varType, varDecl.getDeclDirectives(), currentSegmentData, program.getTargetPlatform().getVariableBuilderConfig());
          lValue = varBuilder.build();
       } else {
          lValue = getCurrentScope().findVariable(varName);
@@ -1914,12 +1944,19 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
    }
 
    @Override
+   public RValue visitInitUnion(KickCParser.InitUnionContext ctx) {
+      final String memberName = ctx.NAME().getText();
+      final RValue rValue = (RValue) visit(ctx.expr());
+      return new UnionDesignator(memberName, rValue);
+   }
+
+   @Override
    public RValue visitInitList(KickCParser.InitListContext ctx) {
       List<RValue> initValues = new ArrayList<>();
       for(KickCParser.ExprContext initializer : ctx.expr()) {
          RValue rValue = (RValue) visit(initializer);
-         initValues.add(rValue);
-      }
+            initValues.add(rValue);
+         }
       return new ValueList(initValues);
    }
 
@@ -2003,7 +2040,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
          while(parentScope instanceof StructDefinition || parentScope instanceof TypeDefsScope)
             parentScope = parentScope.getScope();
          for(Variable member : enumDefinition.getAllConstants(false)) {
-            parentScope.add(Variable.createConstant(member.getLocalName(), SymbolType.BYTE, parentScope, member.getInitValue(), currentDataSegment));
+            parentScope.add(Variable.createConstant(member.getLocalName(), SymbolType.BYTE, parentScope, member.getInitValue(), currentSegmentData));
          }
          varDecl.setDeclType(SymbolType.BYTE);
          return null;
@@ -2038,7 +2075,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
             }
          }
       }
-      currentEnum.add(Variable.createConstant(memberName, SymbolType.BYTE, getCurrentScope(), enumValue, currentDataSegment));
+      currentEnum.add(Variable.createConstant(memberName, SymbolType.BYTE, getCurrentScope(), enumValue, currentSegmentData));
       return null;
    }
 
@@ -2220,7 +2257,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       this.visit(ctx.declType());
       this.visit(ctx.declarator());
       String typedefName = varDecl.getVarName();
-      VariableBuilder varBuilder = new VariableBuilder(typedefName, getCurrentScope(), false, false, varDecl.getEffectiveType(), varDecl.getDeclDirectives(), currentDataSegment, program.getTargetPlatform().getVariableBuilderConfig());
+      VariableBuilder varBuilder = new VariableBuilder(typedefName, getCurrentScope(), false, false, varDecl.getEffectiveType(), varDecl.getDeclDirectives(), currentSegmentData, program.getTargetPlatform().getVariableBuilderConfig());
       varBuilder.build();
       scopeStack.pop();
       varDecl.exitType();
@@ -2471,7 +2508,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
                      new SymbolTypeProcedure(SymbolType.DWORD, Arrays.asList(new SymbolType[]{SymbolType.BYTE, SymbolType.BYTE, SymbolType.BYTE, SymbolType.BYTE})),
                      program.getScope(),
                      Scope.SEGMENT_CODE_DEFAULT, Scope.SEGMENT_DATA_DEFAULT,
-                     Procedure.CallingConvention.INTRINSIC_CALL);
+                     Procedure.CallingConvention.INTRINSIC_CALL, Bank.COMMON);
                makeword4.setDeclaredIntrinsic(true);
                final Variable hihi = new Variable("hihi", Variable.Kind.PHI_MASTER, SymbolType.BYTE, makeword4, Variable.MemoryArea.ZEROPAGE_MEMORY, Scope.SEGMENT_DATA_DEFAULT, null);
                makeword4.add(hihi);

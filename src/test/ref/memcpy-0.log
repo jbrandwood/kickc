@@ -1,5 +1,6 @@
 Inlined call vicSelectGfxBank::$0 = call toDd00(vicSelectGfxBank::gfx)
 Inlined call main::$0 = call toD018(SCREEN_COPY, CHARSET)
+Inlined call call __init
 Eliminating unused variable with no statement memcpy::$0
 
 CONTROL FLOW GRAPH SSA
@@ -42,7 +43,7 @@ memcpy::@return: scope:[memcpy]  from memcpy::@3
   to:@return
 
 void main()
-main: scope:[main]  from __start
+main: scope:[main]  from __start::@1
   main::toD0181_screen#0 = SCREEN_COPY
   main::toD0181_gfx#0 = CHARSET
   to:main::toD0181
@@ -92,11 +93,15 @@ main::@return: scope:[main]  from main::@3
 
 void __start()
 __start: scope:[__start]  from
-  call main
+  to:__start::__init1
+__start::__init1: scope:[__start]  from __start
   to:__start::@1
-__start::@1: scope:[__start]  from __start
+__start::@1: scope:[__start]  from __start::__init1
+  call main
+  to:__start::@2
+__start::@2: scope:[__start]  from __start::@1
   to:__start::@return
-__start::@return: scope:[__start]  from __start::@1
+__start::@return: scope:[__start]  from __start::@2
   return 
   to:@return
 
@@ -243,7 +248,9 @@ Eliminating unused variable memcpy::return#3 and assignment [24] memcpy::return#
 Successful SSA optimization PassNEliminateUnusedVars
 Removing unused procedure __start
 Removing unused procedure block __start
+Removing unused procedure block __start::__init1
 Removing unused procedure block __start::@1
+Removing unused procedure block __start::@2
 Removing unused procedure block __start::@return
 Successful SSA optimization PassNEliminateEmptyStart
 Constant right-side identified [11] main::toD0181_$0 = main::toD0181_$7 & $3fff

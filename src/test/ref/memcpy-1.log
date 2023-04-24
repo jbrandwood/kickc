@@ -1,3 +1,4 @@
+Inlined call call __init
 Eliminating unused variable with no statement memcpy::$0
 
 CONTROL FLOW GRAPH SSA
@@ -40,7 +41,7 @@ memcpy::@return: scope:[memcpy]  from memcpy::@3
   to:@return
 
 void main()
-main: scope:[main]  from __start
+main: scope:[main]  from __start::@1
   main::sc#0 = SCREEN
   main::camelot#0 = CAMELOT
   main::i#0 = 0
@@ -94,11 +95,15 @@ main::@return: scope:[main]  from main::@6
 
 void __start()
 __start: scope:[__start]  from
-  call main
+  to:__start::__init1
+__start::__init1: scope:[__start]  from __start
   to:__start::@1
-__start::@1: scope:[__start]  from __start
+__start::@1: scope:[__start]  from __start::__init1
+  call main
+  to:__start::@2
+__start::@2: scope:[__start]  from __start::@1
   to:__start::@return
-__start::@return: scope:[__start]  from __start::@1
+__start::@return: scope:[__start]  from __start::@2
   return 
   to:@return
 
@@ -232,7 +237,9 @@ Eliminating unused variable memcpy::return#3 and assignment [26] memcpy::return#
 Successful SSA optimization PassNEliminateUnusedVars
 Removing unused procedure __start
 Removing unused procedure block __start
+Removing unused procedure block __start::__init1
 Removing unused procedure block __start::@1
+Removing unused procedure block __start::@2
 Removing unused procedure block __start::@return
 Successful SSA optimization PassNEliminateEmptyStart
 Adding number conversion cast (unumber) 7 in [16] if(main::i#1!=7) goto main::@1

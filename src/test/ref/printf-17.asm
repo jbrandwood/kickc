@@ -15,26 +15,14 @@
   .const OFFSET_STRUCT_PRINTF_BUFFER_NUMBER_DIGITS = 1
   .const STACK_BASE = $103
   .const SIZEOF_STRUCT_PRINTF_BUFFER_NUMBER = $c
-  /// The capacity of the buffer (n passed to snprintf())
-  /// Used to hold state while printing
-  .label __snprintf_capacity = $18
-  // The number of chars that would have been filled when printing without capacity. Grows even after size>capacity.
-  /// Used to hold state while printing
-  .label __snprintf_size = $14
   /// Current position in the buffer being filled ( initially *s passed to snprintf()
   /// Used to hold state while printing
-  .label __snprintf_buffer = $16
+  .label __snprintf_buffer = $14
   .label screen = $e
 .segment Code
 __start: {
-    // volatile size_t __snprintf_capacity
-    lda #<0
-    sta.z __snprintf_capacity
-    sta.z __snprintf_capacity+1
-    // volatile size_t __snprintf_size
-    sta.z __snprintf_size
-    sta.z __snprintf_size+1
     // char * __snprintf_buffer
+    lda #<0
     sta.z __snprintf_buffer
     sta.z __snprintf_buffer+1
     jsr main
@@ -50,16 +38,16 @@ snputc: {
     lda STACK_BASE+OFFSET_STACK_C,x
     tax
     // ++__snprintf_size;
-    inc.z __snprintf_size
+    inc __snprintf_size
     bne !+
-    inc.z __snprintf_size+1
+    inc __snprintf_size+1
   !:
     // if(__snprintf_size > __snprintf_capacity)
-    lda.z __snprintf_size+1
-    cmp.z __snprintf_capacity+1
+    lda __snprintf_size+1
+    cmp __snprintf_capacity+1
     bne !+
-    lda.z __snprintf_size
-    cmp.z __snprintf_capacity
+    lda __snprintf_size
+    cmp __snprintf_capacity
     beq __b1
   !:
     bcc __b1
@@ -67,11 +55,11 @@ snputc: {
     rts
   __b1:
     // if(__snprintf_size==__snprintf_capacity)
-    lda.z __snprintf_size+1
-    cmp.z __snprintf_capacity+1
+    lda __snprintf_size+1
+    cmp __snprintf_capacity+1
     bne __b2
-    lda.z __snprintf_size
-    cmp.z __snprintf_capacity
+    lda __snprintf_size
+    cmp __snprintf_capacity
     bne __b2
     ldx #0
   __b2:
@@ -269,13 +257,13 @@ snprintf_init: {
     .label n = 2
     // __snprintf_capacity = n
     lda.z n
-    sta.z __snprintf_capacity
+    sta __snprintf_capacity
     lda.z n+1
-    sta.z __snprintf_capacity+1
+    sta __snprintf_capacity+1
     // __snprintf_size = 0
     lda #<0
-    sta.z __snprintf_size
-    sta.z __snprintf_size+1
+    sta __snprintf_size
+    sta __snprintf_size+1
     // __snprintf_buffer = s
     lda #<BUF
     sta.z __snprintf_buffer
@@ -868,3 +856,9 @@ toupper: {
   BUF: .fill $14, 0
   // Buffer used for stringified number being printed
   printf_buffer: .fill SIZEOF_STRUCT_PRINTF_BUFFER_NUMBER, 0
+  /// The capacity of the buffer (n passed to snprintf())
+  /// Used to hold state while printing
+  __snprintf_capacity: .word 0
+  // The number of chars that would have been filled when printing without capacity. Grows even after size>capacity.
+  /// Used to hold state while printing
+  __snprintf_size: .word 0

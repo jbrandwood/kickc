@@ -17,8 +17,12 @@ __ma char conio_cursor_x = 0;
 __ma char conio_cursor_y = 0;
 // The current text cursor line start
 __ma char *conio_line_text = CONIO_SCREEN_TEXT;
+
+#ifndef __PET8032__
 // The current color cursor line start
 __ma char *conio_line_color = CONIO_SCREEN_COLORS;
+#endif
+
 // The current text color
 __ma char conio_textcolor = CONIO_TEXTCOLOR_DEFAULT;
 // Is a cursor whown when waiting for input (0: no, other: yes)
@@ -30,19 +34,27 @@ __ma char conio_scroll_enable = 1;
 // clears the screen and moves the cursor to the upper left-hand corner of the screen.
 void clrscr(void) {
     char* line_text = CONIO_SCREEN_TEXT;
+    #ifndef __PET8032__
     char* line_cols = CONIO_SCREEN_COLORS;
+    #endif
     for( char l=0;l<CONIO_HEIGHT; l++ ) {
         for( char c=0;c<CONIO_WIDTH; c++ ) {
             line_text[c] = ' ';
+    #ifndef __PET8032__
             line_cols[c] = conio_textcolor;
+    #endif
         }
         line_text += CONIO_WIDTH;
+    #ifndef __PET8032__
         line_cols += CONIO_WIDTH;
+    #endif
     }
     conio_cursor_x = 0;
     conio_cursor_y = 0;
     conio_line_text = CONIO_SCREEN_TEXT;
+    #ifndef __PET8032__
     conio_line_color = CONIO_SCREEN_COLORS;
+    #endif
 }
 
 // Set the cursor to the specified position
@@ -53,7 +65,9 @@ void gotoxy(unsigned char x, unsigned char y) {
     conio_cursor_y = y;
     unsigned int line_offset = (unsigned int)y*CONIO_WIDTH;
     conio_line_text = CONIO_SCREEN_TEXT + line_offset;
+    #ifndef __PET8032__
     conio_line_color = CONIO_SCREEN_COLORS + line_offset;
+    #endif
 }
 
 // Return the current screen size.
@@ -89,7 +103,9 @@ void cputc(char c) {
         cputln();
     } else {
         conio_line_text[conio_cursor_x] = c;
+        #ifndef __PET8032__
         conio_line_color[conio_cursor_x] = conio_textcolor;
+        #endif
         if(++conio_cursor_x==CONIO_WIDTH)
             cputln();
     }
@@ -98,7 +114,9 @@ void cputc(char c) {
 // Print a newline
 void cputln() {
     conio_line_text +=  CONIO_WIDTH;
+    #ifndef __PET8032__
     conio_line_color += CONIO_WIDTH;
+    #endif
     conio_cursor_x = 0;
     conio_cursor_y++;
     cscroll();
@@ -109,11 +127,17 @@ void cscroll() {
     if(conio_cursor_y==CONIO_HEIGHT) {
         if(conio_scroll_enable) {
             memcpy(CONIO_SCREEN_TEXT, CONIO_SCREEN_TEXT+CONIO_WIDTH, CONIO_BYTES-CONIO_WIDTH);
+            #ifndef __PET8032__
             memcpy(CONIO_SCREEN_COLORS, CONIO_SCREEN_COLORS+CONIO_WIDTH, CONIO_BYTES-CONIO_WIDTH);
+            #endif
             memset(CONIO_SCREEN_TEXT+CONIO_BYTES-CONIO_WIDTH, ' ', CONIO_WIDTH);
+            #ifndef __PET8032__
             memset(CONIO_SCREEN_COLORS+CONIO_BYTES-CONIO_WIDTH, conio_textcolor, CONIO_WIDTH);
+            #endif
             conio_line_text -= CONIO_WIDTH;
+            #ifndef __PET8032__
             conio_line_color -= CONIO_WIDTH;
+            #endif
             conio_cursor_y--;
         } else {
             gotoxy(0,0);
@@ -145,9 +169,13 @@ void cputsxy(unsigned char x, unsigned char y, const char* s) {
 
 // Set the color for text output. The old color setting is returned.
 unsigned char textcolor(unsigned char color) {
+    #ifndef __PET8032__
     char old = conio_textcolor;
     conio_textcolor = color;
     return old;
+    #else
+    return WHITE;
+    #endif
 }
 
 // If onoff is 1, a cursor is displayed when waiting for keyboard input.

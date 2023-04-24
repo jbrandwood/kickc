@@ -1,0 +1,803 @@
+Loading link script "call-banked-phi.ld"
+Updating intermediate variable memory area to MAIN_MEMORY main::$0
+Updating intermediate variable memory area to MAIN_MEMORY main::$1
+Updating intermediate variable memory area to MAIN_MEMORY main::$2
+Updating intermediate variable memory area to MAIN_MEMORY main::$3
+Fixing banked procedure parameter/return value to default segment plus::a
+Fixing banked procedure parameter/return value to default segment plus::b
+Fixing banked procedure parameter/return value to default segment plus::return
+
+CONTROL FLOW GRAPH SSA
+
+void main()
+main: scope:[main]  from __start
+  main::i#0 = 0
+  to:main::@1
+main::@1: scope:[main]  from main main::@4
+  main::i#2 = phi( main/main::i#0, main::@4/main::i#1 )
+  main::$0 = main::i#2 < 5
+  if(main::$0) goto main::@2
+  to:main::@return
+main::@2: scope:[main]  from main::@1
+  main::i#3 = phi( main::@1/main::i#2 )
+  plus::a#0 = $64
+  plus::b#0 = (int)main::i#3
+  call plus
+  plus::return#0 = plus::return#3
+  to:main::@3
+main::@3: scope:[main]  from main::@2
+  main::i#4 = phi( main::@2/main::i#3 )
+  plus::return#4 = phi( main::@2/plus::return#0 )
+  main::$1 = plus::return#4
+  main::$4 = main::i#4 * SIZEOF_INT
+  SCREEN[main::$4] = main::$1
+  main::$2 = $a + main::i#4
+  plus::a#1 = $c8
+  plus::b#1 = (int)main::i#4
+  call plus
+  plus::return#1 = plus::return#3
+  to:main::@4
+main::@4: scope:[main]  from main::@3
+  main::i#5 = phi( main::@3/main::i#4 )
+  plus::return#5 = phi( main::@3/plus::return#1 )
+  main::$3 = plus::return#5
+  main::$5 = main::$2 * SIZEOF_INT
+  SCREEN[main::$5] = main::$3
+  main::i#1 = ++ main::i#5
+  to:main::@1
+main::@return: scope:[main]  from main::@1
+  return 
+  to:@return
+
+__bank(cx16_ram, 1) int plus(int a , int b)
+plus: scope:[plus]  from main::@2 main::@3
+  plus::b#2 = phi( main::@2/plus::b#0, main::@3/plus::b#1 )
+  plus::a#2 = phi( main::@2/plus::a#0, main::@3/plus::a#1 )
+  plus::r#0 = 2
+  plus::r#1 = plus::r#0 + plus::a#2
+  plus::r#2 = plus::r#1 + plus::b#2
+  plus::r#3 = plus::r#2 + plus::a#2
+  plus::r#4 = plus::r#3 + plus::b#2
+  plus::return#2 = plus::r#4
+  to:plus::@return
+plus::@return: scope:[plus]  from plus
+  plus::return#6 = phi( plus/plus::return#2 )
+  plus::return#3 = plus::return#6
+  return 
+  to:@return
+
+void __start()
+__start: scope:[__start]  from
+  call main
+  to:__start::@1
+__start::@1: scope:[__start]  from __start
+  to:__start::@return
+__start::@return: scope:[__start]  from __start::@1
+  return 
+  to:@return
+
+SYMBOL TABLE SSA
+__constant int * const SCREEN = (int *)$400
+__constant char SIZEOF_INT = 2
+void __start()
+void main()
+bool main::$0
+int main::$1
+number main::$2
+int main::$3
+char main::$4
+number main::$5
+char main::i
+char main::i#0
+char main::i#1
+char main::i#2
+char main::i#3
+char main::i#4
+char main::i#5
+__bank(cx16_ram, 1) int plus(int a , int b)
+int plus::a
+int plus::a#0
+int plus::a#1
+int plus::a#2
+int plus::b
+int plus::b#0
+int plus::b#1
+int plus::b#2
+int plus::r
+int plus::r#0
+int plus::r#1
+int plus::r#2
+int plus::r#3
+int plus::r#4
+int plus::return
+int plus::return#0
+int plus::return#1
+int plus::return#2
+int plus::return#3
+int plus::return#4
+int plus::return#5
+int plus::return#6
+
+Adding number conversion cast (unumber) 5 in main::$0 = main::i#2 < 5
+Adding number conversion cast (snumber) $64 in plus::a#0 = $64
+Adding number conversion cast (unumber) $a in main::$2 = $a + main::i#4
+Adding number conversion cast (unumber) main::$2 in main::$2 = (unumber)$a + main::i#4
+Adding number conversion cast (snumber) $c8 in plus::a#1 = $c8
+Adding number conversion cast (unumber) main::$5 in main::$5 = main::$2 * SIZEOF_INT
+Successful SSA optimization PassNAddNumberTypeConversions
+Inlining cast plus::a#0 = (snumber)$64
+Inlining cast plus::a#1 = (snumber)$c8
+Successful SSA optimization Pass2InlineCast
+Simplifying constant pointer cast (int *) 1024
+Simplifying constant integer cast 5
+Simplifying constant integer cast $64
+Simplifying constant integer cast $a
+Simplifying constant integer cast $c8
+Successful SSA optimization PassNCastSimplification
+Finalized unsigned number type (char) 5
+Finalized signed number type (signed char) $64
+Finalized unsigned number type (char) $a
+Finalized signed number type (int) $c8
+Successful SSA optimization PassNFinalizeNumberTypeConversions
+Inferred type updated to char in main::$2 = $a + main::i#4
+Inferred type updated to char in main::$5 = main::$2 * SIZEOF_INT
+Alias main::i#2 = main::i#3 main::i#4 main::i#5 
+Alias plus::return#0 = plus::return#4 
+Alias plus::return#1 = plus::return#5 
+Alias plus::return#2 = plus::r#4 plus::return#6 plus::return#3 
+Successful SSA optimization Pass2AliasElimination
+Simple Condition main::$0 [3] if(main::i#2<5) goto main::@2
+Successful SSA optimization Pass2ConditionalJumpSimplification
+Constant main::i#0 = 0
+Constant plus::a#0 = $64
+Constant plus::a#1 = $c8
+Constant plus::r#0 = 2
+Successful SSA optimization Pass2ConstantIdentification
+Removing unused procedure __start
+Removing unused procedure block __start
+Removing unused procedure block __start::@1
+Removing unused procedure block __start::@return
+Successful SSA optimization PassNEliminateEmptyStart
+Rewriting multiplication to use shift [6] main::$4 = main::i#2 * SIZEOF_INT
+Rewriting multiplication to use shift [13] main::$5 = main::$2 * SIZEOF_INT
+Successful SSA optimization Pass2MultiplyToShiftRewriting
+Inlining constant with var siblings main::i#0
+Inlining constant with var siblings plus::a#0
+Inlining constant with var siblings plus::a#1
+Inlining constant with var siblings plus::r#0
+Constant inlined main::i#0 = 0
+Constant inlined plus::a#1 = $c8
+Constant inlined plus::r#0 = 2
+Constant inlined plus::a#0 = $64
+Successful SSA optimization Pass2ConstantInlining
+Eliminating unused constant SIZEOF_INT
+Successful SSA optimization PassNEliminateUnusedVars
+Adding NOP phi() at start of main
+CALL GRAPH
+Calls in [main] to plus:6 plus:14 
+
+Created 3 initial phi equivalence classes
+Coalesced [5] plus::b#3 = plus::b#0
+Coalesced [13] plus::b#4 = plus::b#1
+Coalesced [20] main::i#6 = main::i#1
+Coalesced down to 3 phi equivalence classes
+Adding NOP phi() at start of main
+
+FINAL CONTROL FLOW GRAPH
+
+void main()
+main: scope:[main]  from
+  [0] phi()
+  to:main::@1
+main::@1: scope:[main]  from main main::@4
+  [1] main::i#2 = phi( main/0, main::@4/main::i#1 )
+  [2] if(main::i#2<5) goto main::@2
+  to:main::@return
+main::@return: scope:[main]  from main::@1
+  [3] return 
+  to:@return
+main::@2: scope:[main]  from main::@1
+  [4] plus::b#0 = (int)main::i#2
+  [5] call plus
+  [6] plus::return#0 = plus::return#2
+  to:main::@3
+main::@3: scope:[main]  from main::@2
+  [7] main::$1 = plus::return#0
+  [8] main::$4 = main::i#2 << 1
+  [9] SCREEN[main::$4] = main::$1
+  [10] main::$2 = $a + main::i#2
+  [11] plus::b#1 = (int)main::i#2
+  [12] call plus
+  [13] plus::return#1 = plus::return#2
+  to:main::@4
+main::@4: scope:[main]  from main::@3
+  [14] main::$3 = plus::return#1
+  [15] main::$5 = main::$2 << 1
+  [16] SCREEN[main::$5] = main::$3
+  [17] main::i#1 = ++ main::i#2
+  to:main::@1
+
+__bank(cx16_ram, 1) int plus(int a , int b)
+plus: scope:[plus]  from main::@2 main::@3
+  [18] plus::b#2 = phi( main::@2/plus::b#0, main::@3/plus::b#1 )
+  [18] plus::a#2 = phi( main::@2/$64, main::@3/$c8 )
+  [19] plus::r#1 = 2 + plus::a#2
+  [20] plus::r#2 = plus::r#1 + plus::b#2
+  [21] plus::r#3 = plus::r#2 + plus::a#2
+  [22] plus::return#2 = plus::r#3 + plus::b#2
+  to:plus::@return
+plus::@return: scope:[plus]  from plus
+  [23] return 
+  to:@return
+
+
+VARIABLE REGISTER WEIGHTS
+void main()
+int main::$1 // 11.0
+char main::$2 // 4.4
+int main::$3 // 11.0
+char main::$4 // 22.0
+char main::$5 // 22.0
+char main::i
+char main::i#1 // 22.0
+char main::i#2 // 3.6666666666666665
+__bank(cx16_ram, 1) int plus(int a , int b)
+int plus::a
+int plus::a#2 // 67.33333333333333
+int plus::b
+int plus::b#0 // 22.0
+int plus::b#1 // 22.0
+int plus::b#2 // 56.0
+int plus::r
+int plus::r#1 // 202.0
+int plus::r#2 // 202.0
+int plus::r#3 // 202.0
+int plus::return
+int plus::return#0 // 22.0
+int plus::return#1 // 22.0
+int plus::return#2 // 30.75
+
+Initial phi equivalence classes
+[ main::i#2 main::i#1 ]
+[ plus::a#2 ]
+[ plus::b#2 plus::b#0 plus::b#1 ]
+Added variable plus::return#0 to live range equivalence class [ plus::return#0 ]
+Added variable main::$1 to live range equivalence class [ main::$1 ]
+Added variable main::$4 to live range equivalence class [ main::$4 ]
+Added variable main::$2 to live range equivalence class [ main::$2 ]
+Added variable plus::return#1 to live range equivalence class [ plus::return#1 ]
+Added variable main::$3 to live range equivalence class [ main::$3 ]
+Added variable main::$5 to live range equivalence class [ main::$5 ]
+Added variable plus::r#1 to live range equivalence class [ plus::r#1 ]
+Added variable plus::r#2 to live range equivalence class [ plus::r#2 ]
+Added variable plus::r#3 to live range equivalence class [ plus::r#3 ]
+Added variable plus::return#2 to live range equivalence class [ plus::return#2 ]
+Complete equivalence classes
+[ main::i#2 main::i#1 ]
+[ plus::a#2 ]
+[ plus::b#2 plus::b#0 plus::b#1 ]
+[ plus::return#0 ]
+[ main::$1 ]
+[ main::$4 ]
+[ main::$2 ]
+[ plus::return#1 ]
+[ main::$3 ]
+[ main::$5 ]
+[ plus::r#1 ]
+[ plus::r#2 ]
+[ plus::r#3 ]
+[ plus::return#2 ]
+Allocated mem[2] [ plus::r#1 ]
+Allocated mem[2] [ plus::r#2 ]
+Allocated mem[2] [ plus::r#3 ]
+Allocated mem[2] [ plus::b#2 plus::b#0 plus::b#1 ]
+Allocated mem[2] [ plus::a#2 ]
+Allocated mem[2] [ plus::return#2 ]
+Allocated mem[1] [ main::i#2 main::i#1 ]
+Allocated mem[2] [ plus::return#0 ]
+Allocated mem[1] [ main::$4 ]
+Allocated mem[2] [ plus::return#1 ]
+Allocated mem[1] [ main::$5 ]
+Allocated mem[2] [ main::$1 ]
+Allocated mem[2] [ main::$3 ]
+Allocated mem[1] [ main::$2 ]
+REGISTER UPLIFT POTENTIAL REGISTERS
+Statement [4] plus::b#0 = (int)main::i#2 [ main::i#2 plus::b#0 ] (  [ main::i#2 plus::b#0 ] { { plus::b#0 = plus::b#2 } { plus::return#0 = plus::return#2 } }  ) always clobbers reg byte a 
+Removing always clobbered register reg byte a as potential for mem[1] [ main::i#2 main::i#1 ]
+Statement [5] call plus [ main::i#2 plus::return#2 ] (  [ main::i#2 plus::return#2 ] { { plus::b#0 = plus::b#2 } { plus::return#0 = plus::return#2 } }  ) always clobbers reg byte a 
+Statement [6] plus::return#0 = plus::return#2 [ main::i#2 plus::return#0 ] (  [ main::i#2 plus::return#0 ] { { plus::b#0 = plus::b#2 } { plus::return#0 = plus::return#2 } }  ) always clobbers reg byte a 
+Statement [7] main::$1 = plus::return#0 [ main::i#2 main::$1 ] (  [ main::i#2 main::$1 ] { { plus::b#1 = plus::b#2 } { plus::return#1 = plus::return#2 } }  ) always clobbers reg byte a 
+Statement [8] main::$4 = main::i#2 << 1 [ main::i#2 main::$1 main::$4 ] (  [ main::i#2 main::$1 main::$4 ] { { plus::b#1 = plus::b#2 } { plus::return#1 = plus::return#2 } }  ) always clobbers reg byte a 
+Statement [9] SCREEN[main::$4] = main::$1 [ main::i#2 ] (  [ main::i#2 ] { { plus::b#1 = plus::b#2 } { plus::return#1 = plus::return#2 } }  ) always clobbers reg byte a 
+Statement [10] main::$2 = $a + main::i#2 [ main::i#2 main::$2 ] (  [ main::i#2 main::$2 ] { { plus::b#1 = plus::b#2 } { plus::return#1 = plus::return#2 } }  ) always clobbers reg byte a 
+Statement [11] plus::b#1 = (int)main::i#2 [ main::i#2 main::$2 plus::b#1 ] (  [ main::i#2 main::$2 plus::b#1 ] { { plus::b#1 = plus::b#2 } { plus::return#1 = plus::return#2 } }  ) always clobbers reg byte a 
+Removing always clobbered register reg byte a as potential for mem[1] [ main::$2 ]
+Statement [12] call plus [ main::i#2 plus::return#2 main::$2 ] (  [ main::i#2 plus::return#2 main::$2 ] { { plus::b#1 = plus::b#2 } { plus::return#1 = plus::return#2 } }  ) always clobbers reg byte a 
+Statement [13] plus::return#1 = plus::return#2 [ main::i#2 main::$2 plus::return#1 ] (  [ main::i#2 main::$2 plus::return#1 ] { { plus::b#1 = plus::b#2 } { plus::return#1 = plus::return#2 } }  ) always clobbers reg byte a 
+Statement [14] main::$3 = plus::return#1 [ main::i#2 main::$2 main::$3 ] (  [ main::i#2 main::$2 main::$3 ] { }  ) always clobbers reg byte a 
+Statement [15] main::$5 = main::$2 << 1 [ main::i#2 main::$3 main::$5 ] (  [ main::i#2 main::$3 main::$5 ] { }  ) always clobbers reg byte a 
+Statement [16] SCREEN[main::$5] = main::$3 [ main::i#2 ] (  [ main::i#2 ] { }  ) always clobbers reg byte a 
+Statement [19] plus::r#1 = 2 + plus::a#2 [ plus::a#2 plus::b#2 plus::r#1 ] ( plus:5 [ main::i#2 plus::a#2 plus::b#2 plus::r#1 ] { { plus::b#0 = plus::b#2 } { plus::return#0 = plus::return#2 } }  plus:12 [ main::i#2 main::$2 plus::a#2 plus::b#2 plus::r#1 ] { { plus::b#1 = plus::b#2 } { plus::return#1 = plus::return#2 } }  ) always clobbers reg byte a 
+Statement [20] plus::r#2 = plus::r#1 + plus::b#2 [ plus::a#2 plus::b#2 plus::r#2 ] ( plus:5 [ main::i#2 plus::a#2 plus::b#2 plus::r#2 ] { { plus::b#0 = plus::b#2 } { plus::return#0 = plus::return#2 } }  plus:12 [ main::i#2 main::$2 plus::a#2 plus::b#2 plus::r#2 ] { { plus::b#1 = plus::b#2 } { plus::return#1 = plus::return#2 } }  ) always clobbers reg byte a 
+Statement [21] plus::r#3 = plus::r#2 + plus::a#2 [ plus::b#2 plus::r#3 ] ( plus:5 [ main::i#2 plus::b#2 plus::r#3 ] { { plus::b#0 = plus::b#2 } { plus::return#0 = plus::return#2 } }  plus:12 [ main::i#2 main::$2 plus::b#2 plus::r#3 ] { { plus::b#1 = plus::b#2 } { plus::return#1 = plus::return#2 } }  ) always clobbers reg byte a 
+Statement [22] plus::return#2 = plus::r#3 + plus::b#2 [ plus::return#2 ] ( plus:5 [ main::i#2 plus::return#2 ] { { plus::b#0 = plus::b#2 } { plus::return#0 = plus::return#2 } }  plus:12 [ main::i#2 main::$2 plus::return#2 ] { { plus::b#1 = plus::b#2 } { plus::return#1 = plus::return#2 } }  ) always clobbers reg byte a 
+Statement [4] plus::b#0 = (int)main::i#2 [ main::i#2 plus::b#0 ] (  [ main::i#2 plus::b#0 ] { { plus::b#0 = plus::b#2 } { plus::return#0 = plus::return#2 } }  ) always clobbers reg byte a 
+Statement [5] call plus [ main::i#2 plus::return#2 ] (  [ main::i#2 plus::return#2 ] { { plus::b#0 = plus::b#2 } { plus::return#0 = plus::return#2 } }  ) always clobbers reg byte a 
+Statement [6] plus::return#0 = plus::return#2 [ main::i#2 plus::return#0 ] (  [ main::i#2 plus::return#0 ] { { plus::b#0 = plus::b#2 } { plus::return#0 = plus::return#2 } }  ) always clobbers reg byte a 
+Statement [7] main::$1 = plus::return#0 [ main::i#2 main::$1 ] (  [ main::i#2 main::$1 ] { { plus::b#1 = plus::b#2 } { plus::return#1 = plus::return#2 } }  ) always clobbers reg byte a 
+Statement [8] main::$4 = main::i#2 << 1 [ main::i#2 main::$1 main::$4 ] (  [ main::i#2 main::$1 main::$4 ] { { plus::b#1 = plus::b#2 } { plus::return#1 = plus::return#2 } }  ) always clobbers reg byte a 
+Statement [9] SCREEN[main::$4] = main::$1 [ main::i#2 ] (  [ main::i#2 ] { { plus::b#1 = plus::b#2 } { plus::return#1 = plus::return#2 } }  ) always clobbers reg byte a 
+Statement [10] main::$2 = $a + main::i#2 [ main::i#2 main::$2 ] (  [ main::i#2 main::$2 ] { { plus::b#1 = plus::b#2 } { plus::return#1 = plus::return#2 } }  ) always clobbers reg byte a 
+Statement [11] plus::b#1 = (int)main::i#2 [ main::i#2 main::$2 plus::b#1 ] (  [ main::i#2 main::$2 plus::b#1 ] { { plus::b#1 = plus::b#2 } { plus::return#1 = plus::return#2 } }  ) always clobbers reg byte a 
+Statement [12] call plus [ main::i#2 plus::return#2 main::$2 ] (  [ main::i#2 plus::return#2 main::$2 ] { { plus::b#1 = plus::b#2 } { plus::return#1 = plus::return#2 } }  ) always clobbers reg byte a 
+Statement [13] plus::return#1 = plus::return#2 [ main::i#2 main::$2 plus::return#1 ] (  [ main::i#2 main::$2 plus::return#1 ] { { plus::b#1 = plus::b#2 } { plus::return#1 = plus::return#2 } }  ) always clobbers reg byte a 
+Statement [14] main::$3 = plus::return#1 [ main::i#2 main::$2 main::$3 ] (  [ main::i#2 main::$2 main::$3 ] { }  ) always clobbers reg byte a 
+Statement [15] main::$5 = main::$2 << 1 [ main::i#2 main::$3 main::$5 ] (  [ main::i#2 main::$3 main::$5 ] { }  ) always clobbers reg byte a 
+Statement [16] SCREEN[main::$5] = main::$3 [ main::i#2 ] (  [ main::i#2 ] { }  ) always clobbers reg byte a 
+Statement [19] plus::r#1 = 2 + plus::a#2 [ plus::a#2 plus::b#2 plus::r#1 ] ( plus:5 [ main::i#2 plus::a#2 plus::b#2 plus::r#1 ] { { plus::b#0 = plus::b#2 } { plus::return#0 = plus::return#2 } }  plus:12 [ main::i#2 main::$2 plus::a#2 plus::b#2 plus::r#1 ] { { plus::b#1 = plus::b#2 } { plus::return#1 = plus::return#2 } }  ) always clobbers reg byte a 
+Statement [20] plus::r#2 = plus::r#1 + plus::b#2 [ plus::a#2 plus::b#2 plus::r#2 ] ( plus:5 [ main::i#2 plus::a#2 plus::b#2 plus::r#2 ] { { plus::b#0 = plus::b#2 } { plus::return#0 = plus::return#2 } }  plus:12 [ main::i#2 main::$2 plus::a#2 plus::b#2 plus::r#2 ] { { plus::b#1 = plus::b#2 } { plus::return#1 = plus::return#2 } }  ) always clobbers reg byte a 
+Statement [21] plus::r#3 = plus::r#2 + plus::a#2 [ plus::b#2 plus::r#3 ] ( plus:5 [ main::i#2 plus::b#2 plus::r#3 ] { { plus::b#0 = plus::b#2 } { plus::return#0 = plus::return#2 } }  plus:12 [ main::i#2 main::$2 plus::b#2 plus::r#3 ] { { plus::b#1 = plus::b#2 } { plus::return#1 = plus::return#2 } }  ) always clobbers reg byte a 
+Statement [22] plus::return#2 = plus::r#3 + plus::b#2 [ plus::return#2 ] ( plus:5 [ main::i#2 plus::return#2 ] { { plus::b#0 = plus::b#2 } { plus::return#0 = plus::return#2 } }  plus:12 [ main::i#2 main::$2 plus::return#2 ] { { plus::b#1 = plus::b#2 } { plus::return#1 = plus::return#2 } }  ) always clobbers reg byte a 
+Potential registers mem[1] [ main::i#2 main::i#1 ] : mem[1] , reg byte x , reg byte y , 
+Potential registers mem[2] [ plus::a#2 ] : mem[2] , 
+Potential registers mem[2] [ plus::b#2 plus::b#0 plus::b#1 ] : mem[2] , 
+Potential registers mem[2] [ plus::return#0 ] : mem[2] , 
+Potential registers mem[2] [ main::$1 ] : mem[2] , 
+Potential registers mem[1] [ main::$4 ] : mem[1] , reg byte a , reg byte x , reg byte y , 
+Potential registers mem[1] [ main::$2 ] : mem[1] , reg byte x , reg byte y , 
+Potential registers mem[2] [ plus::return#1 ] : mem[2] , 
+Potential registers mem[2] [ main::$3 ] : mem[2] , 
+Potential registers mem[1] [ main::$5 ] : mem[1] , reg byte a , reg byte x , reg byte y , 
+Potential registers mem[2] [ plus::r#1 ] : mem[2] , 
+Potential registers mem[2] [ plus::r#2 ] : mem[2] , 
+Potential registers mem[2] [ plus::r#3 ] : mem[2] , 
+Potential registers mem[2] [ plus::return#2 ] : mem[2] , 
+
+REGISTER UPLIFT SCOPES
+Uplift Scope [plus] 202: mem[2] [ plus::r#1 ] 202: mem[2] [ plus::r#2 ] 202: mem[2] [ plus::r#3 ] 100: mem[2] [ plus::b#2 plus::b#0 plus::b#1 ] 67.33: mem[2] [ plus::a#2 ] 30.75: mem[2] [ plus::return#2 ] 22: mem[2] [ plus::return#0 ] 22: mem[2] [ plus::return#1 ] 
+Uplift Scope [main] 25.67: mem[1] [ main::i#2 main::i#1 ] 22: mem[1] [ main::$4 ] 22: mem[1] [ main::$5 ] 11: mem[2] [ main::$1 ] 11: mem[2] [ main::$3 ] 4.4: mem[1] [ main::$2 ] 
+Uplift Scope [] 
+
+Uplifting [plus] best 2226 combination mem[2] [ plus::r#1 ] mem[2] [ plus::r#2 ] mem[2] [ plus::r#3 ] mem[2] [ plus::b#2 plus::b#0 plus::b#1 ] mem[2] [ plus::a#2 ] mem[2] [ plus::return#2 ] mem[2] [ plus::return#0 ] mem[2] [ plus::return#1 ] 
+Uplifting [main] best 1866 combination reg byte y [ main::i#2 main::i#1 ] reg byte x [ main::$4 ] reg byte x [ main::$5 ] mem[2] [ main::$1 ] mem[2] [ main::$3 ] reg byte x [ main::$2 ] 
+Limited combination testing to 100 combinations of 144 possible.
+Uplifting [] best 1866 combination 
+Coalescing zero page register [ mem[2] [ plus::b#2 plus::b#0 plus::b#1 ] ] with [ mem[2] [ plus::return#2 ] ] - score: 1
+Coalescing zero page register [ mem[2] [ plus::return#0 ] ] with [ mem[2] [ main::$1 ] ] - score: 1
+Coalescing zero page register [ mem[2] [ plus::return#1 ] ] with [ mem[2] [ main::$3 ] ] - score: 1
+Coalescing zero page register [ mem[2] [ plus::r#1 ] ] with [ mem[2] [ plus::r#2 ] ] - score: 1
+Coalescing zero page register [ mem[2] [ plus::b#2 plus::b#0 plus::b#1 plus::return#2 ] ] with [ mem[2] [ plus::return#0 main::$1 ] ] - score: 1
+Coalescing zero page register [ mem[2] [ plus::b#2 plus::b#0 plus::b#1 plus::return#2 plus::return#0 main::$1 ] ] with [ mem[2] [ plus::return#1 main::$3 ] ] - score: 1
+Coalescing zero page register [ mem[2] [ plus::r#1 plus::r#2 ] ] with [ mem[2] [ plus::r#3 ] ] - score: 1
+
+ASSEMBLER BEFORE OPTIMIZATION
+  // File Comments
+/**
+ * Test banked calls with memory variables.
+ * The parameters & return should end up in the shared/common bank.
+ */
+  // Upstart
+  .file                               [name="call-banked-phi-memvars.prg", type="prg", segments="Program"]
+.segmentdef Program                 [segments="Basic, Code, Data"]
+.segmentdef Basic                   [start=$0801]
+.segmentdef Code                    [start=$80d]
+.segmentdef Data                    [startAfter="Code"]
+.segmentdef RAM_Bank1               [start=$A000, min=$A000, max=$BFFF, align=$100]
+.segmentdef RAM_Bank2               [start=$A000, min=$A000, max=$BFFF, align=$100]
+.segmentdef ROM_Bank1               [start=$C000, min=$C000, max=$FFFF, align=$100]
+.segment Basic
+:BasicUpstart(main)
+.segment Code
+.segment Data
+
+
+  // Global Constants & labels
+  .label SCREEN = $400
+.segment Code
+  // main
+main: {
+    // [1] phi from main to main::@1 [phi:main->main::@1]
+  __b1_from_main:
+    // [1] phi main::i#2 = 0 [phi:main->main::@1#0] -- vbuyy=vbuc1 
+    ldy #0
+    jmp __b1
+    // main::@1
+  __b1:
+    // [2] if(main::i#2<5) goto main::@2 -- vbuyy_lt_vbuc1_then_la1 
+    cpy #5
+    bcc __b2
+    jmp __breturn
+    // main::@return
+  __breturn:
+    // [3] return 
+    rts
+    // main::@2
+  __b2:
+    // [4] plus::b#0 = (int)main::i#2 -- vwsm1=_sword_vbuyy 
+    tya
+    sta plus.b
+    lda #0
+    sta plus.b+1
+    // [5] call plus
+    // [18] phi from main::@2 to plus [phi:main::@2->plus]
+  plus_from___b2:
+    // [18] phi plus::b#2 = plus::b#0 [phi:main::@2->plus#0] -- register_copy 
+    // [18] phi plus::a#2 = $64 [phi:main::@2->plus#1] -- call_phi_close_cx16_ram 
+    lda #<$64
+    sta plus.a
+    lda #>$64
+    sta plus.a+1
+    sta.z $ff
+    lda.z 0
+    pha
+    lda #1
+    sta.z 0
+    lda.z $ff
+    jsr plus
+    sta.z $ff
+    pla
+    sta.z 0
+    lda.z $ff
+    // [6] plus::return#0 = plus::return#2
+    jmp __b3
+    // main::@3
+  __b3:
+    // [7] main::$1 = plus::return#0
+    // [8] main::$4 = main::i#2 << 1 -- vbuxx=vbuyy_rol_1 
+    tya
+    asl
+    tax
+    // [9] SCREEN[main::$4] = main::$1 -- pwsc1_derefidx_vbuxx=vwsm1 
+    lda __1
+    sta SCREEN,x
+    lda __1+1
+    sta SCREEN+1,x
+    // [10] main::$2 = $a + main::i#2 -- vbuxx=vbuc1_plus_vbuyy 
+    tya
+    tax
+    axs #-[$a]
+    // [11] plus::b#1 = (int)main::i#2 -- vwsm1=_sword_vbuyy 
+    tya
+    sta plus.b
+    lda #0
+    sta plus.b+1
+    // [12] call plus
+    // [18] phi from main::@3 to plus [phi:main::@3->plus]
+  plus_from___b3:
+    // [18] phi plus::b#2 = plus::b#1 [phi:main::@3->plus#0] -- register_copy 
+    // [18] phi plus::a#2 = $c8 [phi:main::@3->plus#1] -- call_phi_close_cx16_ram 
+    lda #<$c8
+    sta plus.a
+    lda #>$c8
+    sta plus.a+1
+    sta.z $ff
+    lda.z 0
+    pha
+    lda #1
+    sta.z 0
+    lda.z $ff
+    jsr plus
+    sta.z $ff
+    pla
+    sta.z 0
+    lda.z $ff
+    // [13] plus::return#1 = plus::return#2
+    jmp __b4
+    // main::@4
+  __b4:
+    // [14] main::$3 = plus::return#1
+    // [15] main::$5 = main::$2 << 1 -- vbuxx=vbuxx_rol_1 
+    txa
+    asl
+    tax
+    // [16] SCREEN[main::$5] = main::$3 -- pwsc1_derefidx_vbuxx=vwsm1 
+    lda __3
+    sta SCREEN,x
+    lda __3+1
+    sta SCREEN+1,x
+    // [17] main::i#1 = ++ main::i#2 -- vbuyy=_inc_vbuyy 
+    iny
+    // [1] phi from main::@4 to main::@1 [phi:main::@4->main::@1]
+  __b1_from___b4:
+    // [1] phi main::i#2 = main::i#1 [phi:main::@4->main::@1#0] -- register_copy 
+    jmp __b1
+  .segment Data
+    .label __1 = plus.b
+    .label __3 = plus.b
+}
+.segment RAM_Bank1
+  // plus
+// __mem() int plus(__mem() int a, __mem() int b)
+// __bank(cx16_ram, 1) 
+plus: {
+    // [19] plus::r#1 = 2 + plus::a#2 -- vwsm1=vwsc1_plus_vwsm2 
+    clc
+    lda a
+    adc #<2
+    sta r
+    lda a+1
+    adc #>2
+    sta r+1
+    // [20] plus::r#2 = plus::r#1 + plus::b#2 -- vwsm1=vwsm1_plus_vwsm2 
+    clc
+    lda r
+    adc b
+    sta r
+    lda r+1
+    adc b+1
+    sta r+1
+    // [21] plus::r#3 = plus::r#2 + plus::a#2 -- vwsm1=vwsm1_plus_vwsm2 
+    clc
+    lda r
+    adc a
+    sta r
+    lda r+1
+    adc a+1
+    sta r+1
+    // [22] plus::return#2 = plus::r#3 + plus::b#2 -- vwsm1=vwsm2_plus_vwsm1 
+    clc
+    lda return
+    adc r
+    sta return
+    lda return+1
+    adc r+1
+    sta return+1
+    jmp __breturn
+    // plus::@return
+  __breturn:
+    // [23] return 
+    rts
+  .segment Data
+    b: .word 0
+    .label return = b
+  .segment RAM_Bank1
+    r: .word 0
+  .segment Data
+    a: .word 0
+}
+  // File Data
+
+ASSEMBLER OPTIMIZATIONS
+Removing instruction jmp __b1
+Removing instruction jmp __breturn
+Removing instruction jmp __b3
+Removing instruction jmp __b4
+Removing instruction jmp __breturn
+Succesful ASM optimization Pass5NextJumpElimination
+Removing instruction __b1_from_main:
+Removing instruction __breturn:
+Removing instruction plus_from___b2:
+Removing instruction __b3:
+Removing instruction plus_from___b3:
+Removing instruction __b4:
+Removing instruction __b1_from___b4:
+Removing instruction __breturn:
+Succesful ASM optimization Pass5UnusedLabelElimination
+
+FINAL SYMBOL TABLE
+__constant int * const SCREEN = (int *) 1024
+void main()
+int main::$1 // mem[2] 11.0
+char main::$2 // reg byte x 4.4
+int main::$3 // mem[2] 11.0
+char main::$4 // reg byte x 22.0
+char main::$5 // reg byte x 22.0
+char main::i
+char main::i#1 // reg byte y 22.0
+char main::i#2 // reg byte y 3.6666666666666665
+__bank(cx16_ram, 1) int plus(int a , int b)
+int plus::a
+int plus::a#2 // a mem[2] 67.33333333333333
+int plus::b
+int plus::b#0 // b mem[2] 22.0
+int plus::b#1 // b mem[2] 22.0
+int plus::b#2 // b mem[2] 56.0
+int plus::r
+int plus::r#1 // r mem[2] 202.0
+int plus::r#2 // r mem[2] 202.0
+int plus::r#3 // r mem[2] 202.0
+int plus::return
+int plus::return#0 // return mem[2] 22.0
+int plus::return#1 // return mem[2] 22.0
+int plus::return#2 // return mem[2] 30.75
+
+reg byte y [ main::i#2 main::i#1 ]
+mem[2] [ plus::a#2 ]
+mem[2] [ plus::b#2 plus::b#0 plus::b#1 plus::return#2 plus::return#0 main::$1 plus::return#1 main::$3 ]
+reg byte x [ main::$4 ]
+reg byte x [ main::$2 ]
+reg byte x [ main::$5 ]
+mem[2] [ plus::r#1 plus::r#2 plus::r#3 ]
+
+
+FINAL ASSEMBLER
+Score: 1103
+
+  // File Comments
+/**
+ * Test banked calls with memory variables.
+ * The parameters & return should end up in the shared/common bank.
+ */
+  // Upstart
+  .file                               [name="call-banked-phi-memvars.prg", type="prg", segments="Program"]
+.segmentdef Program                 [segments="Basic, Code, Data"]
+.segmentdef Basic                   [start=$0801]
+.segmentdef Code                    [start=$80d]
+.segmentdef Data                    [startAfter="Code"]
+.segmentdef RAM_Bank1               [start=$A000, min=$A000, max=$BFFF, align=$100]
+.segmentdef RAM_Bank2               [start=$A000, min=$A000, max=$BFFF, align=$100]
+.segmentdef ROM_Bank1               [start=$C000, min=$C000, max=$FFFF, align=$100]
+.segment Basic
+:BasicUpstart(main)
+.segment Code
+.segment Data
+
+
+  // Global Constants & labels
+  .label SCREEN = $400
+.segment Code
+  // main
+main: {
+    // [1] phi from main to main::@1 [phi:main->main::@1]
+    // [1] phi main::i#2 = 0 [phi:main->main::@1#0] -- vbuyy=vbuc1 
+    ldy #0
+    // main::@1
+  __b1:
+    // for(char i=0;i<5; i++)
+    // [2] if(main::i#2<5) goto main::@2 -- vbuyy_lt_vbuc1_then_la1 
+    cpy #5
+    bcc __b2
+    // main::@return
+    // }
+    // [3] return 
+    rts
+    // main::@2
+  __b2:
+    // plus(100, (int)i)
+    // [4] plus::b#0 = (int)main::i#2 -- vwsm1=_sword_vbuyy 
+    tya
+    sta plus.b
+    lda #0
+    sta plus.b+1
+    // [5] call plus
+    // [18] phi from main::@2 to plus [phi:main::@2->plus]
+    // [18] phi plus::b#2 = plus::b#0 [phi:main::@2->plus#0] -- register_copy 
+    // [18] phi plus::a#2 = $64 [phi:main::@2->plus#1] -- call_phi_close_cx16_ram 
+    lda #<$64
+    sta plus.a
+    lda #>$64
+    sta plus.a+1
+    sta.z $ff
+    lda.z 0
+    pha
+    lda #1
+    sta.z 0
+    lda.z $ff
+    jsr plus
+    sta.z $ff
+    pla
+    sta.z 0
+    lda.z $ff
+    // plus(100, (int)i)
+    // [6] plus::return#0 = plus::return#2
+    // main::@3
+    // [7] main::$1 = plus::return#0
+    // SCREEN[i] = plus(100, (int)i)
+    // [8] main::$4 = main::i#2 << 1 -- vbuxx=vbuyy_rol_1 
+    tya
+    asl
+    tax
+    // [9] SCREEN[main::$4] = main::$1 -- pwsc1_derefidx_vbuxx=vwsm1 
+    lda __1
+    sta SCREEN,x
+    lda __1+1
+    sta SCREEN+1,x
+    // 10+i
+    // [10] main::$2 = $a + main::i#2 -- vbuxx=vbuc1_plus_vbuyy 
+    tya
+    tax
+    axs #-[$a]
+    // plus(200, (int)i)
+    // [11] plus::b#1 = (int)main::i#2 -- vwsm1=_sword_vbuyy 
+    tya
+    sta plus.b
+    lda #0
+    sta plus.b+1
+    // [12] call plus
+    // [18] phi from main::@3 to plus [phi:main::@3->plus]
+    // [18] phi plus::b#2 = plus::b#1 [phi:main::@3->plus#0] -- register_copy 
+    // [18] phi plus::a#2 = $c8 [phi:main::@3->plus#1] -- call_phi_close_cx16_ram 
+    lda #<$c8
+    sta plus.a
+    lda #>$c8
+    sta plus.a+1
+    sta.z $ff
+    lda.z 0
+    pha
+    lda #1
+    sta.z 0
+    lda.z $ff
+    jsr plus
+    sta.z $ff
+    pla
+    sta.z 0
+    lda.z $ff
+    // plus(200, (int)i)
+    // [13] plus::return#1 = plus::return#2
+    // main::@4
+    // [14] main::$3 = plus::return#1
+    // SCREEN[10+i] = plus(200, (int)i)
+    // [15] main::$5 = main::$2 << 1 -- vbuxx=vbuxx_rol_1 
+    txa
+    asl
+    tax
+    // [16] SCREEN[main::$5] = main::$3 -- pwsc1_derefidx_vbuxx=vwsm1 
+    lda __3
+    sta SCREEN,x
+    lda __3+1
+    sta SCREEN+1,x
+    // for(char i=0;i<5; i++)
+    // [17] main::i#1 = ++ main::i#2 -- vbuyy=_inc_vbuyy 
+    iny
+    // [1] phi from main::@4 to main::@1 [phi:main::@4->main::@1]
+    // [1] phi main::i#2 = main::i#1 [phi:main::@4->main::@1#0] -- register_copy 
+    jmp __b1
+  .segment Data
+    .label __1 = plus.b
+    .label __3 = plus.b
+}
+.segment RAM_Bank1
+  // plus
+// __mem() int plus(__mem() int a, __mem() int b)
+// __bank(cx16_ram, 1) 
+plus: {
+    // r += a
+    // [19] plus::r#1 = 2 + plus::a#2 -- vwsm1=vwsc1_plus_vwsm2 
+    clc
+    lda a
+    adc #<2
+    sta r
+    lda a+1
+    adc #>2
+    sta r+1
+    // r += b
+    // [20] plus::r#2 = plus::r#1 + plus::b#2 -- vwsm1=vwsm1_plus_vwsm2 
+    clc
+    lda r
+    adc b
+    sta r
+    lda r+1
+    adc b+1
+    sta r+1
+    // r += a
+    // [21] plus::r#3 = plus::r#2 + plus::a#2 -- vwsm1=vwsm1_plus_vwsm2 
+    clc
+    lda r
+    adc a
+    sta r
+    lda r+1
+    adc a+1
+    sta r+1
+    // r += b
+    // [22] plus::return#2 = plus::r#3 + plus::b#2 -- vwsm1=vwsm2_plus_vwsm1 
+    clc
+    lda return
+    adc r
+    sta return
+    lda return+1
+    adc r+1
+    sta return+1
+    // plus::@return
+    // }
+    // [23] return 
+    rts
+  .segment Data
+    b: .word 0
+    .label return = b
+  .segment RAM_Bank1
+    r: .word 0
+  .segment Data
+    a: .word 0
+}
+  // File Data
+

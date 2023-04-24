@@ -115,7 +115,7 @@ public class Pass4CodeGeneration {
                 currentScope = block.getScope();
                 if (block.isProcedureEntry(program)) {
                     Procedure procedure = block.getProcedure(program);
-                    currentCodeSegmentName = procedure.getCodeSegment();
+                    currentCodeSegmentName = procedure.getSegmentCode();
                 }
                 setCurrentSegment(currentCodeSegmentName, asm);
                 asm.startChunk(currentScope, null, block.getLabel().getFullName());
@@ -219,7 +219,7 @@ public class Pass4CodeGeneration {
     }
 
     /**
-     * Generate a comment that describes the procedure signature and parameter transfer
+     * Generate a comment that describes the procedure signature and parameter transfer.
      *
      * @param asm       The assembler program being generated
      * @param procedure The procedure
@@ -239,6 +239,9 @@ public class Pass4CodeGeneration {
         signature.append(")");
         if (i > 0) {
             asm.addComment(signature.toString(), false);
+        }
+        if(!procedure.getBank().isCommon()) {
+            asm.addComment(" " + procedure.getBank(), false);
         }
     }
 
@@ -853,14 +856,15 @@ public class Pass4CodeGeneration {
                 AsmFragmentCodeGenerator.generateAsm(asm, AsmFragmentInstanceSpecBuilder.conditionalJump((StatementConditionalJump) statement, block, program), program);
             } else if (statement instanceof StatementCall) {
                 StatementCall call = (StatementCall) statement;
-                Procedure procedure = getScope().getProcedure(call.getProcedure());
-                if (procedure.isDeclaredIntrinsic()) {
-                    if (Pass1ByteXIntrinsicRewrite.INTRINSIC_MAKELONG4.equals(procedure.getFullName())) {
+                Procedure toProcedure = getScope().getProcedure(call.getProcedure());
+                Procedure fromProcedure = block.getProcedure(this.program); // We obtain from where the procedure is called, to validate the bank equality.
+                if (toProcedure.isDeclaredIntrinsic()) {
+                    if (Pass1ByteXIntrinsicRewrite.INTRINSIC_MAKELONG4.equals(toProcedure.getFullName())) {
                         AsmFragmentCodeGenerator.generateAsm(asm, AsmFragmentInstanceSpecBuilder.makelong4(call, program), program);
                     } else {
-                        throw new CompileError("Intrinsic procedure not supported " + procedure.toString(program));
+                        throw new CompileError("Intrinsic procedure not supported " + toProcedure.toString(program));
                     }
-                } else if (Procedure.CallingConvention.PHI_CALL.equals(procedure.getCallingConvention())) {
+                } else if (Procedure.CallingConvention.PHI_CALL.equals(toProcedure.getCallingConvention())) {
                     // Generate PHI transition
                     if (genCallPhiEntry) {
                         ControlFlowBlock callSuccessor = getGraph().getCallSuccessor(block);
@@ -872,17 +876,44 @@ public class Pass4CodeGeneration {
                             genBlockPhiTransition(asm, block, callSuccessor, block.getScope());
                         }
                     }
-                    asm.addInstruction("jsr", CpuAddressingMode.ABS, call.getProcedure().getFullName(), false);
-                } else if (Procedure.CallingConvention.STACK_CALL.equals(procedure.getCallingConvention())) {
-                    asm.addInstruction("jsr", CpuAddressingMode.ABS, call.getProcedure().getFullName(), false);
+                    final Bank.CallingDistance callingDistance = Bank.CallingDistance.forCall(fromProcedure.getBank(), toProcedure.getBank());
+                    if(Bank.CallingDistance.NEAR.equals(callingDistance)) {
+                        asm.addInstruction("jsr", CpuAddressingMode.ABS, call.getProcedure().getFullName(), false);
+                    }  else {
+                        AsmFragmentCodeGenerator.generateAsm(asm, AsmFragmentInstanceSpecBuilder.callBanked(toProcedure, callingDistance, program), program);
+                    }
+                } else if (Procedure.CallingConvention.STACK_CALL.equals(toProcedure.getCallingConvention())) {
+                    final Bank.CallingDistance callingDistance = Bank.CallingDistance.forCall(fromProcedure.getBank(), toProcedure.getBank());
+                    if(Bank.CallingDistance.NEAR.equals(callingDistance)) {
+                        asm.addInstruction("jsr", CpuAddressingMode.ABS, call.getProcedure().getFullName(), false);
+                    } else {
+                        throw new CompileError("Stack Call procedure not supported in banked mode " + toProcedure.toString(program));
+                    }
                 }
             } else if (statement instanceof StatementCallExecute) {
                 StatementCallExecute call = (StatementCallExecute) statement;
-                RValue procedureRVal = call.getProcedureRVal();
-                // Generate ASM for a call
-                AsmFragmentCodeGenerator.generateAsm(asm, AsmFragmentInstanceSpecBuilder.call(call, indirectCallCount++, program), program);
-                if (!(procedureRVal instanceof ProcedureRef)) {
-                    asm.getCurrentChunk().setClobberOverwrite(CpuClobber.CLOBBER_ALL);
+                ProcedureRef procedureRef = call.getProcedure();
+                if(procedureRef != null) {
+                    ProgramScope scope = getScope();
+                    Procedure toProcedure = scope.getProcedure(procedureRef);
+                    Procedure fromProcedure = block.getProcedure(this.program);
+                    final Bank.CallingDistance callingDistance = Bank.CallingDistance.forCall(fromProcedure.getBank(), toProcedure.getBank());
+                    if(Bank.CallingDistance.NEAR.equals(callingDistance)) {
+                        AsmFragmentCodeGenerator.generateAsm(asm, AsmFragmentInstanceSpecBuilder.call(call, indirectCallCount++, program), program);
+                    } else {
+                        throw new CompileError("Stack Call procedure not supported in banked mode " + toProcedure.toString(program));
+                    }
+                    RValue procedureRVal = call.getProcedureRVal();
+                    if (!(procedureRVal instanceof ProcedureRef)) {
+                        asm.getCurrentChunk().setClobberOverwrite(CpuClobber.CLOBBER_ALL);
+                    }
+                } else {
+                    RValue procedureRVal = call.getProcedureRVal();
+                    // Generate ASM for a call
+                    AsmFragmentCodeGenerator.generateAsm(asm, AsmFragmentInstanceSpecBuilder.call(call, indirectCallCount++, program), program);
+                    if (!(procedureRVal instanceof ProcedureRef)) {
+                        asm.getCurrentChunk().setClobberOverwrite(CpuClobber.CLOBBER_ALL);
+                    }
                 }
             } else if (statement instanceof StatementExprSideEffect) {
                 AsmFragmentCodeGenerator.generateAsm(asm, AsmFragmentInstanceSpecBuilder.exprSideEffect((StatementExprSideEffect) statement, program), program);

@@ -1,0 +1,668 @@
+Loading link script "call-banked-phi.ld"
+
+CONTROL FLOW GRAPH SSA
+
+void main()
+main: scope:[main]  from __start
+  plus::a#0 = '0'
+  plus::b#0 = 7
+  call plus
+  plus::return#0 = plus::return#3
+  to:main::@1
+main::@1: scope:[main]  from main
+  plus::return#4 = phi( main/plus::return#0 )
+  main::$0 = plus::return#4
+  SCREEN[0] = main::$0
+  plus::a#1 = '1'
+  plus::b#1 = 6
+  call plus
+  plus::return#1 = plus::return#3
+  to:main::@2
+main::@2: scope:[main]  from main::@1
+  plus::return#5 = phi( main::@1/plus::return#1 )
+  main::$1 = plus::return#5
+  SCREEN[1] = main::$1
+  to:main::@return
+main::@return: scope:[main]  from main::@2
+  return 
+  to:@return
+
+__bank(cx16_ram, 1) char plus(char a , char b)
+plus: scope:[plus]  from main main::@1
+  plus::b#2 = phi( main/plus::b#0, main::@1/plus::b#1 )
+  plus::a#2 = phi( main/plus::a#0, main::@1/plus::a#1 )
+  add::a#0 = plus::a#2
+  add::b#0 = plus::b#2
+  call add
+  add::return#0 = add::return#2
+  to:plus::@1
+plus::@1: scope:[plus]  from plus
+  add::return#3 = phi( plus/add::return#0 )
+  plus::$0 = add::return#3
+  plus::return#2 = plus::$0
+  to:plus::@return
+plus::@return: scope:[plus]  from plus::@1
+  plus::return#6 = phi( plus::@1/plus::return#2 )
+  plus::return#3 = plus::return#6
+  return 
+  to:@return
+
+__bank(cx16_ram, 2) char add(char a , char b)
+add: scope:[add]  from plus
+  add::b#1 = phi( plus/add::b#0 )
+  add::a#1 = phi( plus/add::a#0 )
+  add::$0 = add::a#1 + add::b#1
+  add::return#1 = add::$0
+  to:add::@return
+add::@return: scope:[add]  from add
+  add::return#4 = phi( add/add::return#1 )
+  add::return#2 = add::return#4
+  return 
+  to:@return
+
+void __start()
+__start: scope:[__start]  from
+  call main
+  to:__start::@1
+__start::@1: scope:[__start]  from __start
+  to:__start::@return
+__start::@return: scope:[__start]  from __start::@1
+  return 
+  to:@return
+
+SYMBOL TABLE SSA
+__constant char * const SCREEN = (char *)$400
+void __start()
+__bank(cx16_ram, 2) char add(char a , char b)
+char add::$0
+char add::a
+char add::a#0
+char add::a#1
+char add::b
+char add::b#0
+char add::b#1
+char add::return
+char add::return#0
+char add::return#1
+char add::return#2
+char add::return#3
+char add::return#4
+void main()
+char main::$0
+char main::$1
+__bank(cx16_ram, 1) char plus(char a , char b)
+char plus::$0
+char plus::a
+char plus::a#0
+char plus::a#1
+char plus::a#2
+char plus::b
+char plus::b#0
+char plus::b#1
+char plus::b#2
+char plus::return
+char plus::return#0
+char plus::return#1
+char plus::return#2
+char plus::return#3
+char plus::return#4
+char plus::return#5
+char plus::return#6
+
+Adding number conversion cast (unumber) 7 in plus::b#0 = 7
+Adding number conversion cast (unumber) 0 in SCREEN[0] = main::$0
+Adding number conversion cast (unumber) 6 in plus::b#1 = 6
+Adding number conversion cast (unumber) 1 in SCREEN[1] = main::$1
+Successful SSA optimization PassNAddNumberTypeConversions
+Inlining cast plus::b#0 = (unumber)7
+Inlining cast plus::b#1 = (unumber)6
+Successful SSA optimization Pass2InlineCast
+Simplifying constant pointer cast (char *) 1024
+Simplifying constant integer cast 7
+Simplifying constant integer cast 0
+Simplifying constant integer cast 6
+Simplifying constant integer cast 1
+Successful SSA optimization PassNCastSimplification
+Finalized unsigned number type (char) 7
+Finalized unsigned number type (char) 0
+Finalized unsigned number type (char) 6
+Finalized unsigned number type (char) 1
+Successful SSA optimization PassNFinalizeNumberTypeConversions
+Alias plus::return#0 = plus::return#4 
+Alias plus::return#1 = plus::return#5 
+Alias add::return#0 = add::return#3 
+Alias plus::return#2 = plus::$0 plus::return#6 plus::return#3 
+Alias add::return#1 = add::$0 add::return#4 add::return#2 
+Successful SSA optimization Pass2AliasElimination
+Identical Phi Values add::a#1 add::a#0
+Identical Phi Values add::b#1 add::b#0
+Successful SSA optimization Pass2IdenticalPhiElimination
+Constant plus::a#0 = '0'
+Constant plus::b#0 = 7
+Constant plus::a#1 = '1'
+Constant plus::b#1 = 6
+Successful SSA optimization Pass2ConstantIdentification
+Simplifying expression containing zero SCREEN in [5] SCREEN[0] = main::$0
+Successful SSA optimization PassNSimplifyExpressionWithZero
+Removing unused procedure __start
+Removing unused procedure block __start
+Removing unused procedure block __start::@1
+Removing unused procedure block __start::@return
+Successful SSA optimization PassNEliminateEmptyStart
+Inlining constant with var siblings plus::a#0
+Inlining constant with var siblings plus::b#0
+Inlining constant with var siblings plus::a#1
+Inlining constant with var siblings plus::b#1
+Constant inlined plus::b#1 = 6
+Constant inlined plus::b#0 = 7
+Constant inlined plus::a#1 = '1'
+Constant inlined plus::a#0 = '0'
+Successful SSA optimization Pass2ConstantInlining
+Consolidated array index constant in *(SCREEN+1)
+Successful SSA optimization Pass2ConstantAdditionElimination
+Adding NOP phi() at start of main
+CALL GRAPH
+Calls in [main] to plus:1 plus:5 
+Calls in [plus] to add:13 
+
+Created 2 initial phi equivalence classes
+Coalesced down to 2 phi equivalence classes
+Adding NOP phi() at start of main
+
+FINAL CONTROL FLOW GRAPH
+
+void main()
+main: scope:[main]  from
+  [0] phi()
+  [1] call plus
+  [2] plus::return#0 = plus::return#2
+  to:main::@1
+main::@1: scope:[main]  from main
+  [3] main::$0 = plus::return#0
+  [4] *SCREEN = main::$0
+  [5] call plus
+  [6] plus::return#1 = plus::return#2
+  to:main::@2
+main::@2: scope:[main]  from main::@1
+  [7] main::$1 = plus::return#1
+  [8] *(SCREEN+1) = main::$1
+  to:main::@return
+main::@return: scope:[main]  from main::@2
+  [9] return 
+  to:@return
+
+__bank(cx16_ram, 1) char plus(char a , char b)
+plus: scope:[plus]  from main main::@1
+  [10] plus::b#2 = phi( main/7, main::@1/6 )
+  [10] plus::a#2 = phi( main/'0', main::@1/'1' )
+  [11] add::a#0 = plus::a#2
+  [12] add::b#0 = plus::b#2
+  [13] call add
+  [14] add::return#0 = add::return#1
+  to:plus::@1
+plus::@1: scope:[plus]  from plus
+  [15] plus::return#2 = add::return#0
+  to:plus::@return
+plus::@return: scope:[plus]  from plus::@1
+  [16] return 
+  to:@return
+
+__bank(cx16_ram, 2) char add(char a , char b)
+add: scope:[add]  from plus
+  [17] add::return#1 = add::a#0 + add::b#0
+  to:add::@return
+add::@return: scope:[add]  from add
+  [18] return 
+  to:@return
+
+
+VARIABLE REGISTER WEIGHTS
+__bank(cx16_ram, 2) char add(char a , char b)
+char add::a
+char add::a#0 // 56.0
+char add::b
+char add::b#0 // 112.0
+char add::return
+char add::return#0 // 22.0
+char add::return#1 // 37.33333333333333
+void main()
+char main::$0 // 4.0
+char main::$1 // 4.0
+__bank(cx16_ram, 1) char plus(char a , char b)
+char plus::a
+char plus::a#2 // 11.0
+char plus::b
+char plus::b#2 // 5.5
+char plus::return
+char plus::return#0 // 4.0
+char plus::return#1 // 4.0
+char plus::return#2 // 3.75
+
+Initial phi equivalence classes
+[ plus::a#2 ]
+[ plus::b#2 ]
+Added variable plus::return#0 to live range equivalence class [ plus::return#0 ]
+Added variable main::$0 to live range equivalence class [ main::$0 ]
+Added variable plus::return#1 to live range equivalence class [ plus::return#1 ]
+Added variable main::$1 to live range equivalence class [ main::$1 ]
+Added variable add::a#0 to live range equivalence class [ add::a#0 ]
+Added variable add::b#0 to live range equivalence class [ add::b#0 ]
+Added variable add::return#0 to live range equivalence class [ add::return#0 ]
+Added variable plus::return#2 to live range equivalence class [ plus::return#2 ]
+Added variable add::return#1 to live range equivalence class [ add::return#1 ]
+Complete equivalence classes
+[ plus::a#2 ]
+[ plus::b#2 ]
+[ plus::return#0 ]
+[ main::$0 ]
+[ plus::return#1 ]
+[ main::$1 ]
+[ add::a#0 ]
+[ add::b#0 ]
+[ add::return#0 ]
+[ plus::return#2 ]
+[ add::return#1 ]
+Allocated zp[1]:2 [ add::b#0 ]
+Allocated zp[1]:3 [ add::a#0 ]
+Allocated zp[1]:4 [ add::return#1 ]
+Allocated zp[1]:5 [ add::return#0 ]
+Allocated zp[1]:6 [ plus::a#2 ]
+Allocated zp[1]:7 [ plus::b#2 ]
+Allocated zp[1]:8 [ plus::return#0 ]
+Allocated zp[1]:9 [ main::$0 ]
+Allocated zp[1]:10 [ plus::return#1 ]
+Allocated zp[1]:11 [ main::$1 ]
+Allocated zp[1]:12 [ plus::return#2 ]
+REGISTER UPLIFT POTENTIAL REGISTERS
+Statement [1] call plus [ plus::return#2 ] (  [ plus::return#2 ] { { plus::return#0 = plus::return#2 } }  ) always clobbers reg byte a 
+Removing always clobbered register reg byte a as potential for zp[1]:12 [ plus::return#2 ]
+Statement [5] call plus [ plus::return#2 ] (  [ plus::return#2 ] { { plus::return#1 = plus::return#2 } }  ) always clobbers reg byte a 
+Statement [17] add::return#1 = add::a#0 + add::b#0 [ add::return#1 ] ( plus:1::add:13 [ add::return#1 ] { { plus::return#0 = plus::return#2 } { add::a#0 = plus::a#2 } { add::b#0 = plus::b#2 } { add::return#0 = add::return#1 } }  plus:5::add:13 [ add::return#1 ] { { plus::return#1 = plus::return#2 } { add::a#0 = plus::a#2 } { add::b#0 = plus::b#2 } { add::return#0 = add::return#1 } }  ) always clobbers reg byte a 
+Statement [1] call plus [ plus::return#2 ] (  [ plus::return#2 ] { { plus::return#0 = plus::return#2 } }  ) always clobbers reg byte a 
+Statement [5] call plus [ plus::return#2 ] (  [ plus::return#2 ] { { plus::return#1 = plus::return#2 } }  ) always clobbers reg byte a 
+Statement [17] add::return#1 = add::a#0 + add::b#0 [ add::return#1 ] ( plus:1::add:13 [ add::return#1 ] { { plus::return#0 = plus::return#2 } { add::a#0 = plus::a#2 } { add::b#0 = plus::b#2 } { add::return#0 = add::return#1 } }  plus:5::add:13 [ add::return#1 ] { { plus::return#1 = plus::return#2 } { add::a#0 = plus::a#2 } { add::b#0 = plus::b#2 } { add::return#0 = add::return#1 } }  ) always clobbers reg byte a 
+Potential registers zp[1]:6 [ plus::a#2 ] : zp[1]:6 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:7 [ plus::b#2 ] : zp[1]:7 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:8 [ plus::return#0 ] : zp[1]:8 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:9 [ main::$0 ] : zp[1]:9 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:10 [ plus::return#1 ] : zp[1]:10 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:11 [ main::$1 ] : zp[1]:11 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:3 [ add::a#0 ] : zp[1]:3 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:2 [ add::b#0 ] : zp[1]:2 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:5 [ add::return#0 ] : zp[1]:5 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:12 [ plus::return#2 ] : zp[1]:12 , reg byte x , reg byte y , 
+Potential registers zp[1]:4 [ add::return#1 ] : zp[1]:4 , reg byte a , reg byte x , reg byte y , 
+
+REGISTER UPLIFT SCOPES
+Uplift Scope [add] 112: zp[1]:2 [ add::b#0 ] 56: zp[1]:3 [ add::a#0 ] 37.33: zp[1]:4 [ add::return#1 ] 22: zp[1]:5 [ add::return#0 ] 
+Uplift Scope [plus] 11: zp[1]:6 [ plus::a#2 ] 5.5: zp[1]:7 [ plus::b#2 ] 4: zp[1]:8 [ plus::return#0 ] 4: zp[1]:10 [ plus::return#1 ] 3.75: zp[1]:12 [ plus::return#2 ] 
+Uplift Scope [main] 4: zp[1]:9 [ main::$0 ] 4: zp[1]:11 [ main::$1 ] 
+Uplift Scope [] 
+
+Uplifting [add] best 189 combination reg byte a [ add::b#0 ] zp[1]:3 [ add::a#0 ] reg byte a [ add::return#1 ] reg byte a [ add::return#0 ] 
+Limited combination testing to 100 combinations of 256 possible.
+Uplifting [plus] best 161 combination reg byte a [ plus::a#2 ] reg byte x [ plus::b#2 ] reg byte a [ plus::return#0 ] reg byte a [ plus::return#1 ] zp[1]:12 [ plus::return#2 ] 
+Limited combination testing to 100 combinations of 768 possible.
+Uplifting [main] best 149 combination reg byte a [ main::$0 ] reg byte a [ main::$1 ] 
+Uplifting [] best 149 combination 
+Attempting to uplift remaining variables inzp[1]:3 [ add::a#0 ]
+Uplifting [add] best 149 combination zp[1]:3 [ add::a#0 ] 
+Attempting to uplift remaining variables inzp[1]:12 [ plus::return#2 ]
+Uplifting [plus] best 146 combination reg byte x [ plus::return#2 ] 
+Allocated (was zp[1]:3) zp[1]:2 [ add::a#0 ]
+
+ASSEMBLER BEFORE OPTIMIZATION
+  // File Comments
+/**
+ * @file call-banked-phi-case-5-far-0.c
+ * @author Sven Van de Velde (sven.van.de.velde@telenet.be), 
+ * @author Jesper Gravgaard
+ * @brief Test a procedure with calling convention PHI - case #5.
+ * Implementation using the __bank() directive.
+ * @version 0.1
+ * @date 2023-04-11
+ * 
+ * @copyright Copyright (c) 2023
+ * 
+ * The following cases exist in banked calling implementations:
+ * 
+ *   - case #1 - unbanked to unbanked and no banking areas
+ *   - case #2 - unbanked to banked to any bank area
+ *   - case #3 - banked to unbanked from any bank area
+ *   - case #4 - banked to same bank in same bank area
+ *   - case #5 - banked to different bank in same bank area
+ *   - case #6 - banked to any bank between different bank areas
+ * 
+ * This brings us to the call types:
+ * 
+ *   - near = case #1, #3, #4
+ *   - close = case #2, #6
+ *   - far = case #5 
+ * 
+ */
+  // Upstart
+  .file                               [name="call-banked-phi-case-5-far-0.prg", type="prg", segments="Program"]
+.segmentdef Program                 [segments="Basic, Code, Data"]
+.segmentdef Basic                   [start=$0801]
+.segmentdef Code                    [start=$80d]
+.segmentdef Data                    [startAfter="Code"]
+.segmentdef RAM_Bank1               [start=$A000, min=$A000, max=$BFFF, align=$100]
+.segmentdef RAM_Bank2               [start=$A000, min=$A000, max=$BFFF, align=$100]
+.segmentdef ROM_Bank1               [start=$C000, min=$C000, max=$FFFF, align=$100]
+.segment Basic
+:BasicUpstart(main)
+.segment Code
+.segment Data
+
+
+  // Global Constants & labels
+  .label SCREEN = $400
+.segment Code
+  // main
+main: {
+    // [1] call plus
+    // [10] phi from main to plus [phi:main->plus]
+  plus_from_main:
+    // [10] phi plus::b#2 = 7 [phi:main->plus#0] -- vbuxx=vbuc1 
+    ldx #7
+    // [10] phi plus::a#2 = '0' [phi:main->plus#1] -- call_phi_close_cx16_ram 
+    lda #'0'
+    sta.z $ff
+    lda.z 0
+    pha
+    lda #1
+    sta.z 0
+    lda.z $ff
+    jsr plus
+    sta.z $ff
+    pla
+    sta.z 0
+    lda.z $ff
+    // [2] plus::return#0 = plus::return#2 -- vbuaa=vbuxx 
+    txa
+    jmp __b1
+    // main::@1
+  __b1:
+    // [3] main::$0 = plus::return#0
+    // [4] *SCREEN = main::$0 -- _deref_pbuc1=vbuaa 
+    sta SCREEN
+    // [5] call plus
+    // [10] phi from main::@1 to plus [phi:main::@1->plus]
+  plus_from___b1:
+    // [10] phi plus::b#2 = 6 [phi:main::@1->plus#0] -- vbuxx=vbuc1 
+    ldx #6
+    // [10] phi plus::a#2 = '1' [phi:main::@1->plus#1] -- call_phi_close_cx16_ram 
+    lda #'1'
+    sta.z $ff
+    lda.z 0
+    pha
+    lda #1
+    sta.z 0
+    lda.z $ff
+    jsr plus
+    sta.z $ff
+    pla
+    sta.z 0
+    lda.z $ff
+    // [6] plus::return#1 = plus::return#2 -- vbuaa=vbuxx 
+    txa
+    jmp __b2
+    // main::@2
+  __b2:
+    // [7] main::$1 = plus::return#1
+    // [8] *(SCREEN+1) = main::$1 -- _deref_pbuc1=vbuaa 
+    // close call
+    sta SCREEN+1
+    jmp __breturn
+    // main::@return
+  __breturn:
+    // [9] return 
+    rts
+}
+.segment RAM_Bank1
+  // plus
+// __register(X) char plus(__register(A) char a, __register(X) char b)
+// __bank(cx16_ram, 1) 
+plus: {
+    // [11] add::a#0 = plus::a#2 -- vbuz1=vbuaa 
+    sta.z add.a
+    // [12] add::b#0 = plus::b#2 -- vbuaa=vbuxx 
+    txa
+    // [13] call add -- call_phi_far_cx16_ram 
+    jsr $ff6e
+    .byte <add
+    .byte >add
+    .byte 2
+    // [14] add::return#0 = add::return#1
+    jmp __b1
+    // plus::@1
+  __b1:
+    // [15] plus::return#2 = add::return#0 -- vbuxx=vbuaa 
+    tax
+    jmp __breturn
+    // plus::@return
+  __breturn:
+    // [16] return 
+    rts
+}
+.segment RAM_Bank2
+  // add
+// __register(A) char add(__zp(2) char a, __register(A) char b)
+// __bank(cx16_ram, 2) 
+add: {
+    .label a = 2
+    // [17] add::return#1 = add::a#0 + add::b#0 -- vbuaa=vbuz1_plus_vbuaa 
+    clc
+    adc.z a
+    jmp __breturn
+    // add::@return
+  __breturn:
+    // [18] return 
+    rts
+}
+  // File Data
+
+ASSEMBLER OPTIMIZATIONS
+Removing instruction jmp __b1
+Removing instruction jmp __b2
+Removing instruction jmp __breturn
+Removing instruction jmp __b1
+Removing instruction jmp __breturn
+Removing instruction jmp __breturn
+Succesful ASM optimization Pass5NextJumpElimination
+Removing instruction plus_from_main:
+Removing instruction __b1:
+Removing instruction plus_from___b1:
+Removing instruction __b2:
+Removing instruction __breturn:
+Removing instruction __b1:
+Removing instruction __breturn:
+Removing instruction __breturn:
+Succesful ASM optimization Pass5UnusedLabelElimination
+
+FINAL SYMBOL TABLE
+__constant char * const SCREEN = (char *) 1024
+__bank(cx16_ram, 2) char add(char a , char b)
+char add::a
+char add::a#0 // a zp[1]:2 56.0
+char add::b
+char add::b#0 // reg byte a 112.0
+char add::return
+char add::return#0 // reg byte a 22.0
+char add::return#1 // reg byte a 37.33333333333333
+void main()
+char main::$0 // reg byte a 4.0
+char main::$1 // reg byte a 4.0
+__bank(cx16_ram, 1) char plus(char a , char b)
+char plus::a
+char plus::a#2 // reg byte a 11.0
+char plus::b
+char plus::b#2 // reg byte x 5.5
+char plus::return
+char plus::return#0 // reg byte a 4.0
+char plus::return#1 // reg byte a 4.0
+char plus::return#2 // reg byte x 3.75
+
+reg byte a [ plus::a#2 ]
+reg byte x [ plus::b#2 ]
+reg byte a [ plus::return#0 ]
+reg byte a [ main::$0 ]
+reg byte a [ plus::return#1 ]
+reg byte a [ main::$1 ]
+zp[1]:2 [ add::a#0 ]
+reg byte a [ add::b#0 ]
+reg byte a [ add::return#0 ]
+reg byte x [ plus::return#2 ]
+reg byte a [ add::return#1 ]
+
+
+FINAL ASSEMBLER
+Score: 128
+
+  // File Comments
+/**
+ * @file call-banked-phi-case-5-far-0.c
+ * @author Sven Van de Velde (sven.van.de.velde@telenet.be), 
+ * @author Jesper Gravgaard
+ * @brief Test a procedure with calling convention PHI - case #5.
+ * Implementation using the __bank() directive.
+ * @version 0.1
+ * @date 2023-04-11
+ * 
+ * @copyright Copyright (c) 2023
+ * 
+ * The following cases exist in banked calling implementations:
+ * 
+ *   - case #1 - unbanked to unbanked and no banking areas
+ *   - case #2 - unbanked to banked to any bank area
+ *   - case #3 - banked to unbanked from any bank area
+ *   - case #4 - banked to same bank in same bank area
+ *   - case #5 - banked to different bank in same bank area
+ *   - case #6 - banked to any bank between different bank areas
+ * 
+ * This brings us to the call types:
+ * 
+ *   - near = case #1, #3, #4
+ *   - close = case #2, #6
+ *   - far = case #5 
+ * 
+ */
+  // Upstart
+  .file                               [name="call-banked-phi-case-5-far-0.prg", type="prg", segments="Program"]
+.segmentdef Program                 [segments="Basic, Code, Data"]
+.segmentdef Basic                   [start=$0801]
+.segmentdef Code                    [start=$80d]
+.segmentdef Data                    [startAfter="Code"]
+.segmentdef RAM_Bank1               [start=$A000, min=$A000, max=$BFFF, align=$100]
+.segmentdef RAM_Bank2               [start=$A000, min=$A000, max=$BFFF, align=$100]
+.segmentdef ROM_Bank1               [start=$C000, min=$C000, max=$FFFF, align=$100]
+.segment Basic
+:BasicUpstart(main)
+.segment Code
+.segment Data
+
+
+  // Global Constants & labels
+  .label SCREEN = $400
+.segment Code
+  // main
+main: {
+    // plus('0', 7)
+    // [1] call plus
+    // [10] phi from main to plus [phi:main->plus]
+    // [10] phi plus::b#2 = 7 [phi:main->plus#0] -- vbuxx=vbuc1 
+    ldx #7
+    // [10] phi plus::a#2 = '0' [phi:main->plus#1] -- call_phi_close_cx16_ram 
+    lda #'0'
+    sta.z $ff
+    lda.z 0
+    pha
+    lda #1
+    sta.z 0
+    lda.z $ff
+    jsr plus
+    sta.z $ff
+    pla
+    sta.z 0
+    lda.z $ff
+    // plus('0', 7)
+    // [2] plus::return#0 = plus::return#2 -- vbuaa=vbuxx 
+    txa
+    // main::@1
+    // [3] main::$0 = plus::return#0
+    // SCREEN[0] = plus('0', 7)
+    // [4] *SCREEN = main::$0 -- _deref_pbuc1=vbuaa 
+    sta SCREEN
+    // plus('1', 6)
+    // [5] call plus
+    // [10] phi from main::@1 to plus [phi:main::@1->plus]
+    // [10] phi plus::b#2 = 6 [phi:main::@1->plus#0] -- vbuxx=vbuc1 
+    ldx #6
+    // [10] phi plus::a#2 = '1' [phi:main::@1->plus#1] -- call_phi_close_cx16_ram 
+    lda #'1'
+    sta.z $ff
+    lda.z 0
+    pha
+    lda #1
+    sta.z 0
+    lda.z $ff
+    jsr plus
+    sta.z $ff
+    pla
+    sta.z 0
+    lda.z $ff
+    // plus('1', 6)
+    // [6] plus::return#1 = plus::return#2 -- vbuaa=vbuxx 
+    txa
+    // main::@2
+    // [7] main::$1 = plus::return#1
+    // SCREEN[1] = plus('1', 6)
+    // [8] *(SCREEN+1) = main::$1 -- _deref_pbuc1=vbuaa 
+    // close call
+    sta SCREEN+1
+    // main::@return
+    // }
+    // [9] return 
+    rts
+}
+.segment RAM_Bank1
+  // plus
+// __register(X) char plus(__register(A) char a, __register(X) char b)
+// __bank(cx16_ram, 1) 
+plus: {
+    // add(a, b)
+    // [11] add::a#0 = plus::a#2 -- vbuz1=vbuaa 
+    sta.z add.a
+    // [12] add::b#0 = plus::b#2 -- vbuaa=vbuxx 
+    txa
+    // [13] call add -- call_phi_far_cx16_ram 
+    jsr $ff6e
+    .byte <add
+    .byte >add
+    .byte 2
+    // [14] add::return#0 = add::return#1
+    // plus::@1
+    // [15] plus::return#2 = add::return#0 -- vbuxx=vbuaa 
+    tax
+    // plus::@return
+    // }
+    // [16] return 
+    rts
+}
+.segment RAM_Bank2
+  // add
+// __register(A) char add(__zp(2) char a, __register(A) char b)
+// __bank(cx16_ram, 2) 
+add: {
+    .label a = 2
+    // a+b
+    // [17] add::return#1 = add::a#0 + add::b#0 -- vbuaa=vbuz1_plus_vbuaa 
+    clc
+    adc.z a
+    // add::@return
+    // }
+    // [18] return 
+    rts
+}
+  // File Data
+

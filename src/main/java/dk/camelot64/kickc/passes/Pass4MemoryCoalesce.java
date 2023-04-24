@@ -53,6 +53,7 @@ public abstract class Pass4MemoryCoalesce extends Pass2Base {
       return
             canCoalesceNotEqual(ec1, ec2) &&
                   canCoalesceCompatible(ec1, ec2, program) &&
+                  canCoalesceSegments(ec1, ec2, program) &&
                   canCoalesceVolatile(ec1, ec2, program) &&
                   canCoalesceThreads(ec1, ec2, threadHeads, program) &&
                   canCoalesceClobber(ec1, ec2, unknownFragments, program);
@@ -67,6 +68,21 @@ public abstract class Pass4MemoryCoalesce extends Pass2Base {
     */
    private static boolean canCoalesceNotEqual(LiveRangeEquivalenceClass ec1, LiveRangeEquivalenceClass ec2) {
       return !ec1.equals(ec2);
+   }
+
+   /**
+    * Determines if two live range equivalence classes are candidates for coalescing by ensuring they are not from different data segments.
+    * @param ec1 One equivalence class
+    * @param ec2 Another equivalence class
+    * @param program The program
+    * @return True if the two equivalence classes can be coalesced into one without problems.
+    */
+   private static boolean canCoalesceSegments(LiveRangeEquivalenceClass ec1, LiveRangeEquivalenceClass ec2, Program program) {
+      final VariableRef variableRef1 = ec1.getVariables().get(0);
+      final String dataSegment1 = program.getScope().getVar(variableRef1).getDataSegment();
+      final VariableRef variableRef2 = ec2.getVariables().get(0);
+      final String dataSegment2 = program.getScope().getVar(variableRef2).getDataSegment();
+      return dataSegment1.equals(dataSegment2);
    }
 
    /**

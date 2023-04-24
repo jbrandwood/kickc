@@ -54,7 +54,7 @@ public interface AsmFragmentSignature {
     }
 
     /**
-     * ASM fragment signature for a conditional jump <code>if(A) goto B</code>.
+     * ASM fragment signature for a call
      */
     class Call implements AsmFragmentSignature {
 
@@ -67,6 +67,29 @@ public interface AsmFragmentSignature {
         @Override
         public String getName() {
             return "call_" + procedure.getName();
+        }
+    }
+
+    /**
+     * ASM fragment signature for a banked call
+     */
+    class CallBanked implements AsmFragmentSignature {
+
+        final private String callingConvention;
+
+        final private String callingDistance;
+
+        final private String toBankArea;
+
+        public CallBanked(String callingConvention, String callingDistance, String toBankArea) {
+            this.callingConvention = callingConvention;
+            this.callingDistance = callingDistance;
+            this.toBankArea = toBankArea;
+        }
+
+        @Override
+        public String getName() {
+            return "call_" + callingConvention + "_" + callingDistance + ((toBankArea==null)?"":("_"+toBankArea));
         }
     }
 

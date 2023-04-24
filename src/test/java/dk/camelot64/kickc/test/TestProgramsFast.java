@@ -767,6 +767,11 @@ public class TestProgramsFast extends TestPrograms {
       compileAndCompare("examples/cx16/cx16-rasterbars.c");
    }
 
+   //@Test
+   //public void testCx16Banking() throws IOException {
+   //   compileAndCompare("examples/cx16/banking/cx16-banking.c");
+   //}
+
    @Test
    public void testMega65Camelot1536Dots() throws IOException {
       compileAndCompare("examples/mega65/camelot-1536dots.c");
@@ -1515,6 +1520,83 @@ public class TestProgramsFast extends TestPrograms {
    public void testDeclaredMemoryVar0() throws IOException {
       compileAndCompare("declared-memory-var-0.c");
    }
+
+   @Test
+   public void testBankedPhiCase1Near0() throws IOException {
+      compileAndCompare("call-banked-phi-case-1-near-0.c");
+   }
+
+   @Test
+   public void testBankedPhiCase1Near1() throws IOException {
+      compileAndCompare("call-banked-phi-case-1-near-1.c");
+   }
+
+   @Test
+   public void testBankedPhiCase2Close0() throws IOException {
+      compileAndCompare("call-banked-phi-case-2-close-0.c");
+   }
+
+   @Test
+   public void testBankedPhiCase2Close1() throws IOException {
+      compileAndCompare("call-banked-phi-case-2-close-1.c");
+   }
+
+   @Test
+   public void testBankedPhiCase3Near0() throws IOException {
+      compileAndCompare("call-banked-phi-case-3-near-0.c");
+   }
+
+   @Test
+   public void testBankedPhiCase3Near1() throws IOException {
+      compileAndCompare("call-banked-phi-case-3-near-1.c");
+   }
+
+   @Test
+   public void testBankedPhiCase4Near0() throws IOException {
+      compileAndCompare("call-banked-phi-case-4-near-0.c");
+   }
+
+   @Test
+   public void testBankedPhiCase4Near1() throws IOException {
+      compileAndCompare("call-banked-phi-case-4-near-1.c");
+   }
+
+   @Test
+   public void testBankedPhiCase5Far0() throws IOException {
+      compileAndCompare("call-banked-phi-case-5-far-0.c");
+   }
+
+   @Test
+   public void testBankedPhiCase5Far1() throws IOException {
+      compileAndCompare("call-banked-phi-case-5-far-1.c");
+   }
+
+   @Test
+   public void testBankedPhiCase6Close0() throws IOException {
+      compileAndCompare("call-banked-phi-case-6-close-0.c");
+   }
+
+   @Test
+   public void testBankedPhiCase6Close1() throws IOException {
+      compileAndCompare("call-banked-phi-case-6-close-1.c");
+   }
+
+   @Test
+   public void testBankedPhiMemvars() throws IOException {
+      compileAndCompare("call-banked-phi-memvars.c");
+   }
+
+
+   @Test
+   public void testBankedStackCase2Close0() throws IOException {
+      assertError("call-banked-stack-case-2-close-0.c", "Stack Call procedure not supported in banked mode");
+   }
+
+   @Test
+   public void testBankedStackCase5Far0() throws IOException {
+      assertError("call-banked-stack-case-5-far-0.c", "Stack Call procedure not supported in banked mode");
+   }
+
 
    @Test
    public void testProcedureCallingConventionStack13() throws IOException {

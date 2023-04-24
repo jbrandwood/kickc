@@ -96,9 +96,6 @@ public class KickC implements Callable<Integer> {
    @CommandLine.Option(names = {"-Ocoalesce"}, description = "Optimization Option. Enables zero-page coalesce pass which limits zero-page usage significantly, but takes a lot of compile time.")
    private boolean optimizeZeroPageCoalesce = false;
 
-   @CommandLine.Option(names = {"-Ofastcoalesce"}, description = "Optimization Option. Enables zero-page only coalesce, which reduces compile time significantly, but with less coalesce optimimzation.")
-   private boolean optimizeFastCoalesce = false;
-
    @CommandLine.Option(names = {"-Onocoalesce"}, description = "Optimization Option. Disables coalesce completely, which reduces compile time significantly.")
    private boolean optimizeNoCoalesce = false;
 

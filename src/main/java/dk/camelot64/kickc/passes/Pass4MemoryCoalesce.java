@@ -156,7 +156,8 @@ public abstract class Pass4MemoryCoalesce extends Pass2Base {
       // Check the both registers are in memory
       if(!register1.isMem() || !register2.isMem())
          return false;
-      if(register1.getType() == Registers.RegisterType.MAIN_MEM)
+      // Check the both registers have the same type
+      if(!register1.getType().equals(register2.getType()))
          return false;
       // Check the both registers have the same size
       if(register1.getBytes() != register2.getBytes())

@@ -96,6 +96,9 @@ public class KickC implements Callable<Integer> {
    @CommandLine.Option(names = {"-Ocoalesce"}, description = "Optimization Option. Enables zero-page coalesce pass which limits zero-page usage significantly, but takes a lot of compile time.")
    private boolean optimizeZeroPageCoalesce = false;
 
+   @CommandLine.Option(names = {"-Onocoalesce"}, description = "Optimization Option. Disables coalesce completely, which reduces compile time significantly.")
+   private boolean optimizeNoCoalesce = false;
+
    @CommandLine.Option(names = {"-Oloophead"}, description = "Optimization Option. Enabled experimental loop-head constant pass which identifies loops where the condition is constant on the first iteration.")
    private boolean optimizeLoopHeadConstant = false;
 
@@ -319,6 +322,8 @@ public class KickC implements Callable<Integer> {
 
          if(optimizeZeroPageCoalesce)
             compiler.enableZeroPageCoalesce();
+         if(optimizeNoCoalesce)
+            compiler.disableCoalesce();
 
          if(optimizeLoopHeadConstant)
             compiler.enableLoopHeadConstant();

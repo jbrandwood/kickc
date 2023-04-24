@@ -757,6 +757,11 @@ public class TestProgramsFast extends TestPrograms {
    }
 
    @Test
+   public void testMemFast() throws IOException {
+      compileAndCompare("examples/memfast/memfast.c");
+   }
+
+   @Test
    public void testNesDxycp() throws IOException {
       compileAndCompare("examples/nes/nes-dxycp.c");
    }

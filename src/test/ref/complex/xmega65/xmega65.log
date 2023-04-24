@@ -1,4 +1,5 @@
 Loading link script "xmega65.ld"
+Inlined call call __init
 Eliminating unused variable with no statement memset::$2
 
 CONTROL FLOW GRAPH SSA
@@ -47,7 +48,7 @@ memset::@return: scope:[memset]  from memset::@1
   to:@return
 
 void main()
-main: scope:[main]  from __start
+main: scope:[main]  from __start::@1
   *VICII_MEMORY = $14
   memset::str#0 = (void *)SCREEN
   memset::c#0 = ' '
@@ -116,11 +117,15 @@ syscall2::@return: scope:[syscall2]  from syscall2
 
 void __start()
 __start: scope:[__start]  from
-  call main
+  to:__start::__init1
+__start::__init1: scope:[__start]  from __start
   to:__start::@1
-__start::@1: scope:[__start]  from __start
+__start::@1: scope:[__start]  from __start::__init1
+  call main
+  to:__start::@2
+__start::@2: scope:[__start]  from __start::@1
   to:__start::@return
-__start::@return: scope:[__start]  from __start::@1
+__start::@return: scope:[__start]  from __start::@2
   return 
   to:@return
 
@@ -281,7 +286,9 @@ Eliminating unused variable memset::return#3 and assignment [14] memset::return#
 Successful SSA optimization PassNEliminateUnusedVars
 Removing unused procedure __start
 Removing unused procedure block __start
+Removing unused procedure block __start::__init1
 Removing unused procedure block __start::@1
+Removing unused procedure block __start::@2
 Removing unused procedure block __start::@return
 Successful SSA optimization PassNEliminateEmptyStart
 Simple Condition main::$2 [20] if(*RASTER==$36) goto main::@5

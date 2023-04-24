@@ -5,7 +5,7 @@
 /// Implements similar functions as conio.h from CC65 for compatibility
 /// See https://github.com/cc65/cc65/blob/master/include/conio.h
 //
-/// Currently C64/PLUS4/VIC20 platforms are supported
+/// Currently CX16/C64/PLUS4/VIC20 platforms are supported
   // Commodore 64 PRG executable file
 .file [name="tod-1.prg", type="prg", segments="Program"]
 .segmentdef Program [segments="Basic, Code, Data"]

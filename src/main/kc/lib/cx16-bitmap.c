@@ -1,120 +1,159 @@
 // Plot and line drawing routines for HIRES bitmaps
 // Currently it can only plot on the first 256 x-positions.
 
+#include <cx16.h>
 #include <cx16-bitmap.h>
 #include <cx16-veralib.h>
 #include <multiply.h>
 
-// Tables for the plotter - initialized by calling bitmap_draw_init();
-const word  __bitmap_plot_x[640];
-const dword __bitmap_plot_y[480];
-const byte  __bitmap_plot_bitmask[640];
-const byte  __bitmap_plot_bitshift[640];
+typedef struct {
+    // Tables for the plotter - initialized by calling bitmap_draw_init();
+    unsigned int  plot_x[640];
+    unsigned long plot_y[480];
+    unsigned char  plot_bitmask[640];
+    unsigned char  plot_bitshift[640];
 
-__ma dword __bitmap_address = 0;
-__ma byte __bitmap_layer = 0;
-__ma byte __bitmap_hscale = 0;
-__ma byte __bitmap_vscale = 0;
-__ma byte __bitmap_color_depth = 0;
+    unsigned long address;
+    unsigned char layer;
+    unsigned char hscale;
+    unsigned char vscale;
+    unsigned char color_depth;
+} bitmap_t;
 
-word hdeltas[16] = {
+bitmap_t __bitmap;
+
+
+unsigned int hdeltas[16] = {
     0, 80, 40, 20,    // 1 BPP
     0, 160, 80, 40,   // 2 BPP
     0, 320, 160, 80,  // 4 BPP
     0, 640, 320, 160  // 8 BPP
     };
-const word vdeltas[4] = {0, 480, 240, 160};
-const byte bitmasks[5] = {$80, $C0, $F0, $FF};
-const signed byte bitshifts[5] = {7, 6, 4, 0};
+const unsigned int vdeltas[4] = {0, 480, 240, 160};
+const unsigned char bitmasks[5] = {0x80, 0xC0, 0xF0, 0xFF};
+const signed char bitshifts[5] = {7, 6, 4, 0};
+
+
+unsigned char bitmap_hscale()
+{
+    unsigned char hscale[4] = {0,128,64,32};
+    unsigned char scale = 0;
+    for(char s=1;s<=3;s++) {
+        if(*VERA_DC_HSCALE==hscale[s]) {
+            scale = s;
+            break;
+        }
+    }
+    return scale;
+}
+
+unsigned char bitmap_vscale()
+{
+    unsigned char vscale[4] = {0,128,64,32};
+    unsigned char scale = 0;
+    for(char s=1;s<=3;s++) {
+        if(*VERA_DC_VSCALE==vscale[s]) {
+            scale = s;
+            break;
+        }
+    }
+    return scale;
+}
 
 
 // Initialize the bitmap plotter tables for a specific bitmap
-void bitmap_init(byte layer, dword address) {
-    __bitmap_address = address;
-    __bitmap_layer = layer;
-    __bitmap_color_depth = vera_layer_get_color_depth(__bitmap_layer);
-    __bitmap_hscale = vera_display_get_hscale(); // Returns 1 when 640 and 2 when 320.
-    __bitmap_vscale = vera_display_get_vscale(); // Returns 1 when 480 and 2 when 240.
+void bitmap_init(unsigned char layer, unsigned char bank, unsigned int offset)
+{
+    __bitmap.address = MAKELONG(offset, bank);
+    __bitmap.layer = layer;
+    if(layer) {
+        __bitmap.color_depth = (*VERA_L1_CONFIG & VERA_LAYER_COLOR_DEPTH_MASK);
+    } else {
+        __bitmap.color_depth = (*VERA_L0_CONFIG & VERA_LAYER_COLOR_DEPTH_MASK);
+    }
+    __bitmap.hscale = bitmap_hscale(); // Returns 1 when 640 and 2 when 320, 3 when 160.
+    __bitmap.vscale = bitmap_vscale(); // Returns 1 when 480 and 2 when 240, 3 when 160.
 
-    byte bitmask = bitmasks[__bitmap_color_depth];
-    signed byte bitshift = bitshifts[__bitmap_color_depth];
+    unsigned char bitmask = bitmasks[__bitmap.color_depth];
+    signed char bitshift = bitshifts[__bitmap.color_depth];
 
-    for(word x : 0..639) {
+    for(unsigned int x=0; x<630; x++) {
         // 1 BPP
-        if(__bitmap_color_depth==0) {
-            __bitmap_plot_x[x] = (x >> 3);
-            __bitmap_plot_bitmask[x] = bitmask;
-            __bitmap_plot_bitshift[x] = (byte)bitshift;
+        if(__bitmap.color_depth==0) {
+            __bitmap.plot_x[x] = (x >> 3);
+            __bitmap.plot_bitmask[x] = bitmask;
+            __bitmap.plot_bitshift[x] = (unsigned char)bitshift;
             bitshift -= 1;
             bitmask >>= 1;
         }
         // 2 BPP
-        if(__bitmap_color_depth==1) {
-            __bitmap_plot_x[x] = (x >> 2);
-            __bitmap_plot_bitmask[x] = bitmask;
-            __bitmap_plot_bitshift[x] = (byte)bitshift;
+        if(__bitmap.color_depth==1) {
+            __bitmap.plot_x[x] = (x >> 2);
+            __bitmap.plot_bitmask[x] = bitmask;
+            __bitmap.plot_bitshift[x] = (unsigned char)bitshift;
             bitshift -= 2;
             bitmask >>= 2;
         }
         // 4 BPP
-        if(__bitmap_color_depth==2) {
-            __bitmap_plot_x[x] = (x >> 1);
-            __bitmap_plot_bitmask[x] = bitmask;
-            __bitmap_plot_bitshift[x] = (byte)bitshift;
+        if(__bitmap.color_depth==2) {
+            __bitmap.plot_x[x] = (x >> 1);
+            __bitmap.plot_bitmask[x] = bitmask;
+            __bitmap.plot_bitshift[x] = (unsigned char)bitshift;
             bitshift -= 4;
             bitmask >>= 4;
         }
         // 8 BPP
-        if(__bitmap_color_depth==3) {
-            __bitmap_plot_x[x] = x;
-            __bitmap_plot_bitmask[x] = bitmask;
-            __bitmap_plot_bitshift[x] = (byte)bitshift;
+        if(__bitmap.color_depth==3) {
+            __bitmap.plot_x[x] = x;
+            __bitmap.plot_bitmask[x] = bitmask;
+            __bitmap.plot_bitshift[x] = (unsigned char)bitshift;
         }
         if(bitshift<0) {
-            bitshift = bitshifts[__bitmap_color_depth];
+            bitshift = bitshifts[__bitmap.color_depth];
         }
         if(bitmask==0) {
-            bitmask = bitmasks[__bitmap_color_depth];
+            bitmask = bitmasks[__bitmap.color_depth];
         }
     }
 
     // This sets the right delta to skip a whole line based on the scale, depending on the color depth.
-    word hdelta = hdeltas[(__bitmap_color_depth<<2)+__bitmap_hscale];
-    // We start at the bitmap address; The plot_y contains the bitmap address embedded so we know where a line starts.
-    dword yoffs = __bitmap_address;
-    for(word y : 0..479) {
-        __bitmap_plot_y[y] = yoffs;
+    unsigned int hdelta = hdeltas[(__bitmap.color_depth<<2)+__bitmap.hscale];
+    // We start at the bitmap offset; The plot_y contains the bitmap offset embedded so we know where a line starts.
+    unsigned long yoffs = __bitmap.address;
+    for(unsigned int y=0; y<479; y++) {
+        __bitmap.plot_y[y] = yoffs;
         yoffs = yoffs + hdelta;
     }
 }
 
 // Clear all graphics on the bitmap
 void bitmap_clear() {
-    byte bitmask = bitmasks[__bitmap_color_depth];
-    word vdelta = vdeltas[__bitmap_vscale];
-    word hdelta = hdeltas[(__bitmap_color_depth<<2)+__bitmap_hscale];
-    dword count = mul16u(hdelta,vdelta);
-    char vbank = BYTE2(__bitmap_address);
-    void* vdest = (void*)   WORD0(__bitmap_address);
-    memset_vram(vbank, vdest, 0, count);
+    unsigned char bitmask = bitmasks[__bitmap.color_depth];
+    unsigned int vdelta = vdeltas[__bitmap.vscale];
+    unsigned int hdelta = hdeltas[(__bitmap.color_depth<<2)+__bitmap.hscale];
+    hdelta = hdelta >> 1;
+    unsigned int count = (unsigned int)mul16u(hdelta,vdelta);
+    vram_bank_t vbank = BYTE3(__bitmap.address);
+    vram_offset_t vdest = WORD0(__bitmap.address);
+    memset_vram(vbank, vdest, 0, count); // TODO: check this out if it still works properly.
 }
 
-void bitmap_plot(word x, word y, byte c) {
+void bitmap_plot(unsigned int x, unsigned int y, unsigned char c) {
     // Needs unsigned int arrays arranged as two underlying char arrays to allow char* plotter_x = plot_x[x]; - and eventually - char* plotter = plot_x[x] + plot_y[y];
-    dword plot_x = __bitmap_plot_x[x];
-    dword plot_y = __bitmap_plot_y[y];
-    dword plotter = plot_x+plot_y;
-    byte bitshift = __bitmap_plot_bitshift[x];
+    unsigned long plot_x = __bitmap.plot_x[x];
+    unsigned long plot_y = __bitmap.plot_y[y];
+    unsigned long plotter = plot_x+plot_y;
+    unsigned char bitshift = __bitmap.plot_bitshift[x];
     c = bitshift?c<<(bitshift):c;
-    vera_vram_address0(plotter,VERA_INC_0);
-    *VERA_DATA0 = (*VERA_DATA0 & ~__bitmap_plot_bitmask[x]) | c;
+    vera_vram_data0_address(plotter,VERA_INC_0);
+    *VERA_DATA0 = (*VERA_DATA0 & ~__bitmap.plot_bitmask[x]) | c;
 }
 
 
 // Draw a line on the bitmap
-void bitmap_line(word x0, word x1, word y0, word y1, byte c) {
-    word xd;
-    word yd;
+void bitmap_line(unsigned int x0, unsigned int x1, unsigned int y0, unsigned int y1, unsigned char c) {
+    unsigned int xd;
+    unsigned int yd;
     if(x0<x1) {
         xd = x1-x0;
         if(y0<y1) {
@@ -152,8 +191,8 @@ void bitmap_line(word x0, word x1, word y0, word y1, byte c) {
     }
 }
 
-void bitmap_line_xdyi(word x, word y, word x1, word xd, word yd,byte c) {
-  word e = yd>>1;
+void bitmap_line_xdyi(unsigned int x, unsigned int y, unsigned int x1, unsigned int xd, unsigned int yd,unsigned char c) {
+  unsigned int e = yd>>1;
   do  {
       bitmap_plot(x,y,c);
       x++;
@@ -165,8 +204,8 @@ void bitmap_line_xdyi(word x, word y, word x1, word xd, word yd,byte c) {
   } while (x!=(x1+1));
 }
 
-void bitmap_line_xdyd(word x, word y, word x1, word xd, word yd, byte c) {
-  word e = yd>>1;
+void bitmap_line_xdyd(unsigned int x, unsigned int y, unsigned int x1, unsigned int xd, unsigned int yd, unsigned char c) {
+  unsigned int e = yd>>1;
   do  {
       bitmap_plot(x,y,c);
       x++;
@@ -178,8 +217,8 @@ void bitmap_line_xdyd(word x, word y, word x1, word xd, word yd, byte c) {
   } while (x!=(x1+1));
 }
 
-void bitmap_line_ydxi(word y, word x, word y1, word yd, word xd, byte c) {
-  word e = xd>>1;
+void bitmap_line_ydxi(unsigned int y, unsigned int x, unsigned int y1, unsigned int yd, unsigned int xd, unsigned char c) {
+  unsigned int e = xd>>1;
   do  {
       bitmap_plot(x,y,c);
       y++;
@@ -191,8 +230,8 @@ void bitmap_line_ydxi(word y, word x, word y1, word yd, word xd, byte c) {
   } while (y!=(y1+1));
 }
 
-void bitmap_line_ydxd(word y, word x, word y1, word yd, word xd, byte c) {
-  word e = xd>>1;
+void bitmap_line_ydxd(unsigned int y, unsigned int x, unsigned int y1, unsigned int yd, unsigned int xd, unsigned char c) {
+  unsigned int e = xd>>1;
   do  {
       bitmap_plot(x,y,c);
       y = y++;

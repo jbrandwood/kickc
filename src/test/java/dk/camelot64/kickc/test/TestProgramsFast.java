@@ -1658,6 +1658,11 @@ public class TestProgramsFast extends TestPrograms {
 
 
    @Test
+   public void testBitmapCircleStandalone() throws IOException {
+      compileAndCompare("bitmap-circle-standalone.c");
+   }
+
+   @Test
    public void testBitmapCircle2() throws IOException {
       compileAndCompare("bitmap-circle-2.c");
    }

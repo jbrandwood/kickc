@@ -21,7 +21,7 @@ public class Pass1FixProcedureParamSegment extends Pass2SsaOptimization {
 
    @Override
    public boolean step() {
-      final Collection<Variable> allVariables = getScope().getAllVariables(true);
+      final Collection<Variable> allVariables = getProgramScope().getAllVariables(true);
       for(Variable variable : allVariables) {
          if(variable.isKindLoadStore() || variable.isKindPhiMaster() || variable.isKindIntermediate()) {
             if(variable.getRegister() instanceof Registers.RegisterMainMem registerMainMem && registerMainMem.isAddressHardcoded())

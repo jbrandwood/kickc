@@ -115,7 +115,7 @@ public class Pass4CodeGeneration {
                 currentScope = block.getScope();
                 if (program.isProcedureEntry(block)) {
                     Procedure procedure = program.getProcedure(block);
-                    currentCodeSegmentName = procedure.getCodeSegment();
+                    currentCodeSegmentName = procedure.getSegmentCode();
                 }
                 setCurrentSegment(currentCodeSegmentName, asm);
                 asm.startChunk(currentScope, null, block.getLabel().getFullName());
@@ -857,7 +857,7 @@ public class Pass4CodeGeneration {
             } else if (statement instanceof StatementCall) {
                 StatementCall call = (StatementCall) statement;
                 Procedure toProcedure = getScope().getProcedure(call.getProcedure());
-                Procedure fromProcedure = block.getProcedure(this.program); // We obtain from where the procedure is called, to validate the bank equality.
+                Procedure fromProcedure = program.getProcedure(block); // We obtain from where the procedure is called, to validate the bank equality.
                 if (toProcedure.isDeclaredIntrinsic()) {
                     if (Pass1ByteXIntrinsicRewrite.INTRINSIC_MAKELONG4.equals(toProcedure.getFullName())) {
                         AsmFragmentCodeGenerator.generateAsm(asm, AsmFragmentInstanceSpecBuilder.makelong4(call, program), program);
@@ -896,7 +896,7 @@ public class Pass4CodeGeneration {
                 if(procedureRef != null) {
                     ProgramScope scope = getScope();
                     Procedure toProcedure = scope.getProcedure(procedureRef);
-                    Procedure fromProcedure = block.getProcedure(this.program);
+                    Procedure fromProcedure = program.getProcedure(block);
                     final Bank.CallingDistance callingDistance = Bank.CallingDistance.forCall(fromProcedure.getBank(), toProcedure.getBank());
                     if(Bank.CallingDistance.NEAR.equals(callingDistance)) {
                         AsmFragmentCodeGenerator.generateAsm(asm, AsmFragmentInstanceSpecBuilder.call(call, indirectCallCount++, program), program);

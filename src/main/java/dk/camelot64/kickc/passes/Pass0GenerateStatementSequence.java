@@ -286,14 +286,10 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
             } catch(IllegalArgumentException e) {
                throw new CompileError("Unknown string encoding " + encodingName, new StatementSource(ctx));
             }
-            break;
-         case CParser.PRAGMA_CODE_SEG:
-            this.currentSegmentCode = pragmaParamName(pragmaParamSingle(ctx));
-            break;
-         case CParser.PRAGMA_DATA_SEG:
-            this.currentSegmentData = pragmaParamName(pragmaParamSingle(ctx));
-            break;
-         case CParser.PRAGMA_BANK:
+         }
+         case CParser.PRAGMA_CODE_SEG -> this.currentSegmentCode = pragmaParamName(pragmaParamSingle(ctx));
+         case CParser.PRAGMA_DATA_SEG -> this.currentSegmentData = pragmaParamName(pragmaParamSingle(ctx));
+         case CParser.PRAGMA_BANK -> {
             if(ctx.pragmaParam().size() != 2)
                throw new CompileError("#pragma expects two parameters!", new StatementSource(ctx));
             try {
@@ -303,10 +299,8 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
             } catch(IllegalArgumentException e) {
                throw new CompileError("Illegal bank parameter " + ctx.getText(), new StatementSource(ctx));
             }
-            break;
-         case CParser.PRAGMA_NOBANK:
-            this.currentBank = Bank.COMMON; // When the current segment is null, the procedure will not be declared as far.
-            break;
+         }
+         case CParser.PRAGMA_NOBANK -> this.currentBank = Bank.COMMON; // When the current segment is null, the procedure will not be declared as far.
          case CParser.PRAGMA_RESOURCE -> {
             String resourceFileName = pragmaParamString(pragmaParamSingle(ctx));
             addResourceFile(ctx, resourceFileName);
@@ -502,10 +496,8 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
     */
    private Procedure declareProcedure(boolean defineProcedure, ParserRuleContext ctx, StatementSource statementSource) {
 
-      Procedure procedure = new Procedure(varDecl.getVarName(), (SymbolTypeProcedure) varDecl.getEffectiveType(), program.getScope(), currentCodeSegment, currentDataSegment, currentCallingConvention);
-      addDirectives(procedure, varDecl.getDeclDirectives());
       Procedure procedure = new Procedure(varDecl.getVarName(), (SymbolTypeProcedure) varDecl.getEffectiveType(), program.getScope(), currentSegmentCode, currentSegmentData, currentCallingConvention, currentBank);
-      addDirectives(procedure, varDecl.getDeclDirectives(), statementSource);
+      addDirectives(procedure, varDecl.getDeclDirectives());
       // Check if the declaration matches any existing declaration!
       final Symbol existingSymbol = program.getScope().getSymbol(procedure.getRef());
       if(existingSymbol != null) {

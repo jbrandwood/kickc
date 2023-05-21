@@ -56,7 +56,7 @@ public class Compiler {
       return program;
    }
 
-   void setDisableUplift(boolean disableUplift) {
+   public void setDisableUplift(boolean disableUplift) {
       this.disableUplift = disableUplift;
    }
 

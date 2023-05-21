@@ -18,7 +18,6 @@
 #pragma link("pacman.ld")
 #pragma start_address(0x0810)
 #pragma interrupt(hardware_clobber)
-#pragma emulator("C64Debugger")
 #include <c64.h>
 #include <6502.h>
 #include <string.h>

@@ -1,6 +1,7 @@
 package dk.camelot64.kickc.passes;
 
 import dk.camelot64.kickc.model.ControlFlowBlock;
+import dk.camelot64.kickc.model.Graph;
 import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.statements.Statement;
 import dk.camelot64.kickc.model.statements.StatementCalling;
@@ -22,20 +23,20 @@ public class PassNEliminateUnusedConstructors extends Pass2SsaOptimization {
       boolean optimized = false;
       // Find all used constructors
       Set<ProcedureRef> allConstructors = new LinkedHashSet<>();
-      for(Procedure procedure : getScope().getAllProcedures(true)) {
+      for(Procedure procedure : getProgramScope().getAllProcedures(true)) {
          allConstructors.addAll(procedure.getConstructorRefs());
       }
 
-      Procedure startProc = getScope().getLocalProcedure(SymbolRef.START_PROC_NAME);
+      Procedure startProc = getProgramScope().getLocalProcedure(SymbolRef.START_PROC_NAME);
       if(startProc != null) {
          // find all constructor-calls in __init() pointing to unused constructors
          List<ProcedureRef> unusedConstructors = new ArrayList<>();
-         final List<ControlFlowBlock> startProcBlocks = getGraph().getScopeBlocks(startProc.getRef());
-         for(ControlFlowBlock block : startProcBlocks) {
+         final List<Graph.Block> startProcBlocks = getGraph().getScopeBlocks(startProc.getRef());
+         for(var block : startProcBlocks) {
             for(Statement statement : block.getStatements()) {
                if(statement instanceof StatementCalling) {
                   final ProcedureRef procedureRef = ((StatementCalling) statement).getProcedure();
-                  final Procedure procedure = getScope().getProcedure(procedureRef);
+                  final Procedure procedure = getProgramScope().getProcedure(procedureRef);
                   if(procedure.isConstructor()) {
                      // This is a constructor call!
                      if(!allConstructors.contains(procedureRef)) {

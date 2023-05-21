@@ -1,9 +1,7 @@
 package dk.camelot64.kickc.passes;
 
 import dk.camelot64.kickc.CompileLog;
-import dk.camelot64.kickc.model.CompileError;
-import dk.camelot64.kickc.model.ControlFlowBlock;
-import dk.camelot64.kickc.model.Program;
+import dk.camelot64.kickc.model.*;
 import dk.camelot64.kickc.model.statements.*;
 import dk.camelot64.kickc.model.symbols.Label;
 import dk.camelot64.kickc.model.symbols.Procedure;
@@ -13,7 +11,7 @@ import dk.camelot64.kickc.model.values.*;
 
 import java.util.*;
 
-/** Pass that eliminates constant if's - they are either removed (if false) or replaces the default successor (if true). */
+/** Pass that eliminates blocks that are not referenced. */
 public class Pass2EliminateUnusedBlocks extends Pass2SsaOptimization {
 
    public Pass2EliminateUnusedBlocks(Program program) {
@@ -24,15 +22,19 @@ public class Pass2EliminateUnusedBlocks extends Pass2SsaOptimization {
    public boolean step() {
       Set<LabelRef> referencedBlocks = getReferencedBlocks();
       Set<LabelRef> unusedBlocks = new LinkedHashSet<>();
-      for(ControlFlowBlock block : getGraph().getAllBlocks()) {
+      for(var block : getGraph().getAllBlocks()) {
          if(!referencedBlocks.contains(block.getLabel())) {
             unusedBlocks.add(block.getLabel());
+         }
+      }
+
+      for(var block : getGraph().getAllBlocks()) {
+         if(unusedBlocks.contains(block.getLabel())) {
             for(Statement stmt : block.getStatements()) {
-               if(stmt instanceof StatementLValue) {
-                  StatementLValue assignment = (StatementLValue) stmt;
+               if(stmt instanceof StatementLValue assignment) {
                   LValue lValue = assignment.getlValue();
                   if(lValue instanceof VariableRef) {
-                     Variable variable = getScope().getVariable((VariableRef) lValue);
+                     Variable variable = getProgramScope().getVariable((VariableRef) lValue);
                      if(variable.isKindPhiVersion() || variable.isKindIntermediate()) {
                         getLog().append("Eliminating variable " + lValue.toString(getProgram()) + " from unused block " + block.getLabel());
                         variable.getScope().remove(variable);
@@ -42,7 +44,7 @@ public class Pass2EliminateUnusedBlocks extends Pass2SsaOptimization {
                   for(StatementPhiBlock.PhiVariable phiVariable : ((StatementPhiBlock) stmt).getPhiVariables()) {
                      VariableRef phiVar = phiVariable.getVariable();
                      getLog().append("Eliminating variable " + phiVar.toString(getProgram()) + " from unused block " + block.getLabel());
-                     Variable variable = getScope().getVariable(phiVar);
+                     Variable variable = getProgramScope().getVariable(phiVar);
                      variable.getScope().remove(variable);
 
                   }
@@ -51,13 +53,15 @@ public class Pass2EliminateUnusedBlocks extends Pass2SsaOptimization {
          }
       }
 
-
       Set<LabelRef> removedBlocks = new HashSet<>();
       for(LabelRef unusedBlock : unusedBlocks) {
-         Symbol unusedSymbol = getScope().getSymbol(unusedBlock);
+         Symbol unusedSymbol = getProgramScope().getSymbol(unusedBlock);
          if(unusedSymbol instanceof Label) {
-            getGraph().remove(unusedBlock);
-            Label label = getScope().getLabel(unusedBlock);
+            final Procedure procedure = unusedSymbol.getScope().getContainingProcedure();
+            final ProcedureCompilation procedureCompilation = getProgram().getProcedureCompilation(procedure.getRef());
+            final ControlFlowGraph procedureGraph = procedureCompilation.getGraph();
+            procedureGraph.remove(unusedBlock);
+            Label label = getProgramScope().getLabel(unusedBlock);
             label.getScope().remove(label);
             removePhiRValues(unusedBlock, getProgram());
             removedBlocks.add(unusedBlock);
@@ -84,31 +88,19 @@ public class Pass2EliminateUnusedBlocks extends Pass2SsaOptimization {
    public static void removeProcedure(ProcedureRef procedureRef, Set<LabelRef> removedBlocks, Program program) {
       program.getLog().append("Removing unused procedure " + procedureRef);
       Procedure unusedProcedure = program.getScope().getProcedure(procedureRef);
-      List<ControlFlowBlock> procedureBlocks = program.getGraph().getScopeBlocks(procedureRef);
-      for(ControlFlowBlock procedureBlock : procedureBlocks) {
+      final ProcedureCompilation procedureCompilation = program.getProcedureCompilation(procedureRef);
+      final ControlFlowGraph procedureGraph = procedureCompilation.getGraph();
+      List<Graph.Block> procedureBlocks = new ArrayList<>(procedureGraph.getAllBlocks());
+      for(var procedureBlock : procedureBlocks) {
          LabelRef blockLabelRef = procedureBlock.getLabel();
          program.getLog().append("Removing unused procedure block " + blockLabelRef);
-         program.getGraph().remove(blockLabelRef);
+         procedureGraph.remove(blockLabelRef);
          removePhiRValues(blockLabelRef, program);
          removedBlocks.add(blockLabelRef);
       }
       unusedProcedure.getScope().remove(unusedProcedure);
    }
 
-   /**
-    * Get all referenced blocks in the entire program
-    *
-    * @return All blocks referenced
-    */
-   private Set<LabelRef> getReferencedBlocks() {
-      Set<LabelRef> referencedBlocks = new LinkedHashSet<>();
-      List<ControlFlowBlock> entryPointBlocks = getGraph().getEntryPointBlocks(getProgram());
-      for(ControlFlowBlock entryPointBlock : entryPointBlocks) {
-         findReferencedBlocks(entryPointBlock, referencedBlocks);
-      }
-
-      return referencedBlocks;
-   }
 
    /**
     * Remove all PHI RValues in any phi-statements referencing the passed block
@@ -116,7 +108,7 @@ public class Pass2EliminateUnusedBlocks extends Pass2SsaOptimization {
     * @param removeBlock The block to remove from PHI RValues
     */
    private static void removePhiRValues(LabelRef removeBlock, Program program) {
-      for(ControlFlowBlock block : program.getGraph().getAllBlocks()) {
+      for(var block : program.getGraph().getAllBlocks()) {
          removePhiRValues(removeBlock, block, program.getLog());
       }
    }
@@ -127,7 +119,7 @@ public class Pass2EliminateUnusedBlocks extends Pass2SsaOptimization {
     * @param removeBlock The block to remove from PHI RValues
     * @param block The block to modify
     */
-   public static void removePhiRValues(LabelRef removeBlock, ControlFlowBlock block, CompileLog log) {
+   public static void removePhiRValues(LabelRef removeBlock, Graph.Block block, CompileLog log) {
       if(block.hasPhiBlock()) {
          for(StatementPhiBlock.PhiVariable phiVariable : block.getPhiBlock().getPhiVariables()) {
             ListIterator<StatementPhiBlock.PhiRValue> phiRValueIt = phiVariable.getValues().listIterator();
@@ -143,12 +135,27 @@ public class Pass2EliminateUnusedBlocks extends Pass2SsaOptimization {
    }
 
    /**
+    * Get all referenced blocks in the entire program
+    *
+    * @return All blocks referenced
+    */
+   private Set<LabelRef> getReferencedBlocks() {
+      Set<LabelRef> referencedBlocks = new LinkedHashSet<>();
+      List<Graph.Block> entryPointBlocks = getProgram().getEntryPointBlocks();
+      for(var entryPointBlock : entryPointBlocks) {
+         findReferencedBlocks(entryPointBlock, referencedBlocks);
+      }
+
+      return referencedBlocks;
+   }
+
+   /**
     * Find all referenced block labels recursively
     *
     * @param block The block to add (inc. all blocks that this block calls or jumps to)
     * @param used The blocks already discovered (not examined again)
     */
-   private void findReferencedBlocks(ControlFlowBlock block, Set<LabelRef> used) {
+   private void findReferencedBlocks(Graph.Block block, Set<LabelRef> used) {
       if(block == null) {
          return;
       }

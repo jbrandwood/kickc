@@ -30,8 +30,8 @@ public class Pass3LoopDepthAnalysis extends Pass2Base {
       Deque<ScopeRef> todo = new ArrayDeque<>();
       Set<ScopeRef> done = new LinkedHashSet<>();
 
-      List<ControlFlowBlock> entryPointBlocks = getGraph().getEntryPointBlocks(getProgram());
-      for(ControlFlowBlock entryPointBlock : entryPointBlocks)
+      List<Graph.Block> entryPointBlocks = getProgram().getEntryPointBlocks();
+      for(var entryPointBlock : entryPointBlocks)
          todo.push(entryPointBlock.getScope());
 
       while(!todo.isEmpty()) {
@@ -66,7 +66,7 @@ public class Pass3LoopDepthAnalysis extends Pass2Base {
          for(CallGraph.CallBlock.Call call : calls) {
             // First look for loops containing the call
             int callStatementIdx = call.getCallStatementIdx();
-            ControlFlowBlock callingControlBlock = getProgram().getStatementInfos().getBlock(callStatementIdx);
+            Graph.Block callingControlBlock = getProgram().getStatementInfos().getBlock(callStatementIdx);
             Collection<NaturalLoop> callingLoops = loopSet.getLoopsContainingBlock(callingControlBlock.getLabel());
             for(NaturalLoop callingLoop : callingLoops) {
                Integer depth = callingLoop.getDepth();
@@ -95,7 +95,7 @@ public class Pass3LoopDepthAnalysis extends Pass2Base {
       List<NaturalLoop> currentScopeLoops = new ArrayList<>();
       for(NaturalLoop loop : loopSet.getLoops()) {
          LabelRef loopHead = loop.getHead();
-         ControlFlowBlock loopHeadBlock = getGraph().getBlock(loopHead);
+         Graph.Block loopHeadBlock = getGraph().getBlock(loopHead);
          ScopeRef scopeRef = PassNCalcCallGraph.getScopeRef(loopHeadBlock, getProgram());
          if(scopeRef.equals(currentScope)) {
             // Loop is inside current scope block!

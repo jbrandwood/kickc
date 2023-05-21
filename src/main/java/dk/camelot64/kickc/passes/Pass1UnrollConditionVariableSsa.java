@@ -1,6 +1,7 @@
 package dk.camelot64.kickc.passes;
 
 import dk.camelot64.kickc.model.ControlFlowBlock;
+import dk.camelot64.kickc.model.Graph;
 import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.VariableReferenceInfos;
 import dk.camelot64.kickc.model.statements.Statement;
@@ -26,21 +27,20 @@ public class Pass1UnrollConditionVariableSsa extends Pass2SsaOptimization {
 
    @Override
    public boolean step() {
-      for(ControlFlowBlock block : getGraph().getAllBlocks()) {
-         for(Statement statement : block.getStatements()) {
-            if(statement instanceof StatementConditionalJump) {
-               final StatementConditionalJump conditionalJump = (StatementConditionalJump) statement;
-               if(conditionalJump.isDeclaredUnroll()) {
-                  Collection<VariableRef> referencedVars = new LinkedHashSet<>();
-                  findAllReferencedVars(referencedVars, conditionalJump.getrValue1());
-                  findAllReferencedVars(referencedVars, conditionalJump.getrValue2());
-                  for(VariableRef referencedVar : referencedVars) {
-                     final Variable variable = getScope().getVariable(referencedVar);
-                     if(variable.isKindLoadStore()) {
-                        // Convert the variable to versioned if it is load/store
-                        getLog().append("Converting unrolled condition variable to single-static-assignment "+variable);
-                        variable.setKind(Variable.Kind.PHI_MASTER);
-                     }
+      for(var statement : getGraph().getAllStatements()) {
+         if (statement instanceof final StatementConditionalJump conditionalJump) {
+            if (conditionalJump.isDeclaredUnroll()) {
+               Collection<VariableRef> referencedVars = new LinkedHashSet<>();
+               findAllReferencedVars(referencedVars, conditionalJump.getrValue1());
+               findAllReferencedVars(referencedVars, conditionalJump.getrValue2());
+               for (VariableRef referencedVar : referencedVars) {
+                  final Variable variable = getProgramScope().getVariable(referencedVar);
+                  if (variable.isKindLoadStore()) {
+                     // Convert the variable to versioned if it is load/store
+                     getLog().append(
+                         "Converting unrolled condition variable to single-static-assignment "
+                             + variable);
+                     variable.setKind(Variable.Kind.PHI_MASTER);
                   }
                }
             }
@@ -60,7 +60,7 @@ public class Pass1UnrollConditionVariableSsa extends Pass2SsaOptimization {
       for(VariableRef varRef : directReferenced) {
          if(varRef.isIntermediate()) {
             // Found an intermediate variable - recurse to the definition
-            final List<VarAssignments.VarAssignment> varAssignments = VarAssignments.get(varRef, getGraph(), getScope());
+            final List<VarAssignments.VarAssignment> varAssignments = VarAssignments.get(varRef, getGraph(), getProgramScope());
             for(VarAssignments.VarAssignment varAssignment : varAssignments) {
                if(VarAssignments.VarAssignment.Type.STATEMENT_LVALUE.equals(varAssignment.type)) {
                   if(varAssignment.statementLValue instanceof StatementAssignment) {

@@ -26,7 +26,7 @@ public class Pass1AsmUsesHandling extends Pass2SsaOptimization {
             // Symbol used in inline ASM or KickAsm
             final Value value = programValue.get();
             if(value instanceof SymbolVariableRef) {
-               Variable variable = getScope().getVariable((SymbolVariableRef) value);
+               Variable variable = getProgramScope().getVariable((SymbolVariableRef) value);
                if(!variable.isKindConstant() && !variable.isVolatile()) {
                   final String stmtStr = currentStmt == null ? value.toString(getProgram()) : currentStmt.toString(getProgram(), false);
                   updateAddressOfVariable(variable, stmtStr);

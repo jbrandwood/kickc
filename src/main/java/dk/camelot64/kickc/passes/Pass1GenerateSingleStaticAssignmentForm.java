@@ -1,9 +1,7 @@
 package dk.camelot64.kickc.passes;
 
-import dk.camelot64.kickc.model.CompileError;
-import dk.camelot64.kickc.model.ControlFlowBlock;
+import dk.camelot64.kickc.model.*;
 import dk.camelot64.kickc.model.InternalError;
-import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.iterator.ProgramValue;
 import dk.camelot64.kickc.model.iterator.ProgramValueIterator;
 import dk.camelot64.kickc.model.statements.Statement;
@@ -51,20 +49,21 @@ public class Pass1GenerateSingleStaticAssignmentForm extends Pass1Base {
     * Version all non-versioned non-intermediary being assigned a value.
     */
    private void versionAllAssignments() {
-      for(ControlFlowBlock block : getGraph().getAllBlocks()) {
-         for(Statement statement : block.getStatements()) {
-            if(statement instanceof StatementLValue) {
-               StatementLValue statementLValue = (StatementLValue) statement;
-               LValue lValue = statementLValue.getlValue();
-               if(lValue instanceof VariableRef) {
-                  versionAssignment((VariableRef) lValue, new ProgramValue.ProgramValueLValue(statementLValue), statementLValue.getSource());
-               } else if(lValue instanceof ValueList) {
-                  List<RValue> lValueList = ((ValueList) lValue).getList();
-                  for(int i = 0; i < lValueList.size(); i++) {
-                     LValue lVal = (LValue) lValueList.get(i);
-                     if(lVal instanceof VariableRef) {
-                        versionAssignment((VariableRef) lVal, new ProgramValue.ProgramValueListElement((ValueList) lValue, i), statementLValue.getSource());
-                     }
+      for(var statement : getGraph().getAllStatements()) {
+         if (statement instanceof StatementLValue statementLValue) {
+            LValue lValue = statementLValue.getlValue();
+            if (lValue instanceof VariableRef) {
+               versionAssignment((VariableRef) lValue,
+                   new ProgramValue.ProgramValueLValue(statementLValue),
+                   statementLValue.getSource());
+            } else if (lValue instanceof ValueList) {
+               List<RValue> lValueList = ((ValueList) lValue).getList();
+               for (int i = 0; i < lValueList.size(); i++) {
+                  LValue lVal = (LValue) lValueList.get(i);
+                  if (lVal instanceof VariableRef) {
+                     versionAssignment((VariableRef) lVal,
+                         new ProgramValue.ProgramValueListElement((ValueList) lValue, i),
+                         statementLValue.getSource());
                   }
                }
             }
@@ -80,7 +79,7 @@ public class Pass1GenerateSingleStaticAssignmentForm extends Pass1Base {
     * @param source The statement source - usable for error messages
     */
    private void versionAssignment(VariableRef lValueRef, ProgramValue programLValue, StatementSource source) {
-      Variable assignedVar = getScope().getVariable(lValueRef);
+      Variable assignedVar = getProgramScope().getVariable(lValueRef);
       if(assignedVar.isKindPhiMaster()) {
          if(assignedVar.isVolatile())
             throw new InternalError("Error! Volatiles can not be versioned ", source);
@@ -93,7 +92,7 @@ public class Pass1GenerateSingleStaticAssignmentForm extends Pass1Base {
     * Version all uses of non-versioned non-intermediary variables
     */
    private void versionAllUses() {
-      for(ControlFlowBlock block : getGraph().getAllBlocks()) {
+      for(var block : getGraph().getAllBlocks()) {
          // Newest version of variables in the block.
          Map<Variable, Variable> blockVersions = new LinkedHashMap<>();
          // New phi functions introduced in the block to create versions of variables.
@@ -109,8 +108,7 @@ public class Pass1GenerateSingleStaticAssignmentForm extends Pass1Base {
                programValue.set(version.getRef());
             }
             // Update map of versions encountered in the block
-            if(currentStmt instanceof StatementLValue && programValue instanceof ProgramValue.ProgramValueLValue) {
-               StatementLValue statementLValue = (StatementLValue) currentStmt;
+            if(currentStmt instanceof StatementLValue statementLValue && programValue instanceof ProgramValue.ProgramValueLValue) {
                LValue lValue = statementLValue.getlValue();
                if(lValue instanceof VariableRef) {
                   updateBlockVersions((VariableRef) lValue, blockVersions);
@@ -132,7 +130,7 @@ public class Pass1GenerateSingleStaticAssignmentForm extends Pass1Base {
    }
 
    private void updateBlockVersions(VariableRef lValue, Map<Variable, Variable> blockVersions) {
-      Variable variable = Pass1GenerateSingleStaticAssignmentForm.this.getScope().getVariable(lValue);
+      Variable variable = Pass1GenerateSingleStaticAssignmentForm.this.getProgramScope().getVariable(lValue);
       if(variable.isKindPhiVersion()) {
          blockVersions.put(variable.getPhiMaster(), variable);
       }
@@ -153,7 +151,7 @@ public class Pass1GenerateSingleStaticAssignmentForm extends Pass1Base {
          Map<Variable, Variable> blockNewPhis) {
       Variable version = null;
       if(rValue instanceof VariableRef) {
-         Variable rValueVar = getScope().getVariable((VariableRef) rValue);
+         Variable rValueVar = getProgramScope().getVariable((VariableRef) rValue);
          if(rValueVar.isKindPhiMaster()) {
             // rValue needs versioning - look for version in statements
             Variable rSymbol = rValueVar;
@@ -192,7 +190,7 @@ public class Pass1GenerateSingleStaticAssignmentForm extends Pass1Base {
    private boolean completePhiFunctions() {
       Map<LabelRef, Map<Variable, Variable>> newPhis = new LinkedHashMap<>();
       Map<LabelRef, Map<Variable, Variable>> symbolMap = buildSymbolMap();
-      for(ControlFlowBlock block : getGraph().getAllBlocks()) {
+      for(var block : getGraph().getAllBlocks()) {
          for(Statement statement : block.getStatements()) {
 
             if(statement instanceof StatementPhiBlock) {
@@ -200,10 +198,10 @@ public class Pass1GenerateSingleStaticAssignmentForm extends Pass1Base {
                for(StatementPhiBlock.PhiVariable phiVariable : phiBlock.getPhiVariables()) {
                   if(phiVariable.isEmpty()) {
                      VariableRef phiLValVarRef = phiVariable.getVariable();
-                     Variable versioned = getScope().getVariable(phiLValVarRef);
+                     Variable versioned = getProgramScope().getVariable(phiLValVarRef);
                      Variable unversioned = versioned.getPhiMaster();
-                     List<ControlFlowBlock> predecessors = getPhiPredecessors(block, getProgram());
-                     for(ControlFlowBlock predecessor : predecessors) {
+                     List<Graph.Block> predecessors = getPhiPredecessors(block, getProgram());
+                     for(var predecessor : predecessors) {
                         LabelRef predecessorLabel = predecessor.getLabel();
                         Map<Variable, Variable> predecessorMap = symbolMap.get(predecessorLabel);
                         Variable previousSymbol = null;
@@ -232,7 +230,7 @@ public class Pass1GenerateSingleStaticAssignmentForm extends Pass1Base {
          }
       }
       // Ads new phi functions to blocks
-      for(ControlFlowBlock block : getGraph().getAllBlocks()) {
+      for(var block : getGraph().getAllBlocks()) {
          Map<Variable, Variable> blockNewPhis = newPhis.get(block.getLabel());
          if(blockNewPhis != null) {
             for(Variable symbol : blockNewPhis.keySet()) {
@@ -251,16 +249,16 @@ public class Pass1GenerateSingleStaticAssignmentForm extends Pass1Base {
     * @param block The block to examine
     * @return All predecessor blocks
     */
-   public static List<ControlFlowBlock> getPhiPredecessors(ControlFlowBlock block, Program program) {
-      List<ControlFlowBlock> predecessors = program.getGraph().getPredecessors(block);
+   public static List<Graph.Block> getPhiPredecessors(Graph.Block block, Program program) {
+      List<Graph.Block> predecessors = program.getGraph().getPredecessors(block);
       Symbol symbol = program.getScope().getSymbol(block.getLabel());
       if(symbol instanceof Procedure) {
          Procedure procedure = (Procedure) symbol;
          if(procedure.getInterruptType() != null || Pass2ConstantIdentification.isAddressOfUsed(procedure.getRef(), program)) {
             // Find all root-level predecessors to the main block
-            ControlFlowBlock mainBlock = program.getGraph().getBlock(new LabelRef(SymbolRef.MAIN_PROC_NAME));
-            List<ControlFlowBlock> mainPredecessors = program.getGraph().getPredecessors(mainBlock);
-            for(ControlFlowBlock mainPredecessor : mainPredecessors) {
+            Graph.Block mainBlock = program.getGraph().getBlock(new LabelRef(SymbolRef.MAIN_PROC_NAME));
+            List<Graph.Block> mainPredecessors = program.getGraph().getPredecessors(mainBlock);
+            for(var mainPredecessor : mainPredecessors) {
                if(mainPredecessor.getScope().equals(ScopeRef.ROOT)) {
                   predecessors.add(mainPredecessor);
                   throw new RuntimeException("W");
@@ -277,7 +275,7 @@ public class Pass1GenerateSingleStaticAssignmentForm extends Pass1Base {
     */
    private Map<LabelRef, Map<Variable, Variable>> buildSymbolMap() {
       Map<LabelRef, Map<Variable, Variable>> symbolMap = new LinkedHashMap<>();
-      for(ControlFlowBlock block : getGraph().getAllBlocks()) {
+      for(var block : getGraph().getAllBlocks()) {
          for(Statement statement : block.getStatements()) {
             if(statement instanceof StatementLValue) {
                StatementLValue assignment = (StatementLValue) statement;
@@ -293,9 +291,9 @@ public class Pass1GenerateSingleStaticAssignmentForm extends Pass1Base {
       return symbolMap;
    }
 
-   private void addSymbolToMap(LValue lValue, ControlFlowBlock block, Map<LabelRef, Map<Variable, Variable>> symbolMap) {
+   private void addSymbolToMap(LValue lValue, Graph.Block block, Map<LabelRef, Map<Variable, Variable>> symbolMap) {
       if(lValue instanceof VariableRef) {
-         Variable lValueVar = getScope().getVariable((VariableRef) lValue);
+         Variable lValueVar = getProgramScope().getVariable((VariableRef) lValue);
          if(lValueVar.isKindPhiVersion()) {
             Variable versioned = lValueVar;
             LabelRef label = block.getLabel();

@@ -16,6 +16,7 @@ import dk.camelot64.kickc.model.values.SymbolRef;
 import dk.camelot64.kickc.model.values.VariableRef;
 import dk.camelot64.kickc.passes.utils.AliasReplacer;
 
+import dk.camelot64.kickc.passes.utils.StatementsBetween;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashMap;
@@ -40,7 +41,7 @@ public class Pass2ConditionalJumpSimplification extends Pass2SsaOptimization {
          simpleConditionVars.add(simpleCondition.conditionVar);
       }
       removeAssignments(getGraph(), simpleConditionVars);
-      deleteSymbols(getScope(), simpleConditionVars);
+      deleteSymbols(getProgramScope(), simpleConditionVars);
       return (simpleConditionVars.size() > 0);
    }
 
@@ -65,33 +66,29 @@ public class Pass2ConditionalJumpSimplification extends Pass2SsaOptimization {
    private List<SimpleCondition> getSimpleConditionTodos() {
       final VariableReferenceInfos variableReferenceInfos = getProgram().getVariableReferenceInfos();
       List<SimpleCondition> todos = new ArrayList<>();
-      for(ControlFlowBlock block : getGraph().getAllBlocks()) {
-         for(Statement statement : block.getStatements()) {
-            if(statement instanceof StatementConditionalJump) {
-               StatementConditionalJump conditionalJump = (StatementConditionalJump) statement;
-               if(conditionalJump.getrValue1() == null && conditionalJump.getOperator() == null) {
-                  RValue conditionRValue = conditionalJump.getrValue2();
-                  if(conditionRValue instanceof VariableRef) {
-                     VariableRef conditionVar = (VariableRef) conditionRValue;
-                     final Collection<Integer> conditionRvalueUsages = variableReferenceInfos.getVarUseStatements(conditionVar);
-                     final Integer conditionDefineStmtIdx = variableReferenceInfos.getVarDefineStatement(conditionVar);
-                     if(conditionRvalueUsages.size() == 1 && conditionDefineStmtIdx != null) {
-                        final Statement conditionDefineStmt = getGraph().getStatementByIndex(conditionDefineStmtIdx);
-                        if(conditionDefineStmt instanceof StatementAssignment && ((StatementAssignment) conditionDefineStmt).getOperator() != null) {
-                           StatementAssignment conditionAssignment = (StatementAssignment) conditionDefineStmt;
-                           switch(conditionAssignment.getOperator().getOperator()) {
-                              case "==":
-                              case "<>":
-                              case "!=":
-                              case "<":
-                              case ">":
-                              case "<=":
-                              case "=<":
-                              case ">=":
-                              case "=>":
-                                 todos.add(new SimpleCondition(conditionalJump, conditionAssignment, conditionVar));
-                              default:
-                           }
+      for(var statement : getGraph().getAllStatements()) {
+         if(statement instanceof StatementConditionalJump conditionalJump) {
+            if(conditionalJump.getrValue1() == null && conditionalJump.getOperator() == null) {
+               RValue conditionRValue = conditionalJump.getrValue2();
+               if(conditionRValue instanceof VariableRef conditionVar) {
+                  final Collection<Integer> conditionRvalueUsages = variableReferenceInfos.getVarUseStatements(conditionVar);
+                  final Integer conditionDefineStmtIdx = variableReferenceInfos.getVarDefineStatement(conditionVar);
+                  if(conditionRvalueUsages.size() == 1 && conditionDefineStmtIdx != null) {
+                     final Statement conditionDefineStmt = getGraph().getStatementByIndex(conditionDefineStmtIdx);
+                     if(conditionDefineStmt instanceof StatementAssignment conditionAssignment
+                         && ((StatementAssignment) conditionDefineStmt).getOperator() != null) {
+                        switch(conditionAssignment.getOperator().getOperator()) {
+                           case "==":
+                           case "<>":
+                           case "!=":
+                           case "<":
+                           case ">":
+                           case "<=":
+                           case "=<":
+                           case ">=":
+                           case "=>":
+                              todos.add(new SimpleCondition(conditionalJump, conditionAssignment, conditionVar));
+                           default:
                         }
                      }
                   }
@@ -120,16 +117,16 @@ public class Pass2ConditionalJumpSimplification extends Pass2SsaOptimization {
          // Found referenced load/store variables
          // Examine all statements between the conditionAssignment and conditionalJump for modifications
          final StatementInfos statementInfos = getProgram().getStatementInfos();
-         Collection<Statement> statementsBetween = getGraph().getStatementsBetween(simpleCondition.conditionAssignment, simpleCondition.conditionalJump, statementInfos);
+         final Graph.Block conditionDefineBlock = statementInfos.getBlock(simpleCondition.conditionAssignment);
+         Collection<Statement> statementsBetween = StatementsBetween.find(simpleCondition.conditionAssignment, conditionDefineBlock, simpleCondition.conditionalJump, getGraph());
          for(Statement statementBetween : statementsBetween) {
             for(Variable referencedLoadStoreVariable : referencedLoadStoreVariables) {
                if(variableReferenceInfos.getDefinedVars(statementBetween).contains(referencedLoadStoreVariable.getVariableRef())) {
                   // A referenced load/store-variable is modified in a statement between the assignment and the condition!
                   getLog().append("Condition not simple " + simpleCondition.conditionVar.toString(getProgram()) + " " + simpleCondition.conditionalJump.toString(getProgram(), false));
                   // Create an intermediate variable copy of the load/store-variable at the position of the condition-variable to preserve the value
-                  final ControlFlowBlock conditionDefineBlock = statementInfos.getBlock(simpleCondition.conditionAssignment);
                   final ScopeRef conditionDefineScopeRef = conditionDefineBlock.getScope();
-                  final Scope conditionDefineScope = getScope().getScope(conditionDefineScopeRef);
+                  final Scope conditionDefineScope = getProgramScope().getScope(conditionDefineScopeRef);
                   SymbolType typeQualified = referencedLoadStoreVariable.getType().getQualified(false, referencedLoadStoreVariable.getType().isNomodify());
                   final Variable intermediateLoadStoreVar = VariableBuilder.createIntermediate(conditionDefineScope, typeQualified, getProgram());
                   final StatementAssignment intermediateLoadStoreAssignment = new StatementAssignment(intermediateLoadStoreVar.getVariableRef(), referencedLoadStoreVariable.getRef(), true, simpleCondition.conditionAssignment.getSource(), Comment.NO_COMMENTS);
@@ -168,7 +165,7 @@ public class Pass2ConditionalJumpSimplification extends Pass2SsaOptimization {
    private Collection<Variable> getReferencedLoadStoreVariables(RValue rValue) {
       return VariableReferenceInfos.getReferencedVars(rValue)
             .stream()
-            .map(variableRef -> getScope().getVariable(variableRef))
+            .map(variableRef -> getProgramScope().getVariable(variableRef))
             .filter(Variable::isKindLoadStore)
             .collect(Collectors.toList());
    }

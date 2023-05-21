@@ -33,7 +33,7 @@ public class Pass2LoopHeadConstantIdentification extends Pass2SsaOptimization {
       NaturalLoopSet loopSet = getProgram().getLoopSet();
       for(NaturalLoop loop : loopSet.getLoops()) {
          LabelRef loopHeadRef = loop.getHead();
-         ControlFlowBlock loopHeadBlock = getGraph().getBlock(loopHeadRef);
+         Graph.Block loopHeadBlock = getGraph().getBlock(loopHeadRef);
          boolean modified = optimizeLoopHead(loopHeadBlock, loop, variableReferenceInfos);
          if(modified) {
             getProgram().clearVariableReferenceInfos();
@@ -49,7 +49,7 @@ public class Pass2LoopHeadConstantIdentification extends Pass2SsaOptimization {
       return false;
    }
 
-   private boolean optimizeLoopHead(ControlFlowBlock loopHeadBlock, NaturalLoop loop, VariableReferenceInfos variableReferenceInfos) {
+   private boolean optimizeLoopHead(Graph.Block loopHeadBlock, NaturalLoop loop, VariableReferenceInfos variableReferenceInfos) {
       if(loopHeadBlock.getConditionalSuccessor() != null && loopHeadBlock.hasPhiBlock()) {
          // Find the variables used in the continue/end condition
          StatementConditionalJump condition = null;
@@ -142,7 +142,7 @@ public class Pass2LoopHeadConstantIdentification extends Pass2SsaOptimization {
             isVol.set(true);
          }
          if(programValue.get() instanceof VariableRef) {
-            Variable variable = getScope().getVariable((VariableRef) programValue.get());
+            Variable variable = getProgramScope().getVariable((VariableRef) programValue.get());
             if(variable.isVolatile())
                isVol.set(true);
          }

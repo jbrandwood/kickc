@@ -1,9 +1,6 @@
 package dk.camelot64.kickc.passes;
 
-import dk.camelot64.kickc.model.Comment;
-import dk.camelot64.kickc.model.ControlFlowBlock;
-import dk.camelot64.kickc.model.Program;
-import dk.camelot64.kickc.model.VariableReferenceInfos;
+import dk.camelot64.kickc.model.*;
 import dk.camelot64.kickc.model.operators.Operators;
 import dk.camelot64.kickc.model.statements.Statement;
 import dk.camelot64.kickc.model.statements.StatementAssignment;
@@ -31,15 +28,23 @@ public class Pass2ConditionalAndOrRewriting extends Pass2SsaOptimization {
 
    @Override
    public boolean step() {
+      boolean modified = false;
+      for(ProcedureCompilation procedureCompilation : getProgram().getProcedureCompilations()) {
+         modified |= findAndRewriteBooleanConditions(procedureCompilation.getGraph());
+      }
+      return modified;
+   }
+
+   private boolean findAndRewriteBooleanConditions(Graph graph) {
       boolean done = false;
       boolean modified = false;
       while(!done) {
-         VariableRef obsoleteConditionVar = findAndRewriteBooleanCondition();
+         VariableRef obsoleteConditionVar = findAndRewriteBooleanCondition(graph);
          if(obsoleteConditionVar != null) {
             Collection<VariableRef> obsoleteVars = new ArrayList<>();
             obsoleteVars.add(obsoleteConditionVar);
-            removeAssignments(getGraph(), obsoleteVars);
-            deleteSymbols(getScope(), obsoleteVars);
+            removeAssignments(graph, obsoleteVars);
+            deleteSymbols(getProgramScope(), obsoleteVars);
             modified = true;
          } else {
             done = true;
@@ -49,17 +54,17 @@ public class Pass2ConditionalAndOrRewriting extends Pass2SsaOptimization {
    }
 
    /**
-    * Look through the entire program looking for an if() condition that uses &&, || or !.
+    * Look through a control flow graph looking for an if() condition that uses &&, || or !.
     * When found rewrite it (adding blocks)
     *
     * @return Null if no condition was found to rewrite. The now obsolete variable containing the && / || / ! to be removed.
+    * @param graph The control flow graph to modify
     */
-   private VariableRef findAndRewriteBooleanCondition() {
+   private VariableRef findAndRewriteBooleanCondition(Graph graph) {
       final VariableReferenceInfos variableReferenceInfos = getProgram().getVariableReferenceInfos();
-      for(ControlFlowBlock block : getGraph().getAllBlocks()) {
+      for(var block : graph.getAllBlocks()) {
          for(Statement statement : block.getStatements()) {
-            if(statement instanceof StatementConditionalJump) {
-               StatementConditionalJump conditional = (StatementConditionalJump) statement;
+            if(statement instanceof StatementConditionalJump conditional) {
                if(conditional.getrValue1() == null && conditional.getOperator() == null) {
                   RValue conditionRValue = conditional.getrValue2();
                   if(conditionRValue instanceof VariableRef) {
@@ -68,16 +73,15 @@ public class Pass2ConditionalAndOrRewriting extends Pass2SsaOptimization {
                         VariableRef conditionVar = (VariableRef) conditionRValue;
                         final Integer conditionDefineStatementIdx = variableReferenceInfos.getVarDefineStatement(conditionVar);
                         if(conditionDefineStatementIdx != null) {
-                           final Statement conditionDefineStatement = getGraph().getStatementByIndex(conditionDefineStatementIdx);
-                           if(conditionDefineStatement instanceof StatementAssignment) {
-                              StatementAssignment conditionAssignment = (StatementAssignment) conditionDefineStatement;
+                           final Statement conditionDefineStatement = graph.getStatementByIndex(conditionDefineStatementIdx);
+                           if(conditionDefineStatement instanceof StatementAssignment conditionAssignment) {
                               if(Operators.LOGIC_AND.equals(conditionAssignment.getOperator())) {
                                  // Found if() with logical && condition - rewrite to if(c1) if(c2) { xx }
-                                 rewriteLogicAnd(block, conditional, conditionAssignment);
+                                 rewriteLogicAnd(block, conditional, conditionAssignment, graph);
                                  return conditionVar;
                               } else if(Operators.LOGIC_OR.equals(conditionAssignment.getOperator())) {
                                  // Found if() with logical || condition - rewrite to if(c1) goto x else if(c2) goto x else goto end, x:{ xx } end:
-                                 rewriteLogicOr(block, conditional, conditionAssignment);
+                                 rewriteLogicOr(block, conditional, conditionAssignment, graph);
                                  return conditionVar;
                               } else if(Operators.LOGIC_NOT.equals(conditionAssignment.getOperator())) {
                                  // Found if() with logical ! condition - rewrite to if(!c1) goto x else goto end, x:{ xx } end:
@@ -101,16 +105,17 @@ public class Pass2ConditionalAndOrRewriting extends Pass2SsaOptimization {
     * @param block The block containing the current if()
     * @param conditional The if()-statement
     * @param conditionAssignment The assignment defining the condition variable.
+    * @param graph The control flow graph to modify
     */
-   private void rewriteLogicAnd(ControlFlowBlock block, StatementConditionalJump conditional, StatementAssignment conditionAssignment) {
+   private void rewriteLogicAnd(Graph.Block block, StatementConditionalJump conditional, StatementAssignment conditionAssignment, Graph graph) {
       // Found an if with a logical && condition - rewrite to if(c1) if(c2) { xx }
       getLog().append("Rewriting && if()-condition to two if()s " + conditionAssignment.toString(getProgram(), false));
       ScopeRef currentScopeRef = block.getScope();
-      Scope currentScope = getScope().getScope(currentScopeRef);
+      Scope currentScope = getProgramScope().getScope(currentScopeRef);
       // Add a new block containing the second part of the && condition expression
       Label newBlockLabel = currentScope.addLabelIntermediate();
       ControlFlowBlock newBlock = new ControlFlowBlock(newBlockLabel.getRef(), currentScopeRef);
-      getGraph().addBlock(newBlock);
+      graph.addBlock(newBlock);
       LabelRef destLabel = conditional.getDestination();
       StatementConditionalJump newConditional = new StatementConditionalJump(conditionAssignment.getrValue2(), destLabel, conditional.getSource(), Comment.NO_COMMENTS);
       newConditional.setDeclaredUnroll(conditional.isDeclaredUnroll());
@@ -123,7 +128,7 @@ public class Pass2ConditionalAndOrRewriting extends Pass2SsaOptimization {
       conditional.setrValue2(conditionAssignment.getrValue1());
 
       // Replace the phi labels inside the destination block with the new block
-      ControlFlowBlock destBlock = getGraph().getBlock(destLabel);
+      Graph.Block destBlock = graph.getBlock(destLabel);
       LinkedHashMap<LabelRef, LabelRef> replacements = new LinkedHashMap<>();
       replacements.put(block.getLabel(), newBlockLabel.getRef());
       replaceLabels(destBlock.getPhiBlock(), replacements);
@@ -136,15 +141,16 @@ public class Pass2ConditionalAndOrRewriting extends Pass2SsaOptimization {
     * @param block The block containing the current if()
     * @param conditional The if()-statement
     * @param conditionAssignment The assignment defining the condition variable.
+    * @param graph The control flow graph to modify
     */
-   private void rewriteLogicOr(ControlFlowBlock block, StatementConditionalJump conditional, StatementAssignment conditionAssignment) {
+   private void rewriteLogicOr(Graph.Block block, StatementConditionalJump conditional, StatementAssignment conditionAssignment, Graph graph) {
       getLog().append("Rewriting || if()-condition to two if()s " + conditionAssignment.toString(getProgram(), false));
       ScopeRef currentScopeRef = block.getScope();
-      Scope currentScope = getScope().getScope(currentScopeRef);
+      Scope currentScope = getProgramScope().getScope(currentScopeRef);
       // Add a new block containing the second part of the && condition expression
       Label newBlockLabel = currentScope.addLabelIntermediate();
       ControlFlowBlock newBlock = new ControlFlowBlock(newBlockLabel.getRef(), currentScopeRef);
-      getGraph().addBlock(newBlock);
+      graph.addBlock(newBlock);
       StatementConditionalJump newConditional = new StatementConditionalJump(conditionAssignment.getrValue2(), conditional.getDestination(), conditional.getSource(), Comment.NO_COMMENTS);
       // Copy unrolling to the new conditional
       newConditional.setDeclaredUnroll(conditional.isDeclaredUnroll());
@@ -158,7 +164,7 @@ public class Pass2ConditionalAndOrRewriting extends Pass2SsaOptimization {
       conditional.setDeclaredUnroll(false);
 
       // Update the default destination PHI block to reflect the last of the conditions
-      ControlFlowBlock defaultDestBlock = getGraph().getBlock(newBlock.getDefaultSuccessor());
+      Graph.Block defaultDestBlock = graph.getBlock(newBlock.getDefaultSuccessor());
       if(defaultDestBlock.hasPhiBlock()) {
          StatementPhiBlock defaultDestPhiBlock = defaultDestBlock.getPhiBlock();
          for(StatementPhiBlock.PhiVariable phiVariable : defaultDestPhiBlock.getPhiVariables()) {
@@ -171,13 +177,13 @@ public class Pass2ConditionalAndOrRewriting extends Pass2SsaOptimization {
          }
       }
 
-      ControlFlowBlock conditionalDestBlock = getGraph().getBlock(conditional.getDestination());
+      Graph.Block conditionalDestBlock = graph.getBlock(conditional.getDestination());
       if(conditionalDestBlock.hasPhiBlock()) {
          StatementPhiBlock conditionalDestPhiBlock = conditionalDestBlock.getPhiBlock();
          for(StatementPhiBlock.PhiVariable phiVariable : conditionalDestPhiBlock.getPhiVariables()) {
             for(StatementPhiBlock.PhiRValue phiRValue : phiVariable.getValues()) {
                if(phiRValue.getPredecessor().equals(block.getLabel())) {
-                  // Found phi-variable with current block as predecessor - copy the phivalue for the new block
+                  // Found phi-variable with current block as predecessor - copy the phi-value for the new block
                   phiVariable.setrValue(newBlockLabel.getRef(), phiRValue.getrValue());
                   break;
                }
@@ -194,7 +200,7 @@ public class Pass2ConditionalAndOrRewriting extends Pass2SsaOptimization {
     * @param conditional The if()-statement
     * @param conditionAssignment The assignment defining the condition variable.
     */
-   private void rewriteLogicNot(ControlFlowBlock block, StatementConditionalJump conditional, StatementAssignment conditionAssignment) {
+   private void rewriteLogicNot(Graph.Block block, StatementConditionalJump conditional, StatementAssignment conditionAssignment) {
       getLog().append("Rewriting ! if()-condition to reversed if() " + conditionAssignment.toString(getProgram(), false));
       // Rewrite the conditional to use only the first part of the && condition expression
       LabelRef defaultSuccessor = block.getDefaultSuccessor();

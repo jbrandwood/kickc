@@ -34,22 +34,22 @@ public class PassNFinalizeNumberTypeConversions extends Pass2SsaOptimization {
          if(programValue.get() instanceof ConstantInteger) {
             ConstantInteger constantInteger = (ConstantInteger) programValue.get();
             if(SymbolType.UNUMBER.equals(constantInteger.getType())) {
-               SymbolType integerType = SymbolTypeConversion.getSmallestUnsignedFixedIntegerType(constantInteger, getScope());
+               SymbolType integerType = SymbolTypeConversion.getSmallestUnsignedFixedIntegerType(constantInteger, getProgramScope());
                programValue.set(new ConstantInteger(constantInteger.getValue(), integerType));
                getLog().append("Finalized unsigned number type (" + integerType + ") " + programValue.get().toString(getProgram()));
                modified.set(true);
             } else if(SymbolType.SNUMBER.equals(constantInteger.getType())) {
-               SymbolType integerType = SymbolTypeConversion.getSmallestSignedFixedIntegerType(constantInteger, getScope());
+               SymbolType integerType = SymbolTypeConversion.getSmallestSignedFixedIntegerType(constantInteger, getProgramScope());
                programValue.set(new ConstantInteger(constantInteger.getValue(), integerType));
                getLog().append("Finalized signed number type (" + integerType + ") " + programValue.get().toString(getProgram()));
                modified.set(true);
             } else if(finalizeAllNumbers && SymbolType.NUMBER.equals(constantInteger.getType()) && constantInteger.getValue() >= 0) {
-               SymbolType integerType = SymbolTypeConversion.getSmallestUnsignedFixedIntegerType(constantInteger, getScope());
+               SymbolType integerType = SymbolTypeConversion.getSmallestUnsignedFixedIntegerType(constantInteger, getProgramScope());
                programValue.set(new ConstantInteger(constantInteger.getValue(), integerType));
                getLog().append("Finalized unsigned number type (" + integerType + ") " + programValue.get().toString(getProgram()));
                modified.set(true);
             } else if(finalizeAllNumbers && SymbolType.NUMBER.equals(constantInteger.getType()) && constantInteger.getValue() <= 0) {
-               SymbolType integerType = SymbolTypeConversion.getSmallestSignedFixedIntegerType(constantInteger, getScope());
+               SymbolType integerType = SymbolTypeConversion.getSmallestSignedFixedIntegerType(constantInteger, getProgramScope());
                programValue.set(new ConstantInteger(constantInteger.getValue(), integerType));
                getLog().append("Finalized signed number type (" + integerType + ") " + programValue.get().toString(getProgram()));
                modified.set(true);
@@ -60,7 +60,7 @@ public class PassNFinalizeNumberTypeConversions extends Pass2SsaOptimization {
             if(SymbolType.UNUMBER.equals(toType)) {
                if(constantCastValue.getValue() instanceof ConstantRef) {
                   ConstantRef constRef = (ConstantRef) constantCastValue.getValue();
-                  Variable constant = getScope().getConstant(constRef);
+                  Variable constant = getProgramScope().getConstant(constRef);
                   if(constant.isKindIntermediate())
                      constant.setType(toType);
                   else
@@ -72,7 +72,7 @@ public class PassNFinalizeNumberTypeConversions extends Pass2SsaOptimization {
                   } catch (ConstantNotLiteral e) {
                      throw new InternalError("Cannot cast declared type!" + constantCastValue.toString());
                   }
-                  SymbolType smallestUnsigned = SymbolTypeConversion.getSmallestUnsignedFixedIntegerType(constantLiteral, getScope());
+                  SymbolType smallestUnsigned = SymbolTypeConversion.getSmallestUnsignedFixedIntegerType(constantLiteral, getProgramScope());
                   if(smallestUnsigned != null) {
                      constantCastValue.setToType(smallestUnsigned);
                   }
@@ -80,14 +80,14 @@ public class PassNFinalizeNumberTypeConversions extends Pass2SsaOptimization {
             } else if(SymbolType.SNUMBER.equals(toType)) {
                if(constantCastValue.getValue() instanceof ConstantRef) {
                   ConstantRef constRef = (ConstantRef) constantCastValue.getValue();
-                  Variable constant = getScope().getConstant(constRef);
+                  Variable constant = getProgramScope().getConstant(constRef);
                   if(constant.isKindIntermediate())
                      constant.setType(toType);
                   else
                      throw new InternalError("Cannot cast declared type!" + constant.toString());
                } else {
                   ConstantLiteral constantLiteral = constantCastValue.getValue().calculateLiteral(getProgram().getScope());
-                  SymbolType smallestSigned = SymbolTypeConversion.getSmallestSignedFixedIntegerType(constantLiteral, getScope());
+                  SymbolType smallestSigned = SymbolTypeConversion.getSmallestSignedFixedIntegerType(constantLiteral, getProgramScope());
                   if(smallestSigned != null) {
                      constantCastValue.setToType(smallestSigned);
                   }

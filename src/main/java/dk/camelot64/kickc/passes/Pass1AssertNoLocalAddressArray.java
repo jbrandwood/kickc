@@ -16,7 +16,7 @@ public class Pass1AssertNoLocalAddressArray extends Pass1Base {
 
    @Override
    public boolean step() {
-      for(Variable variable : getScope().getAllVars(true)) {
+      for(Variable variable : getProgramScope().getAllVars(true)) {
          if(!ScopeRef.ROOT.equals(variable.getScope().getRef()) && variable.isArray() && variable.getMemoryAddress()!=null)
             throw new CompileError("Error! Local array variables with __address() not allowed. "+variable.toString(getProgram()));
       }

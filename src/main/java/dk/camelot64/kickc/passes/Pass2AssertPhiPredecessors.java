@@ -2,6 +2,7 @@ package dk.camelot64.kickc.passes;
 
 import dk.camelot64.kickc.model.CompileError;
 import dk.camelot64.kickc.model.ControlFlowBlock;
+import dk.camelot64.kickc.model.Graph;
 import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.statements.StatementPhiBlock;
 import dk.camelot64.kickc.model.values.LabelRef;
@@ -18,12 +19,12 @@ public class Pass2AssertPhiPredecessors extends Pass2SsaAssertion {
 
    @Override
    public void check() throws AssertionFailed {
-      for(ControlFlowBlock block : getGraph().getAllBlocks()) {
+      for(var block : getGraph().getAllBlocks()) {
          if(block.hasPhiBlock()) {
             StatementPhiBlock phiBlock = block.getPhiBlock();
-            List<ControlFlowBlock> phiPredecessors = Pass1GenerateSingleStaticAssignmentForm.getPhiPredecessors(block, getProgram());
+            List<Graph.Block> phiPredecessors = Pass1GenerateSingleStaticAssignmentForm.getPhiPredecessors(block, getProgram());
             List<LabelRef> predecessors =
-                  phiPredecessors.stream().map(ControlFlowBlock::getLabel).collect(Collectors.toList());
+                  phiPredecessors.stream().map(Graph.Block::getLabel).toList();
             for(StatementPhiBlock.PhiVariable phiVariable : phiBlock.getPhiVariables()) {
                for(StatementPhiBlock.PhiRValue phiRValue : phiVariable.getValues()) {
                   if(!predecessors.contains(phiRValue.getPredecessor())) {

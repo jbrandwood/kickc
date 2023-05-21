@@ -5,6 +5,7 @@ import dk.camelot64.kickc.model.iterator.ProgramValue;
 import dk.camelot64.kickc.model.iterator.ProgramValueIterator;
 import dk.camelot64.kickc.model.statements.*;
 import dk.camelot64.kickc.model.symbols.Label;
+import dk.camelot64.kickc.model.symbols.Procedure;
 import dk.camelot64.kickc.model.symbols.Scope;
 import dk.camelot64.kickc.model.symbols.Variable;
 import dk.camelot64.kickc.model.values.*;
@@ -60,7 +61,7 @@ public class Unroller {
       prepare();
       if(program.getLog().isVerboseLoopUnroll()) {
          program.getLog().append("CONTROL FLOW GRAPH (PREPARED FOR LOOP HEAD UNROLL)");
-         program.getLog().append(program.getGraph().toString(program));
+         program.getLog().append(program.prettyControlFlowGraph());
       }
       // 1. Create new versions of all symbols assigned inside the loop
       this.varsOriginalToCopied = copyDefinedVars(unrollBlocks, program);
@@ -84,7 +85,7 @@ public class Unroller {
             reVersionAllUsages(origVarRef, newPhis, varVersions);
             if(program.getLog().isVerboseLoopUnroll()) {
                program.getLog().append("Created new versions for " + origVarRef );
-               //program.getLog().append(program.getGraph().toString(program));
+               //program.getLog().append(program.prettyControlFlowGraph());
             }
             // Recursively fill out & add PHI-functions until they have propagated everywhere needed
             completePhiFunctions(newPhis, varVersions);
@@ -102,7 +103,7 @@ public class Unroller {
    private void reVersionAllUsages(SymbolVariableRef origVarRef, Map<LabelRef, SymbolVariableRef> newPhis, Map<LabelRef, SymbolVariableRef> varVersions) {
 
       // First add the definition of origVar to varVersions
-      for(ControlFlowBlock block : program.getGraph().getAllBlocks()) {
+      for(var block : program.getGraph().getAllBlocks()) {
          for(Statement statement : block.getStatements()) {
             Collection<VariableRef> definedVars = PassNCalcVariableReferenceInfos.getDefinedVars(statement);
             if(definedVars.contains(origVarRef)) {
@@ -111,7 +112,7 @@ public class Unroller {
          }
       }
       // Next iterate the entire graph ensuring that all usages create new versions (except usages right after the definition)
-      for(ControlFlowBlock block : program.getGraph().getAllBlocks()) {
+      for(var block : program.getGraph().getAllBlocks()) {
          AtomicReference<SymbolVariableRef> currentVersion = new AtomicReference<>();
          // Set current version from map
          currentVersion.set(varVersions.get(block.getLabel()));
@@ -157,7 +158,7 @@ public class Unroller {
       }
       // Add the new empty PHI-blocks()
       for(LabelRef blockRef : newPhis.keySet()) {
-         ControlFlowBlock block = program.getGraph().getBlock(blockRef);
+         Graph.Block block = program.getGraph().getBlock(blockRef);
          SymbolVariableRef newVersion = newPhis.get(blockRef);
          block.getPhiBlock().addPhiVariable((VariableRef) newVersion);
       }
@@ -195,10 +196,10 @@ public class Unroller {
          todo = new LinkedHashMap<>();
          for(LabelRef blockRef : doing.keySet()) {
             SymbolVariableRef doingVarRef = doing.get(blockRef);
-            ControlFlowBlock block = program.getGraph().getBlock(blockRef);
+            Graph.Block block = program.getGraph().getBlock(blockRef);
             StatementPhiBlock.PhiVariable doingPhiVariable = block.getPhiBlock().getPhiVariable((VariableRef) doingVarRef);
-            List<ControlFlowBlock> predecessors = Pass1GenerateSingleStaticAssignmentForm.getPhiPredecessors(block, program);
-            for(ControlFlowBlock predecessor : predecessors) {
+            List<Graph.Block> predecessors = Pass1GenerateSingleStaticAssignmentForm.getPhiPredecessors(block, program);
+            for(var predecessor : predecessors) {
                SymbolVariableRef predecessorVarRef = varVersions.get(predecessor.getLabel());
                if(predecessorVarRef == null) {
                   // Variable has no version in the predecessor block - add a new PHI and populate later!
@@ -213,7 +214,7 @@ public class Unroller {
             }
          }
          //program.getLog().append("Completing PHI-functions...");
-         //program.getLog().append(program.getGraph().toString(program));
+         //program.getLog().append(program.prettyControlFlowGraph());
       }
    }
 
@@ -255,7 +256,7 @@ public class Unroller {
     */
    private static Map<LabelRef, LabelRef> copyBlockLabels(BlockSet unrollBlocks, Program program) {
       LinkedHashMap<LabelRef, LabelRef> blockToNewBlock = new LinkedHashMap<>();
-      for(ControlFlowBlock block : unrollBlocks.getBlocks(program.getGraph())) {
+      for(var block : unrollBlocks.getBlocks(program.getGraph())) {
          Scope blockScope = program.getScope().getScope(block.getScope());
          // Find the serial number
          int unrollSerial = 1;
@@ -281,11 +282,19 @@ public class Unroller {
     * - Rewrite transitions in both original and copy according to the strategy
     */
    private void unrollBlocks() {
-      for(ControlFlowBlock origBlock : unrollBlocks.getBlocks(program.getGraph())) {
+      for(var origBlock : unrollBlocks.getBlocks(program.getGraph())) {
          // Create the new block
          LabelRef newBlockLabel = blocksOriginalToCopied.get(origBlock.getLabel());
          ControlFlowBlock newBlock = new ControlFlowBlock(newBlockLabel, origBlock.getScope());
-         program.getGraph().addBlock(newBlock);
+
+         // Add the new graph to the appropriate procedure
+         final Procedure containingProcedure = program.getScope().getSymbol(origBlock.getLabel()).getContainingProcedure();
+         final ProcedureCompilation procedureCompilation = program.getProcedureCompilation(containingProcedure.getRef());
+         final List<Graph.Block> procedureBlocks = new ArrayList<>(procedureCompilation.getGraph().getAllBlocks());
+         procedureBlocks.add(newBlock);
+         procedureCompilation.setGraph(new ControlFlowGraph(procedureBlocks));
+
+
          for(Statement origStatement : origBlock.getStatements()) {
             Statement newStatement = unrollStatement(origStatement, origBlock.getLabel());
             newBlock.addStatement(newStatement);
@@ -356,7 +365,7 @@ public class Unroller {
     * @param newBlock The label of the newly created copy
     */
    private void patchSuccessorBlockPhi(LabelRef successor, LabelRef origBlock, LabelRef newBlock) {
-      ControlFlowBlock successorBlock = program.getGraph().getBlock(successor);
+      Graph.Block successorBlock = program.getGraph().getBlock(successor);
       StatementPhiBlock successorPhiBlock = successorBlock.getPhiBlock();
       for(StatementPhiBlock.PhiVariable phiVariable : successorPhiBlock.getPhiVariables()) {
          List<StatementPhiBlock.PhiRValue> phiRValues = phiVariable.getValues();
@@ -498,7 +507,7 @@ public class Unroller {
                   // Remove the phi entry into the original block since only the new block is hit
                   origPhiRValuesIt.remove();
                   // Update the successor in the predecessor block to point to the new copy
-                  ControlFlowBlock predecessorBlock = program.getGraph().getBlock(predecessor);
+                  Graph.Block predecessorBlock = program.getGraph().getBlock(predecessor);
                   LabelRef newBlock = blocksOriginalToCopied.get(origBlock);
                   if(origBlock.equals(predecessorBlock.getDefaultSuccessor())) {
                      predecessorBlock.setDefaultSuccessor(newBlock);
@@ -610,7 +619,7 @@ public class Unroller {
     */
    private static List<SuccessorTransition> getSuccessorTransitions(BlockSet blockSet, ControlFlowGraph graph) {
       List<SuccessorTransition> successorTransitions = new ArrayList<>();
-      for(ControlFlowBlock block : blockSet.getBlocks(graph)) {
+      for(var block : blockSet.getBlocks(graph)) {
          if(block.getDefaultSuccessor() != null && !blockSet.getBlocks().contains(block.getDefaultSuccessor())) {
             // Default successor is outside
             successorTransitions.add(new SuccessorTransition(block.getDefaultSuccessor(), block.getLabel()));
@@ -650,7 +659,7 @@ public class Unroller {
       StatementInfos statementInfos = program.getStatementInfos();
       Collection<Integer> varRefStatements = variableReferenceInfos.getVarRefStatements(variableRef);
       for(Integer varRefStatement : varRefStatements) {
-         ControlFlowBlock refBlock = statementInfos.getBlock(varRefStatement);
+         Graph.Block refBlock = statementInfos.getBlock(varRefStatement);
          if(!blockSet.getBlocks().contains(refBlock.getLabel())) {
             referencedOutside = true;
             break;
@@ -669,7 +678,7 @@ public class Unroller {
    private static List<VariableRef> getVarsDefinedIn(BlockSet blockSet, Program program) {
       VariableReferenceInfos variableReferenceInfos = program.getVariableReferenceInfos();
       List<VariableRef> definedInBlocks = new ArrayList<>();
-      for(ControlFlowBlock block : blockSet.getBlocks(program.getGraph())) {
+      for(var block : blockSet.getBlocks(program.getGraph())) {
          for(Statement statement : block.getStatements()) {
             Collection<VariableRef> definedVars = variableReferenceInfos.getDefinedVars(statement);
             definedInBlocks.addAll(definedVars);

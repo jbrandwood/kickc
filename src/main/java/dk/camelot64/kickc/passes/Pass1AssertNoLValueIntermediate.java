@@ -2,6 +2,7 @@ package dk.camelot64.kickc.passes;
 
 import dk.camelot64.kickc.model.CompileError;
 import dk.camelot64.kickc.model.ControlFlowBlock;
+import dk.camelot64.kickc.model.Graph;
 import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.statements.Statement;
 import dk.camelot64.kickc.model.statements.StatementLValue;
@@ -23,16 +24,14 @@ public class Pass1AssertNoLValueIntermediate extends Pass1Base {
 
    @Override
    public boolean step() {
-      for(ControlFlowBlock block : getGraph().getAllBlocks()) {
-         for(Statement statement : block.getStatements()) {
-            if(statement instanceof StatementLValue) {
-               LValue lValue = ((StatementLValue) statement).getlValue();
-               if(lValue instanceof LvalueIntermediate) {
-                  VariableRef intermediateVar = ((LvalueIntermediate) lValue).getVariable();
-                  final List<VarAssignments.VarAssignment> varAssignments = VarAssignments.get(intermediateVar, getGraph(), getScope());
-                  final VarAssignments.VarAssignment varAssignment = varAssignments.get(0);
-                  throw new CompileError("LValue is illegal. " + statement + " - definition of lValue " + varAssignment, varAssignment.getSource());
-               }
+      for(var statement : getGraph().getAllStatements()) {
+         if(statement instanceof StatementLValue) {
+            LValue lValue = ((StatementLValue) statement).getlValue();
+            if(lValue instanceof LvalueIntermediate) {
+               VariableRef intermediateVar = ((LvalueIntermediate) lValue).getVariable();
+               final List<VarAssignments.VarAssignment> varAssignments = VarAssignments.get(intermediateVar, getGraph(), getProgramScope());
+               final VarAssignments.VarAssignment varAssignment = varAssignments.get(0);
+               throw new CompileError("LValue is illegal. " + statement + " - definition of lValue " + varAssignment, varAssignment.getSource());
             }
          }
       }

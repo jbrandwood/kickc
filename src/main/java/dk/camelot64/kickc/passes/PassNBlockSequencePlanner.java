@@ -1,7 +1,7 @@
 package dk.camelot64.kickc.passes;
 
-import dk.camelot64.kickc.model.ControlFlowBlock;
-import dk.camelot64.kickc.model.Program;
+import dk.camelot64.kickc.model.*;
+import dk.camelot64.kickc.model.symbols.Procedure;
 import dk.camelot64.kickc.model.symbols.Scope;
 import dk.camelot64.kickc.model.values.LabelRef;
 
@@ -19,15 +19,15 @@ public class PassNBlockSequencePlanner extends Pass2SsaOptimization {
    @Override
    public boolean step() {
 
-      List<ControlFlowBlock> entryPointBlocks = getGraph().getEntryPointBlocks(getProgram());
+      List<Graph.Block> entryPointBlocks = getProgram().getEntryPointBlocks();
 
-      for(ControlFlowBlock entryPointBlock : entryPointBlocks) {
+      for(var entryPointBlock : entryPointBlocks) {
          pushTodo(entryPointBlock);
       }
 
       List<LabelRef> sequence = new ArrayList<>();
       while(hasTodo()) {
-         ControlFlowBlock block = popTodo();
+         Graph.Block block = popTodo();
          if(block == null) {
             break;
          }
@@ -39,8 +39,8 @@ public class PassNBlockSequencePlanner extends Pass2SsaOptimization {
          if(block.getCallSuccessor() != null) {
             pushCallTodo(getGraph().getCallSuccessor(block));
          }
-         ControlFlowBlock conditionalSuccessor = getGraph().getConditionalSuccessor(block);
-         ControlFlowBlock defaultSuccessor = getGraph().getDefaultSuccessor(block);
+         Graph.Block conditionalSuccessor = getGraph().getConditionalSuccessor(block);
+         Graph.Block defaultSuccessor = getGraph().getDefaultSuccessor(block);
          if(conditionalSuccessor != null && defaultSuccessor != null) {
             // Both conditional and default successor
             if(conditionalSuccessor.getDefaultSuccessor().equals(defaultSuccessor.getLabel())) {
@@ -61,7 +61,7 @@ public class PassNBlockSequencePlanner extends Pass2SsaOptimization {
          }
 
       }
-      getGraph().setSequence(sequence);
+      setSequence(sequence);
 
       if(getLog().isVerboseSequencePlan()) {
          StringBuilder entry = new StringBuilder();
@@ -77,9 +77,38 @@ public class PassNBlockSequencePlanner extends Pass2SsaOptimization {
 
    }
 
-   void pushTodo(ControlFlowBlock block) {
+   public void setSequence(List<LabelRef> sequence) {
+      if(sequence.size() != getGraph().getAllBlocks().size()) {
+         throw new CompileError("ERROR! Sequence does not contain all blocks from the program. Sequence: " + sequence.size() + " Blocks: " + getGraph().getAllBlocks().size());
+      }
+
+      // First re-order the procedureCompilations
+      List<ProcedureCompilation> updatedProgramSequence = new ArrayList<>();
+      for(LabelRef labelRef : sequence) {
+         final Procedure procedure = getProgramScope().getSymbol(labelRef).getContainingProcedure();
+         final ProcedureCompilation procedureCompilation = getProgram().getProcedureCompilation(procedure.getRef());
+         if(!updatedProgramSequence.contains(procedureCompilation)) {
+            updatedProgramSequence.add(procedureCompilation);
+         }
+      }
+      getProgram().setProcedureCompilations(updatedProgramSequence);
+
+      // Now re-order the blocks for each procedure
+      for(var procedureCompilation : getProgram().getProcedureCompilations()) {
+         final ControlFlowGraph procedureGraph = procedureCompilation.getGraph();
+         final List<LabelRef> procedureLabels = procedureGraph.getAllBlocks().stream().map(Graph.Block::getLabel).toList();
+         final List<Graph.Block> updatedProcedureSequence = sequence.stream().filter(procedureLabels::contains).map(procedureGraph::getBlock).toList();
+         if(updatedProcedureSequence.size() != procedureGraph.getAllBlocks().size()) {
+            throw new CompileError("ERROR! Sequence does not contain all blocks for "+procedureCompilation.getProcedureRef()+". Sequence: " + updatedProcedureSequence.size() + " Blocks: " + procedureGraph.getAllBlocks().size());
+         }
+         procedureCompilation.setGraph(new ControlFlowGraph(updatedProcedureSequence));
+      }
+
+   }
+
+   void pushTodo(Graph.Block block) {
       LabelRef blockRef = block.getLabel();
-      Scope blockScope = getScope().getSymbol(blockRef).getScope();
+      Scope blockScope = getProgramScope().getSymbol(blockRef).getScope();
       for(ScopeTodo todoScope : todoScopes) {
          if(todoScope.scope.equals(blockScope)) {
             todoScope.pushTodo(block);
@@ -91,9 +120,9 @@ public class PassNBlockSequencePlanner extends Pass2SsaOptimization {
       newScopeTodo.pushTodo(block);
    }
 
-   void pushCallTodo(ControlFlowBlock block) {
+   void pushCallTodo(Graph.Block block) {
       LabelRef blockRef = block.getLabel();
-      Scope blockScope = getScope().getSymbol(blockRef).getScope();
+      Scope blockScope = getProgramScope().getSymbol(blockRef).getScope();
       for(ScopeTodo todoScope : todoScopes) {
          if(todoScope.scope.equals(blockScope)) {
             todoScope.addTodo(block);
@@ -115,9 +144,9 @@ public class PassNBlockSequencePlanner extends Pass2SsaOptimization {
       return !todoScopes.isEmpty();
    }
 
-   ControlFlowBlock popTodo() {
+   Graph.Block popTodo() {
       ScopeTodo scopeTodo = todoScopes.peek();
-      ControlFlowBlock block = scopeTodo.todo.pop();
+      Graph.Block block = scopeTodo.todo.pop();
       if(scopeTodo.todo.isEmpty()) {
          todoScopes.pop();
       }
@@ -128,18 +157,18 @@ public class PassNBlockSequencePlanner extends Pass2SsaOptimization {
 
       Scope scope;
 
-      Deque<ControlFlowBlock> todo;
+      Deque<Graph.Block> todo;
 
       public ScopeTodo(Scope scope) {
          this.scope = scope;
          this.todo = new LinkedList<>();
       }
 
-      public void pushTodo(ControlFlowBlock block) {
+      public void pushTodo(Graph.Block block) {
          todo.addFirst(block);
       }
 
-      public void addTodo(ControlFlowBlock block) {
+      public void addTodo(Graph.Block block) {
          todo.addLast(block);
       }
 

@@ -2,7 +2,7 @@ package dk.camelot64.kickc.passes;
 
 import dk.camelot64.kickc.model.ConstantNotLiteral;
 import dk.camelot64.kickc.model.ControlFlowBlock;
-import dk.camelot64.kickc.model.InternalError;
+import dk.camelot64.kickc.model.Graph;
 import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.operators.Operator;
 import dk.camelot64.kickc.model.operators.OperatorBinary;
@@ -35,7 +35,7 @@ public class Pass2ConstantIfs extends Pass2SsaOptimization {
    public boolean step() {
       boolean modified = false;
 
-      for(ControlFlowBlock block : getGraph().getAllBlocks()) {
+      for(var block : getGraph().getAllBlocks()) {
          ListIterator<Statement> stmtIt = block.getStatements().listIterator();
          while(stmtIt.hasNext()) {
             Statement statement = stmtIt.next();
@@ -85,15 +85,15 @@ public class Pass2ConstantIfs extends Pass2SsaOptimization {
          // If all values are constant find the literal condition value
          if(conditional.getrValue1() == null && operator == null && constValue2 != null) {
             // Constant condition
-            return constValue2.calculateLiteral(getScope());
+            return constValue2.calculateLiteral(getProgramScope());
          } else if(conditional.getrValue1() == null && operator != null && constValue2 != null) {
             // Constant unary condition
             ConstantValue constVal = Pass2ConstantIdentification.createUnary((OperatorUnary) operator, constValue2);
-            return constVal.calculateLiteral(getScope());
+            return constVal.calculateLiteral(getProgramScope());
          } else if(constValue1 != null && operator != null && constValue2 != null) {
             // Constant binary condition
-            ConstantValue constVal = Pass2ConstantIdentification.createBinary(constValue1, (OperatorBinary) operator, constValue2, getScope());
-            return constVal.calculateLiteral(getScope());
+            ConstantValue constVal = Pass2ConstantIdentification.createBinary(constValue1, (OperatorBinary) operator, constValue2, getProgramScope());
+            return constVal.calculateLiteral(getProgramScope());
          }
 
       } catch(ConstantNotLiteral e) {
@@ -183,7 +183,7 @@ public class Pass2ConstantIfs extends Pass2SsaOptimization {
       ConstantValue constValue = Pass2ConstantIdentification.getConstant(rValue);
       if(constValue != null) {
          try {
-            ConstantLiteral constantLiteral = constValue.calculateLiteral(getScope());
+            ConstantLiteral constantLiteral = constValue.calculateLiteral(getProgramScope());
             if(constantLiteral instanceof ConstantInteger) {
                Long value = ((ConstantInteger) constantLiteral).getInteger();
                return new IntValueInterval(value, value);
@@ -193,7 +193,7 @@ public class Pass2ConstantIfs extends Pass2SsaOptimization {
          }
       }
       // Not constant - find the interval of the type
-      SymbolType symbolType = SymbolTypeInference.inferType(getScope(), rValue);
+      SymbolType symbolType = SymbolTypeInference.inferType(getProgramScope(), rValue);
       if(symbolType instanceof SymbolTypeIntegerFixed) {
          SymbolTypeIntegerFixed typeIntegerFixed = (SymbolTypeIntegerFixed) symbolType;
          return new IntValueInterval(typeIntegerFixed.getMinValue(), typeIntegerFixed.getMaxValue());

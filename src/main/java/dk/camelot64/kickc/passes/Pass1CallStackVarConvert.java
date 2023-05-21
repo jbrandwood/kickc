@@ -1,9 +1,6 @@
 package dk.camelot64.kickc.passes;
 
-import dk.camelot64.kickc.model.Comment;
-import dk.camelot64.kickc.model.CompileError;
-import dk.camelot64.kickc.model.ControlFlowBlock;
-import dk.camelot64.kickc.model.Program;
+import dk.camelot64.kickc.model.*;
 import dk.camelot64.kickc.model.statements.*;
 import dk.camelot64.kickc.model.symbols.Procedure;
 import dk.camelot64.kickc.model.types.SymbolType;
@@ -24,14 +21,14 @@ public class Pass1CallStackVarConvert extends Pass2SsaOptimization {
    public boolean step() {
 
       // Transform STACK_CALL/VAR_CALL calls to call-prepare, call-execute, call-finalize
-      for(ControlFlowBlock block : getGraph().getAllBlocks()) {
+      for(var block : getGraph().getAllBlocks()) {
          ListIterator<Statement> stmtIt = block.getStatements().listIterator();
          while(stmtIt.hasNext()) {
             Statement statement = stmtIt.next();
             if(statement instanceof StatementCall) {
                StatementCall call = (StatementCall) statement;
                ProcedureRef procedureRef = call.getProcedure();
-               Procedure procedure = getScope().getProcedure(procedureRef);
+               Procedure procedure = getProgramScope().getProcedure(procedureRef);
                Procedure.CallingConvention callingConvention = procedure.getCallingConvention();
                if(Procedure.CallingConvention.STACK_CALL.equals(callingConvention) || Procedure.CallingConvention.VAR_CALL.equals(callingConvention)) {
                   boolean hasParamOrReturn = (call.getParameters().size() > 0) || !SymbolType.VOID.equals(procedure.getReturnType());
@@ -45,7 +42,7 @@ public class Pass1CallStackVarConvert extends Pass2SsaOptimization {
                StatementCallPointer call = (StatementCallPointer) statement;
                boolean hasParamOrReturn = call.getNumParameters() > 0 || call.getlValue() != null;
                //if(hasParamOrReturn) {
-               final SymbolType procType = SymbolTypeInference.inferType(getScope(), call.getProcedure());
+               final SymbolType procType = SymbolTypeInference.inferType(getProgramScope(), call.getProcedure());
                if(!(procType instanceof SymbolTypeProcedure)) {
                   throw new CompileError("Called object is not a function or function pointer "+call.getProcedure().toString(), call);
                }

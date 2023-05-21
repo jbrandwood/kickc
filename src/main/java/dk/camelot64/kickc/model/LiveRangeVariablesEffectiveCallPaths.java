@@ -45,10 +45,8 @@ public class LiveRangeVariablesEffectiveCallPaths implements LiveRangeVariablesE
       this.referenceInfo = referenceInfo;
       this.blockSuccessorClosure = blockSuccessorClosure;
       this.statementLiveVariables = new LinkedHashMap<>();
-      for(ControlFlowBlock block : program.getGraph().getAllBlocks()) {
-         for(Statement statement : block.getStatements()) {
-            statementLiveVariables.put(statement.getIndex(), liveRangeVariables.getAlive(statement.getIndex()));
-         }
+      for (Statement statement : program.getGraph().getAllStatements()) {
+         statementLiveVariables.put(statement.getIndex(), liveRangeVariables.getAlive(statement.getIndex()));
       }
    }
 
@@ -102,7 +100,7 @@ public class LiveRangeVariablesEffectiveCallPaths implements LiveRangeVariablesE
          Collection<VariableRef> aliveAtStmt = statementLiveVariables.get(statement.getIndex());
          CallPaths callPaths;
          Collection<VariableRef> referencedInProcedure;
-         ControlFlowBlock block = program.getStatementInfos().getBlock(statement);
+         Graph.Block block = program.getStatementInfos().getBlock(statement);
          ScopeRef scopeRef = block.getScope();
          Scope scope = program.getScope().getScope(scopeRef);
          if(scope instanceof Procedure) {

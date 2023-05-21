@@ -25,10 +25,10 @@ public class PassNAssertStructMembers extends Pass2SsaOptimization {
       ProgramValueIterator.execute(getGraph(), (programValue, currentStmt, stmtIt, currentBlock) -> {
          if(programValue.get() instanceof StructMemberRef) {
             StructMemberRef structMemberRef = (StructMemberRef) programValue.get();
-            SymbolType type = SymbolTypeInference.inferType(getScope(), structMemberRef.getStruct());
+            SymbolType type = SymbolTypeInference.inferType(getProgramScope(), structMemberRef.getStruct());
             if(type instanceof SymbolTypeStruct) {
                SymbolTypeStruct structType = (SymbolTypeStruct) type;
-               StructDefinition structDefinition = structType.getStructDefinition(getScope());
+               StructDefinition structDefinition = structType.getStructDefinition(getProgramScope());
                Variable member = structDefinition.getMember(structMemberRef.getMemberName());
                if(member==null) {
                   throw new CompileError("Unknown struct member "+structMemberRef.getMemberName()+" in struct "+ structType.toCDecl(), currentStmt);

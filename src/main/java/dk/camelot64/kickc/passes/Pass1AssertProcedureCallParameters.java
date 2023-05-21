@@ -2,6 +2,7 @@ package dk.camelot64.kickc.passes;
 
 import dk.camelot64.kickc.model.CompileError;
 import dk.camelot64.kickc.model.ControlFlowBlock;
+import dk.camelot64.kickc.model.Graph;
 import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.statements.Statement;
 import dk.camelot64.kickc.model.statements.StatementCall;
@@ -27,11 +28,11 @@ public class Pass1AssertProcedureCallParameters extends Pass1Base {
 
    @Override
    public boolean step() {
-      for(ControlFlowBlock block : getGraph().getAllBlocks()) {
+      for(var block : getGraph().getAllBlocks()) {
          for(Statement statement : block.getStatements()) {
             if(statement instanceof StatementCall) {
                StatementCall call = (StatementCall) statement;
-               Procedure procedure = getScope().getProcedure(call.getProcedure());
+               Procedure procedure = getProgramScope().getProcedure(call.getProcedure());
                List<Variable> declParameters = procedure.getParameters();
                List<RValue> callParameters = call.getParameters();
                if(callParameters.size()!=declParameters.size()) {
@@ -40,7 +41,7 @@ public class Pass1AssertProcedureCallParameters extends Pass1Base {
                for(int i = 0; i < declParameters.size(); i++) {
                   Variable declParameter = declParameters.get(i);
                   RValue callParameter = callParameters.get(i);
-                  SymbolType callParameterType = SymbolTypeInference.inferType(getScope(), callParameter);
+                  SymbolType callParameterType = SymbolTypeInference.inferType(getProgramScope(), callParameter);
                   SymbolType declParameterType = declParameter.getType();
 
                   if(declParameterType instanceof SymbolTypePointer) {

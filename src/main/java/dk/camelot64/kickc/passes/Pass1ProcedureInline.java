@@ -1,9 +1,6 @@
 package dk.camelot64.kickc.passes;
 
-import dk.camelot64.kickc.model.Comment;
-import dk.camelot64.kickc.model.CompileError;
-import dk.camelot64.kickc.model.ControlFlowBlock;
-import dk.camelot64.kickc.model.Program;
+import dk.camelot64.kickc.model.*;
 import dk.camelot64.kickc.model.iterator.ProgramValue;
 import dk.camelot64.kickc.model.iterator.ProgramValueHandler;
 import dk.camelot64.kickc.model.iterator.ProgramValueIterator;
@@ -26,26 +23,37 @@ public class Pass1ProcedureInline extends Pass1Base {
 
    @Override
    public boolean step() {
-      List<ControlFlowBlock> allBlocks = getGraph().getAllBlocks();
-      ListIterator<ControlFlowBlock> blocksIt = allBlocks.listIterator();
-      while(blocksIt.hasNext()) {
-         ControlFlowBlock block = blocksIt.next();
-         List<Statement> blockStatements = block.getStatements();
-         ListIterator<Statement> statementsIt = blockStatements.listIterator();
-         while(statementsIt.hasNext()) {
-            Statement statement = statementsIt.next();
-            if(statement instanceof StatementCall) {
-               StatementCall call = (StatementCall) statement;
-               ProcedureRef procedureRef = call.getProcedure();
-               Procedure procedure = getScope().getProcedure(procedureRef);
-               if(procedure.isDeclaredInline()) {
-                  procedure.setCallingConvention(Procedure.CallingConvention.PHI_CALL);
-                  if(procedure.getInterruptType()!=null) {
-                     throw new CompileError("Error! Interrupts cannot be inlined. "+procedure.getRef().toString());
+      for(var procedureCompilation : getProgram().getProcedureCompilations())
+         if(inlineProcedure(procedureCompilation))
+            return true;
+      return false;
+   }
+
+   private boolean inlineProcedure(ProcedureCompilation procedureCompilation) {
+      final ControlFlowGraph procedureGraph = procedureCompilation.getGraph();
+      if(procedureGraph!=null) {
+         final List<Graph.Block> procedureBlocks = new ArrayList<>(procedureGraph.getAllBlocks());
+         ListIterator<Graph.Block> blocksIt = procedureBlocks.listIterator();
+         while(blocksIt.hasNext()) {
+            Graph.Block block = blocksIt.next();
+            List<Statement> blockStatements = block.getStatements();
+            ListIterator<Statement> statementsIt = blockStatements.listIterator();
+            while(statementsIt.hasNext()) {
+               Statement statement = statementsIt.next();
+               if(statement instanceof StatementCall call) {
+                  ProcedureRef procedureRef = call.getProcedure();
+                  Procedure procedure = getProgramScope().getProcedure(procedureRef);
+                  if(procedure.isDeclaredInline()) {
+                     procedure.setCallingConvention(Procedure.CallingConvention.PHI_CALL);
+                     if(procedure.getInterruptType() != null) {
+                        throw new CompileError("Error! Interrupts cannot be inlined. " + procedure.getRef().toString());
+                     }
+                     inlineProcedureCall(call, procedure, statementsIt, block, blocksIt);
+                     // Update the procedure graph
+                     procedureCompilation.setGraph(new ControlFlowGraph(procedureBlocks));
+                     // Exit and restart
+                     return true;
                   }
-                  inlineProcedureCall(call, procedure, statementsIt, block, blocksIt);
-                  // Exit and restart
-                  return true;
                }
             }
          }
@@ -62,8 +70,8 @@ public class Pass1ProcedureInline extends Pass1Base {
     * @param block The block containing the call
     * @param blocksIt The block iterator pointing to the block containing the call
     */
-   private void inlineProcedureCall(StatementCall call, Procedure procedure, ListIterator<Statement> statementsIt, ControlFlowBlock block, ListIterator<ControlFlowBlock> blocksIt) {
-      Scope callScope = getScope().getScope(block.getScope());
+   private void inlineProcedureCall(StatementCall call, Procedure procedure, ListIterator<Statement> statementsIt, Graph.Block block, ListIterator<Graph.Block> blocksIt) {
+      Scope callScope = getProgramScope().getScope(block.getScope());
       // Remove call
       statementsIt.remove();
       // Find call serial number (handles when multiple calls to the same procedure is made in the call scope)
@@ -75,10 +83,10 @@ public class Pass1ProcedureInline extends Pass1Base {
       // Create a new block label for the rest of the calling block
       Label restBlockLabel = callScope.addLabelIntermediate();
       // Copy all procedure blocks
-      List<ControlFlowBlock> procedureBlocks = getGraph().getScopeBlocks(procedure.getRef());
-      for(ControlFlowBlock procedureBlock : procedureBlocks) {
+      List<Graph.Block> procedureBlocks = getGraph().getScopeBlocks(procedure.getRef());
+      for(var procedureBlock : procedureBlocks) {
          LabelRef procBlockLabelRef = procedureBlock.getLabel();
-         Symbol procBlockLabel = getScope().getSymbol(procBlockLabelRef);
+         Symbol procBlockLabel = getProgramScope().getSymbol(procBlockLabelRef);
          Label inlinedBlockLabel;
          if(procedure.equals(procBlockLabel)) {
             inlinedBlockLabel = callScope.getLocalLabel(procedure.getLocalName() + serial);
@@ -119,7 +127,7 @@ public class Pass1ProcedureInline extends Pass1Base {
          // Remove the tmp var receiving the result
          LValue lValue = call.getlValue();
          if(lValue instanceof VariableRef) {
-            callScope.remove(getScope().getVariable((VariableRef) lValue));
+            callScope.remove(getProgramScope().getVariable((VariableRef) lValue));
             call.setlValue(null);
          }
       }
@@ -147,7 +155,7 @@ public class Pass1ProcedureInline extends Pass1Base {
          // Set successor of the @return block to the rest block
          inlinedSuccessor = restBlockLabel.getRef();
       } else {
-         Label procBlockSuccessor = getScope().getLabel(procBlockSuccessorRef);
+         Label procBlockSuccessor = getProgramScope().getLabel(procBlockSuccessorRef);
          String inlinedSuccessorName = getInlineSymbolName(procedure, procBlockSuccessor, serial);
          Label inlinedSuccessorLabel = callScope.getLocalLabel(inlinedSuccessorName);
          inlinedSuccessor = inlinedSuccessorLabel.getRef();
@@ -187,26 +195,19 @@ public class Pass1ProcedureInline extends Pass1Base {
     */
    private Statement inlineStatement(Statement procStatement, Procedure procedure, Scope callScope, int serial) {
       Statement inlinedStatement;
-      if(procStatement instanceof StatementAssignment) {
-         StatementAssignment procAssignment = (StatementAssignment) procStatement;
+      if(procStatement instanceof StatementAssignment procAssignment) {
          inlinedStatement = new StatementAssignment(procAssignment.getlValue(), procAssignment.getrValue1(), procAssignment.getOperator(), procAssignment.getrValue2(), procAssignment.isInitialAssignment(), procAssignment.getSource(), Comment.NO_COMMENTS);
-      } else if(procStatement instanceof StatementCall) {
-         StatementCall procCall = (StatementCall) procStatement;
+      } else if(procStatement instanceof StatementCall procCall) {
          StatementCall inlinedCall = new StatementCall(procCall.getlValue(), procCall.getProcedureName(), new ArrayList<>(procCall.getParameters()), procCall.getSource(), procCall.getComments());
          inlinedCall.setProcedure(procCall.getProcedure());
          inlinedStatement = inlinedCall;
-      } else if(procStatement instanceof StatementAsm) {
-         StatementAsm procAsm = (StatementAsm) procStatement;
-         StatementAsm inlinedAsm = new StatementAsm(procAsm.getAsmLines(), new LinkedHashMap<>(procAsm.getReferenced()), procAsm.getDeclaredClobber(), procAsm.getSource(), Comment.NO_COMMENTS);
-         inlinedStatement = inlinedAsm;
-      } else if(procStatement instanceof StatementKickAsm) {
-         StatementKickAsm procKasm = (StatementKickAsm) procStatement;
-         StatementKickAsm inlinedAsm = new StatementKickAsm(procKasm.getKickAsmCode(), procKasm.getBytes(), procKasm.getCycles(), procKasm.getUses(), procKasm.getDeclaredClobber(), procKasm.getSource(), Comment.NO_COMMENTS);
-         inlinedStatement = inlinedAsm;
-      } else if(procStatement instanceof StatementConditionalJump) {
-         StatementConditionalJump procConditional = (StatementConditionalJump) procStatement;
+      } else if(procStatement instanceof StatementAsm procAsm) {
+         inlinedStatement = new StatementAsm(procAsm.getAsmLines(), new LinkedHashMap<>(procAsm.getReferenced()), procAsm.getDeclaredClobber(), procAsm.getSource(), Comment.NO_COMMENTS);
+      } else if(procStatement instanceof StatementKickAsm procKasm) {
+         inlinedStatement = new StatementKickAsm(procKasm.getKickAsmCode(), procKasm.getBytes(), procKasm.getCycles(), procKasm.getUses(), procKasm.getDeclaredClobber(), procKasm.getSource(), Comment.NO_COMMENTS);
+      } else if(procStatement instanceof StatementConditionalJump procConditional) {
          LabelRef procDestinationRef = procConditional.getDestination();
-         Label procDestination = getScope().getLabel(procDestinationRef);
+         Label procDestination = getProgramScope().getLabel(procDestinationRef);
          Label inlinedDest = procDestination;
          if(procDestination.getScope().equals(procedure)) {
             String inlineSymbolName = getInlineSymbolName(procedure, procDestination, serial);
@@ -221,9 +222,7 @@ public class Pass1ProcedureInline extends Pass1Base {
       } else {
          throw new CompileError("Statement type of Inline function not handled " + procStatement, procStatement.getSource());
       }
-      if(inlinedStatement!=null) {
-         ProgramValueIterator.execute(inlinedStatement, new RValueInliner(procedure, serial, callScope), null, null);
-      }
+      ProgramValueIterator.execute(inlinedStatement, new RValueInliner(procedure, serial, callScope), null, null);
       return inlinedStatement;
    }
 
@@ -247,11 +246,10 @@ public class Pass1ProcedureInline extends Pass1Base {
       }
 
       @Override
-      public void execute(ProgramValue programValue, Statement currentStmt, ListIterator<Statement> stmtIt, ControlFlowBlock currentBlock) {
+      public void execute(ProgramValue programValue, Statement currentStmt, ListIterator<Statement> stmtIt, Graph.Block currentBlock) {
          Value rValue = programValue.get();
-         if(rValue instanceof VariableRef) {
-            VariableRef procVarRef = (VariableRef) rValue;
-            Variable procVar = Pass1ProcedureInline.this.getScope().getVariable(procVarRef);
+         if(rValue instanceof VariableRef procVarRef) {
+            Variable procVar = Pass1ProcedureInline.this.getProgramScope().getVariable(procVarRef);
             if(procVar.getScope().equals(procedure)) {
                String inlineSymbolName = Pass1ProcedureInline.this.getInlineSymbolName(procedure, procVar, serial);
                Variable inlineVar = callScope.getLocalVariable(inlineSymbolName);
@@ -302,8 +300,7 @@ public class Pass1ProcedureInline extends Pass1Base {
       callScope.addLabel(procedure.getLocalName() + serial);
       // And copy all procedure symbols
       for(Symbol procSymbol : procedure.getAllSymbols()) {
-         if(procSymbol instanceof Variable) {
-            Variable procVar = (Variable) procSymbol;
+         if(procSymbol instanceof Variable procVar) {
             String inlineVarName = getInlineSymbolName(procedure, procSymbol, serial);
             Variable inlineVar = Variable.createCopy(inlineVarName, callScope, procVar);
             callScope.add(inlineVar);

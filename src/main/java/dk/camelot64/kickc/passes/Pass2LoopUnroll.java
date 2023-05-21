@@ -57,7 +57,7 @@ public class Pass2LoopUnroll extends Pass2SsaOptimization {
     * @param unroll The (original) blocks being unrolled
     */
    private static void markOriginalUnrolled(BlockSet unroll, Program program) {
-      for(ControlFlowBlock block : unroll.getBlocks(program.getGraph())) {
+      for(var block : unroll.getBlocks(program.getGraph())) {
          for(Statement statement : block.getStatements()) {
             if(statement instanceof StatementConditionalJump) {
                //  - Remove the "unroll" directive on the condition in the old loop (as it is already unrolled).
@@ -106,7 +106,7 @@ public class Pass2LoopUnroll extends Pass2SsaOptimization {
    private static List<NaturalLoop> findUnrollLoops(Program program) {
       NaturalLoopSet loops = program.getLoopSet();
       List<NaturalLoop> unrollLoopCandidates = new ArrayList<>();
-      for(ControlFlowBlock block : program.getGraph().getAllBlocks()) {
+      for(var block : program.getGraph().getAllBlocks()) {
          for(Statement statement : block.getStatements()) {
             if(statement instanceof StatementConditionalJump) {
                if(((StatementConditionalJump) statement).isDeclaredUnroll()) {

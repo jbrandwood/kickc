@@ -109,7 +109,7 @@ public class Pass4LiveRangeEquivalenceClassesFinalize extends Pass2Base {
    /**
     * Add all variables to a non-overlapping equivalence or create a new one.
     */
-   private class EquivalenceClassAdder extends ControlFlowGraphBaseVisitor<Void> {
+   private class EquivalenceClassAdder extends GraphBaseVisitor<Void> {
 
       private LiveRangeEquivalenceClassSet liveRangeEquivalenceClassSet;
 

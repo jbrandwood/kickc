@@ -216,9 +216,9 @@
   // Pointer to the music play routine
   .label musicPlay = INTRO_MUSIC+6
   // Is the pacman eating sound enabled
-  .label pacman_ch1_enabled = $6e
+  .label pacman_ch1_enabled = $66
   // Index into the eating sound
-  .label pacman_ch1_idx = $66
+  .label pacman_ch1_idx = $5e
   // Pointer to the tile to render in the logic code
   .label logic_tile_ptr = $1a
   // The x-column of the tile to render
@@ -226,16 +226,16 @@
   // The y-fine of the tile to render
   .label logic_tile_yfine = $1d
   // The ID*4 of the left tile to render
-  .label logic_tile_left_idx = $4d
+  .label logic_tile_left_idx = $4c
   // The ID*4 of the right tile to render
-  .label logic_tile_right_idx = $4e
+  .label logic_tile_right_idx = $4d
   // Variables used by the logic-code renderer and restorer
-  .label left_render_index_xcol = $4f
-  .label left_canvas = $51
-  .label left_ypos_inc_offset = $53
-  .label rigt_render_index_xcol = $54
-  .label rigt_canvas = $56
-  .label rigt_ypos_inc_offset = $58
+  .label left_render_index_xcol = $4e
+  .label left_canvas = $50
+  .label left_ypos_inc_offset = $52
+  .label rigt_render_index_xcol = $53
+  .label rigt_canvas = $55
+  .label rigt_ypos_inc_offset = $57
   // The high-byte of the start-address of the canvas currently being rendered to
   .label canvas_base_hi = $20
   // The offset used for bobs_restore - used to achieve double buffering
@@ -249,7 +249,7 @@
   .label bottom_sprites_color = $18
   .label bottom_sprites_mc = $19
   // The number of pills left
-  .label pill_count = $59
+  .label pill_count = $58
   // 1 When pacman wins
   .label pacman_wins = $1f
   // The number of pacman lives left
@@ -259,19 +259,19 @@
   // 0: intro, 1: game
   .label phase = $3d
   // The double buffer frame (0=BANK_1, 1=BANK_2)
-  .label frame = $6d
+  .label frame = $65
   // The animation frame IDX (within the current direction) [0-3] 
-  .label anim_frame_idx = $68
+  .label anim_frame_idx = $60
   // Pacman x fine position (0-99). 
   .label pacman_xfine = $47
   // Pacman y fine position (0-70). 
   .label pacman_yfine = $48
   // The pacman movement current direction 
-  .label pacman_direction = $34
+  .label pacman_direction = $35
   // Pacman movement substep (0: on tile, 1: between tiles). 
   .label pacman_substep = $2c
   // Mode determining ghost target mode. 0: chase, 1: scatter
-  .label ghosts_mode = $67
+  .label ghosts_mode = $5f
   // Counts frames to change ghost mode (7 seconds scatter, 20 seconds chase )
   .label ghosts_mode_count = $2b
   // Ghost 1 x fine position (0-99). 
@@ -279,11 +279,11 @@
   // Ghost 1 y fine position (0-70). 
   .label ghost1_yfine = $3c
   // Ghost 1 movement current direction 
-  .label ghost1_direction = $35
+  .label ghost1_direction = $36
   // Ghost 1 movement substep (0: on tile, 1: between tiles). 
   .label ghost1_substep = $2d
   // Ghost 1 movement should be reversed  (0: normal, 1: reverse direction)
-  .label ghost1_reverse = $69
+  .label ghost1_reverse = $61
   // Ghost 1 respawn timer
   .label ghost1_respawn = $26
   // Ghost 2 x fine position (0-99). 
@@ -291,11 +291,11 @@
   // Ghost 2 y fine position (0-70). 
   .label ghost2_yfine = $3f
   // Ghost 2 movement current direction 
-  .label ghost2_direction = $36
+  .label ghost2_direction = $37
   // Ghost 2 movement substep (0: on tile, 1: between tiles). 
   .label ghost2_substep = $2e
   // Ghost 2 movement should be reversed  (0: normal, 1: reverse direction)
-  .label ghost2_reverse = $6a
+  .label ghost2_reverse = $62
   // Ghost 2 respawn timer
   .label ghost2_respawn = $28
   // Ghost 3 x fine position (0-99). 
@@ -307,7 +307,7 @@
   // Ghost 3 movement substep (0: on tile, 1: between tiles). 
   .label ghost3_substep = $2f
   // Ghost 3 movement should be reversed  (0: normal, 1: reverse direction)
-  .label ghost3_reverse = $6b
+  .label ghost3_reverse = $63
   // Ghost 3 respawn timer
   .label ghost3_respawn = $29
   // Ghost 4 x fine position (0-99). 
@@ -319,11 +319,11 @@
   // Ghost 4 movement substep (0: on tile, 1: between tiles). 
   .label ghost4_substep = $30
   // Ghost 4 movement should be reversed  (0: normal, 1: reverse direction)
-  .label ghost4_reverse = $6c
+  .label ghost4_reverse = $64
   // Ghost 4 respawn timer
   .label ghost4_respawn = $2a
   // Game logic sub-step [0-7]. Each frame a different sub-step is animated
-  .label game_logic_substep = $5c
+  .label game_logic_substep = $5a
   // 1 when the game is playable and characters should move around
   .label game_playable = $41
 .segment Code
@@ -646,21 +646,21 @@ main: {
 game_logic: {
     .label __67 = $45
     .label __71 = $45
-    .label __210 = $5d
-    .label ghost_frame_idx = $49
-    .label pacman_xtile = $5b
+    .label __210 = $22
+    .label ghost_frame_idx = $4a
+    .label pacman_xtile = $49
     .label ytiles = $45
-    .label ghost4_xtile = $5e
-    .label ghost4_ytile = $5f
+    .label ghost4_xtile = $33
+    .label ghost4_ytile = $34
     .label target_ytile = $27
-    .label ghost3_xtile = $60
-    .label ghost3_ytile = $61
+    .label ghost3_xtile = $5b
+    .label ghost3_ytile = $34
     .label target_ytile1 = $27
-    .label ghost2_xtile = $62
-    .label ghost2_ytile = $63
+    .label ghost2_xtile = $5c
+    .label ghost2_ytile = $34
     .label target_ytile2 = $27
-    .label ghost1_xtile = $64
-    .label ghost1_ytile = $65
+    .label ghost1_xtile = $5d
+    .label ghost1_ytile = $34
     .label target_ytile3 = $27
     // if(game_playable==0)
     lda.z game_playable
@@ -1347,8 +1347,6 @@ game_logic: {
     // choose_direction( open_directions, ghost4_xtile, ghost4_ytile, target_xtile, target_ytile )
     sty.z choose_direction.open_directions
     ldy.z ghost4_xtile
-    lda.z ghost4_ytile
-    sta.z choose_direction.ghost_ytile
     jsr choose_direction
     // choose_direction( open_directions, ghost4_xtile, ghost4_ytile, target_xtile, target_ytile )
     lda.z choose_direction.return
@@ -1518,8 +1516,6 @@ game_logic: {
     // choose_direction( open_directions, ghost3_xtile, ghost3_ytile, target_xtile, target_ytile )
     sty.z choose_direction.open_directions
     ldy.z ghost3_xtile
-    lda.z ghost3_ytile
-    sta.z choose_direction.ghost_ytile
     jsr choose_direction
     // choose_direction( open_directions, ghost3_xtile, ghost3_ytile, target_xtile, target_ytile )
     lda.z choose_direction.return
@@ -1690,8 +1686,6 @@ game_logic: {
     // choose_direction( open_directions, ghost2_xtile, ghost2_ytile, target_xtile, target_ytile )
     sty.z choose_direction.open_directions
     ldy.z ghost2_xtile
-    lda.z ghost2_ytile
-    sta.z choose_direction.ghost_ytile
     jsr choose_direction
     // choose_direction( open_directions, ghost2_xtile, ghost2_ytile, target_xtile, target_ytile )
     lda.z choose_direction.return
@@ -1863,8 +1857,6 @@ game_logic: {
     // choose_direction( open_directions, ghost1_xtile, ghost1_ytile, target_xtile, target_ytile )
     sty.z choose_direction.open_directions
     ldy.z ghost1_xtile
-    lda.z ghost1_ytile
-    sta.z choose_direction.ghost_ytile
     jsr choose_direction
     // choose_direction( open_directions, ghost1_xtile, ghost1_ytile, target_xtile, target_ytile )
     lda.z choose_direction.return
@@ -2853,13 +2845,13 @@ level_tile_directions: {
 }
 // Choose the open direction that brings the ghost closest to the target
 // Uses Manhattan distance calculation
-// __zp($33) char choose_direction(__zp($4a) char open_directions, __register(Y) char ghost_xtile, __zp($37) char ghost_ytile, __register(X) char target_xtile, __zp($27) char target_ytile)
+// __zp($33) char choose_direction(__zp($49) char open_directions, __register(Y) char ghost_xtile, __zp($34) char ghost_ytile, __register(X) char target_xtile, __zp($27) char target_ytile)
 choose_direction: {
-    .label open_directions = $4a
-    .label ghost_ytile = $37
+    .label open_directions = $49
+    .label ghost_ytile = $34
     .label target_ytile = $27
-    .label xdiff = $4c
-    .label ydiff = $4b
+    .label xdiff = $4b
+    .label ydiff = $34
     .label dist_left = $22
     .label return = $33
     .label direction = $33
@@ -2871,7 +2863,7 @@ choose_direction: {
     sbc.z $ff
     sta.z xdiff
     // char ydiff = ghost_ytile-target_ytile
-    lda.z ghost_ytile
+    lda.z ydiff
     sec
     sbc.z target_ytile
     sta.z ydiff
@@ -2976,12 +2968,12 @@ choose_direction: {
     jmp __b2
 }
 // Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
-// void * memset(__zp($6f) void *str, char c, __zp(5) unsigned int num)
+// void * memset(__zp($b) void *str, char c, __zp(5) unsigned int num)
 memset: {
     .label end = 5
     .label dst = $b
     .label num = 5
-    .label str = $6f
+    .label str = $b
     // if(num>0)
     lda.z num
     bne !+
@@ -2996,10 +2988,6 @@ memset: {
     lda.z end+1
     adc.z str+1
     sta.z end+1
-    lda.z str
-    sta.z dst
-    lda.z str+1
-    sta.z dst+1
   __b2:
     // for(char* dst = str; dst!=end; dst++)
     lda.z dst+1

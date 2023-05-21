@@ -7,6 +7,7 @@ package dk.camelot64.kickc.passes;
 
 import dk.camelot64.kickc.model.Comment;
 import dk.camelot64.kickc.model.ControlFlowBlock;
+import dk.camelot64.kickc.model.Graph;
 import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.statements.Statement;
 import dk.camelot64.kickc.model.statements.StatementCalling;
@@ -24,7 +25,7 @@ public class Pass3AddNopBeforeCallOns extends Pass2Base {
     * Create index numbers for all statements in the control flow graph.
     */
    public void generate() {
-      for(ControlFlowBlock block : getProgram().getGraph().getAllBlocks()) {
+      for(var block : getProgram().getGraph().getAllBlocks()) {
          List<Statement> statements = block.getStatements();
          if(statements.size() == 0) {
             statements.add(0, new StatementPhiBlock(Comment.NO_COMMENTS));

@@ -70,7 +70,7 @@ public class Pass4RegisterUpliftPotentialRegisterAnalysis extends Pass2Base {
       RegisterPotentials registerPotentials = getProgram().getRegisterPotentials();
 
       VariableReferenceInfos referenceInfo = getProgram().getVariableReferenceInfos();
-      for(ControlFlowBlock block : getProgram().getGraph().getAllBlocks()) {
+      for(var block : getProgram().getGraph().getAllBlocks()) {
          for(Statement statement : block.getStatements()) {
 
             // Find all variables referenced/assigned in the statement
@@ -144,7 +144,7 @@ public class Pass4RegisterUpliftPotentialRegisterAnalysis extends Pass2Base {
     * @param combinations The regsiter combinations to test
     * @return A set with registers that are clobbered by all different register assignments in the combination
     */
-   private Set<Registers.Register> findAlwaysClobberedRegisters(ControlFlowBlock block, Statement statement, RegisterCombinationIterator combinations) {
+   private Set<Registers.Register> findAlwaysClobberedRegisters(Graph.Block block, Statement statement, RegisterCombinationIterator combinations) {
 
       // Initially assume all registers are always clobbered
       Set<Registers.Register> alwaysClobbered = new LinkedHashSet<>();

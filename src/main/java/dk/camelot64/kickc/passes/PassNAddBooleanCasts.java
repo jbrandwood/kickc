@@ -1,9 +1,6 @@
 package dk.camelot64.kickc.passes;
 
-import dk.camelot64.kickc.model.Comment;
-import dk.camelot64.kickc.model.ControlFlowBlock;
-import dk.camelot64.kickc.model.Program;
-import dk.camelot64.kickc.model.VariableBuilder;
+import dk.camelot64.kickc.model.*;
 import dk.camelot64.kickc.model.iterator.ProgramExpressionIterator;
 import dk.camelot64.kickc.model.iterator.ProgramExpressionUnary;
 import dk.camelot64.kickc.model.operators.Operators;
@@ -33,7 +30,7 @@ public class PassNAddBooleanCasts extends Pass2SsaOptimization {
 
    @Override
    public boolean step() {
-      for(ControlFlowBlock currentBlock : getGraph().getAllBlocks()) {
+      for(var currentBlock : getGraph().getAllBlocks()) {
          ListIterator<Statement> stmtIt = currentBlock.getStatements().listIterator();
          while(stmtIt.hasNext()) {
             Statement currentStmt = stmtIt.next();
@@ -41,7 +38,7 @@ public class PassNAddBooleanCasts extends Pass2SsaOptimization {
                StatementConditionalJump conditionalJump = (StatementConditionalJump) currentStmt;
                if(conditionalJump.getOperator() == null) {
                   RValue rValue2 = conditionalJump.getrValue2();
-                  SymbolType type = SymbolTypeInference.inferType(getScope(), rValue2);
+                  SymbolType type = SymbolTypeInference.inferType(getProgramScope(), rValue2);
                   if(SymbolType.isInteger(type) || type instanceof SymbolTypePointer) {
                      // Found integer condition - add boolean cast
                      if(!pass1)
@@ -57,14 +54,14 @@ public class PassNAddBooleanCasts extends Pass2SsaOptimization {
          if(Operators.LOGIC_NOT.equals(programExpression.getOperator())) {
             ProgramExpressionUnary unaryExpression = (ProgramExpressionUnary) programExpression;
             RValue operand = unaryExpression.getOperand();
-            SymbolType operandType = SymbolTypeInference.inferType(getScope(), operand);
+            SymbolType operandType = SymbolTypeInference.inferType(getProgramScope(), operand);
             if(SymbolType.isInteger(operandType) || operandType instanceof SymbolTypePointer) {
                if(!pass1)
                   getLog().append("Warning! Adding boolean cast to non-boolean sub-expression " + operand.toString(getProgram()));
                if(operand instanceof ConstantValue) {
                   unaryExpression.setOperand(new ConstantBinary(new ConstantInteger(0L, SymbolType.NUMBER), Operators.NEQ, (ConstantValue) operand));
                } else {
-                  SymbolType type = SymbolTypeInference.inferType(getScope(), operand);
+                  SymbolType type = SymbolTypeInference.inferType(getProgramScope(), operand);
                   Variable tmpVar = addBooleanCast(operand, type, currentStmt, stmtIt, currentBlock);
                   unaryExpression.setOperand(tmpVar.getRef());
                }
@@ -74,8 +71,8 @@ public class PassNAddBooleanCasts extends Pass2SsaOptimization {
       return false;
    }
 
-   private Variable addBooleanCast(RValue rValue, SymbolType rValueType, Statement currentStmt, ListIterator<Statement> stmtIt, ControlFlowBlock currentBlock) {
-      Scope currentScope = getScope().getScope(currentBlock.getScope());
+   private Variable addBooleanCast(RValue rValue, SymbolType rValueType, Statement currentStmt, ListIterator<Statement> stmtIt, Graph.Block currentBlock) {
+      Scope currentScope = getProgramScope().getScope(currentBlock.getScope());
       stmtIt.previous();
       Variable tmpVar = VariableBuilder.createIntermediate(currentScope, SymbolType.BOOLEAN, getProgram());
       // Go straight to xxx!=0 instead of casting to bool

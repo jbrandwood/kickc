@@ -1,6 +1,6 @@
 package dk.camelot64.kickc.passes;
 
-import dk.camelot64.kickc.model.ControlFlowGraphBaseVisitor;
+import dk.camelot64.kickc.model.GraphBaseVisitor;
 import dk.camelot64.kickc.model.LiveRangeEquivalenceClass;
 import dk.camelot64.kickc.model.LiveRangeEquivalenceClassSet;
 import dk.camelot64.kickc.model.Program;
@@ -44,7 +44,7 @@ public class Pass3PhiMemCoalesce extends Pass2SsaOptimization {
       phiMemCoalescer.visitGraph(getGraph());
       removeAssignments(getGraph(), phiMemCoalescer.getRemove());
       replaceVariables(phiMemCoalescer.getReplace());
-      deleteSymbols(getScope(), phiMemCoalescer.getRemove());
+      deleteSymbols(getProgramScope(), phiMemCoalescer.getRemove());
       getLog().append("Coalesced down to " + phiEquivalenceClasses.size() + " phi equivalence classes");
       return false;
    }
@@ -52,7 +52,7 @@ public class Pass3PhiMemCoalesce extends Pass2SsaOptimization {
    /**
     * Creates initial live range equivalence classes from program phi statements.
     */
-   public static class EquivalenceClassPhiInitializer extends ControlFlowGraphBaseVisitor<Void> {
+   public static class EquivalenceClassPhiInitializer extends GraphBaseVisitor<Void> {
 
       private Program program;
 
@@ -99,7 +99,7 @@ public class Pass3PhiMemCoalesce extends Pass2SsaOptimization {
    }
 
    /** Coalesces phi equivalence classes when they do not overlap based on assignments to variables in phi statements. */
-   private class PhiMemCoalescer extends ControlFlowGraphBaseVisitor<Void> {
+   private class PhiMemCoalescer extends GraphBaseVisitor<Void> {
 
       private LiveRangeEquivalenceClassSet phiEquivalenceClassSet;
       private List<VariableRef> remove;

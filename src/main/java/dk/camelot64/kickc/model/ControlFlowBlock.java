@@ -2,8 +2,6 @@ package dk.camelot64.kickc.model;
 
 import dk.camelot64.kickc.model.statements.*;
 import dk.camelot64.kickc.model.symbols.Procedure;
-import dk.camelot64.kickc.model.symbols.Scope;
-import dk.camelot64.kickc.model.symbols.Symbol;
 import dk.camelot64.kickc.model.values.LabelRef;
 import dk.camelot64.kickc.model.values.ScopeRef;
 
@@ -17,7 +15,7 @@ import java.util.ListIterator;
  * The connections defines the control flow of the program.
  * The block only knows its own successors. To find predecessor blocks access to the entire graph is needed.
  */
-public class ControlFlowBlock {
+public class ControlFlowBlock implements Graph.Block {
 
    /** The label representing the block. */
    private LabelRef label;
@@ -140,16 +138,6 @@ public class ControlFlowBlock {
    }
 
    /**
-    * Is the block the entry of a procedure, ie. the first block of the code of the procedure.
-    *
-    * @return true if this is the entry of a procedure
-    */
-   public boolean isProcedureEntry(Program program) {
-      Symbol symbol = program.getScope().getSymbol(getLabel());
-      return (symbol instanceof Procedure);
-   }
-
-   /**
     * Is the block the exit of a procedure, ie. the last block of code of the the procedure
     *
     * @param program
@@ -159,27 +147,11 @@ public class ControlFlowBlock {
       return getLabel().isProcExit();
    }
 
-   /**
-    * Get the procedure, that the block is part of. Null if the block is not part of a procedure.
-    *
-    * @return the procedure, that the block is part of
-    */
-   public Procedure getProcedure(Program program) {
-      final ScopeRef scopeRef = getScope();
-      final Scope scope = program.getScope().getScope(scopeRef);
-      if(scope instanceof Procedure) {
-         return (Procedure) scope;
-      } else {
-         return null;
-      }
-   }
 
-
-   public String toString(Program program) {
-      ControlFlowGraph graph = program.getGraph();
+   public String toString(Program program, Graph graph) {
       StringBuffer out = new StringBuffer();
 
-      if(isProcedureEntry(program)) {
+      if(program.isProcedureEntry(this)) {
          Procedure procedure = (Procedure) program.getScope().getScope(scope);
          out.append("\n");
          out.append(procedure.toString(program)+"\n");
@@ -189,9 +161,9 @@ public class ControlFlowBlock {
       out.append(" scope:[" + this.scope.getFullName() + "] ");
       out.append(" from");
       if(graph != null) {
-         List<ControlFlowBlock> predecessors = graph.getPredecessors(this);
+         List<Graph.Block> predecessors = program.getGraph().getPredecessors(this);
          if(predecessors.size() > 0) {
-            for(ControlFlowBlock predecessor : predecessors) {
+            for(Graph.Block predecessor : predecessors) {
                out.append(" " + predecessor.getLabel().getFullName());
             }
          }
@@ -207,7 +179,7 @@ public class ControlFlowBlock {
          }
          if(program.getLog().isVerboseSsaSourceCode()) {
             if(statement.getSource()!=null && statement.getSource().getCode()!=null)
-            out.append("  // " + statement.getSource().getCode()).append("\n");
+               out.append("  // " + statement.getSource().getCode()).append("\n");
          }
          out.append("  " + statement.toString(program, program.getLog().isVerboseLiveRanges()) + "\n");
       }
@@ -269,24 +241,5 @@ public class ControlFlowBlock {
       return false;
    }
 
-
-   /**
-    * Get all successors of the block
-    *
-    * @return All successors
-    */
-   public Collection<LabelRef> getSuccessors() {
-      List<LabelRef> successors = new ArrayList<>();
-      if(defaultSuccessor != null) {
-         successors.add(defaultSuccessor);
-      }
-      if(conditionalSuccessor != null) {
-         successors.add(conditionalSuccessor);
-      }
-      if(callSuccessor != null) {
-         successors.add(callSuccessor);
-      }
-      return successors;
-   }
 
 }

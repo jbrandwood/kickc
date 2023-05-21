@@ -31,7 +31,7 @@ public class Pass1PointerSizeofFix extends Pass1Base {
 
    @Override
    public boolean step() {
-      for(ControlFlowBlock block : getGraph().getAllBlocks()) {
+      for(var block : getGraph().getAllBlocks()) {
          ListIterator<Statement> stmtIt = block.getStatements().listIterator();
          while(stmtIt.hasNext()) {
             Statement statement = stmtIt.next();
@@ -69,8 +69,8 @@ public class Pass1PointerSizeofFix extends Pass1Base {
                      getLog().append("Fixing pointer array-indexing " + deref.toString(getProgram()));
                   SymbolVariableRef idx2VarRef = handled.getOrDefault(currentStmt, new LinkedHashMap<>()).get(deref.getIndex());
                   if(idx2VarRef == null) {
-                     SymbolType type = SymbolTypeInference.inferType(getScope(), deref.getIndex());
-                     Scope scope = getScope().getScope(currentBlock.getScope());
+                     SymbolType type = SymbolTypeInference.inferType(getProgramScope(), deref.getIndex());
+                     Scope scope = getProgramScope().getScope(currentBlock.getScope());
                      Variable idx2Var = VariableBuilder.createIntermediate(scope, type, getProgram());
                      ConstantRef sizeOfTargetType = SizeOfConstants.getSizeOfConstantVar(getProgram().getScope(), pointerType.getElementType());
                      StatementAssignment idx2 = new StatementAssignment((LValue) idx2Var.getRef(), deref.getIndex(), Operators.MULTIPLY, sizeOfTargetType, true, currentStmt.getSource(), Comment.NO_COMMENTS);
@@ -95,7 +95,7 @@ public class Pass1PointerSizeofFix extends Pass1Base {
     * @param assignment The assignment statement
     */
 
-   private void fixPointerBinary(ControlFlowBlock block, ListIterator<Statement> stmtIt, StatementAssignment assignment) {
+   private void fixPointerBinary(Graph.Block block, ListIterator<Statement> stmtIt, StatementAssignment assignment) {
       SymbolTypePointer pointerType = getPointerType(assignment.getrValue1());
       if(pointerType != null) {
          if(SymbolType.VOID.equals(pointerType.getElementType())) {
@@ -107,15 +107,15 @@ public class Pass1PointerSizeofFix extends Pass1Base {
             if(Operators.PLUS.equals(assignment.getOperator()) || Operators.MINUS.equals(assignment.getOperator())) {
                boolean isPointerPlusConst = true;
                if(assignment.getrValue2() instanceof SymbolVariableRef) {
-                  Symbol symbolR2 = getScope().getSymbol((SymbolVariableRef) assignment.getrValue2());
+                  Symbol symbolR2 = getProgramScope().getSymbol((SymbolVariableRef) assignment.getrValue2());
                   if(symbolR2.getType() instanceof SymbolTypePointer) {
                      // RValue 2 is a pointer
                      isPointerPlusConst = false;
                      if(getLog().isVerboseParse())
                         getLog().append("Fixing pointer addition " + assignment.toString(getProgram(), false));
                      LValue lValue = assignment.getlValue();
-                     Scope scope = getScope().getScope(block.getScope());
-                     SymbolType type = SymbolTypeInference.inferType(getScope(), assignment.getlValue());
+                     Scope scope = getProgramScope().getScope(block.getScope());
+                     SymbolType type = SymbolTypeInference.inferType(getProgramScope(), assignment.getlValue());
                      Variable tmpVar = VariableBuilder.createIntermediate(scope, type, getProgram());
                      assignment.setlValue((LValue) tmpVar.getRef());
                      ConstantRef sizeOfTargetType = SizeOfConstants.getSizeOfConstantVar(getProgram().getScope(), pointerType.getElementType());
@@ -128,8 +128,8 @@ public class Pass1PointerSizeofFix extends Pass1Base {
                   // Adding to a pointer - multiply by sizeof()
                   if(getLog().isVerboseParse())
                      getLog().append("Fixing pointer addition " + assignment.toString(getProgram(), false));
-                  Scope scope = getScope().getScope(block.getScope());
-                  SymbolType type = SymbolTypeInference.inferType(getScope(), assignment.getrValue2());
+                  Scope scope = getProgramScope().getScope(block.getScope());
+                  SymbolType type = SymbolTypeInference.inferType(getProgramScope(), assignment.getrValue2());
                   Variable tmpVar = VariableBuilder.createIntermediate(scope, type, getProgram());
                   stmtIt.remove();
                   ConstantRef sizeOfTargetType = SizeOfConstants.getSizeOfConstantVar(getProgram().getScope(), pointerType.getElementType());
@@ -187,7 +187,7 @@ public class Pass1PointerSizeofFix extends Pass1Base {
    private SymbolTypePointer getPointerType(RValue pointer) {
       if(pointer instanceof SymbolVariableRef) {
          SymbolVariableRef varRef = (SymbolVariableRef) pointer;
-         Variable variable = getScope().getVar(varRef);
+         Variable variable = getProgramScope().getVar(varRef);
          SymbolType type = variable.getType();
          if(type instanceof SymbolTypePointer) {
             return (SymbolTypePointer) type;
@@ -195,9 +195,9 @@ public class Pass1PointerSizeofFix extends Pass1Base {
       } else if(pointer instanceof StructMemberRef) {
          StructMemberRef structMemberRef = (StructMemberRef) pointer;
          RValue struct = structMemberRef.getStruct();
-         SymbolType structType = SymbolTypeInference.inferType(getScope(), struct);
+         SymbolType structType = SymbolTypeInference.inferType(getProgramScope(), struct);
          if(structType instanceof SymbolTypeStruct) {
-            StructDefinition structDefinition = ((SymbolTypeStruct) structType).getStructDefinition(getScope());
+            StructDefinition structDefinition = ((SymbolTypeStruct) structType).getStructDefinition(getProgramScope());
             Variable memberVariable = structDefinition.getMember(structMemberRef.getMemberName());
             SymbolType memberType = memberVariable.getType();
             if(memberType instanceof SymbolTypePointer) {

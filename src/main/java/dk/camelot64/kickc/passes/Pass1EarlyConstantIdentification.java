@@ -40,7 +40,7 @@ public class Pass1EarlyConstantIdentification extends Pass1Base {
                // Skip variables allocated into memory
                continue;
             if(!isParameter(variableRef)) {
-               final List<VarAssignments.VarAssignment> varAssignments = VarAssignments.get(variableRef, getGraph(), getScope());
+               final List<VarAssignments.VarAssignment> varAssignments = VarAssignments.get(variableRef, getGraph(), getProgramScope());
                if(varAssignments.size() == 1) {
                   final VarAssignments.VarAssignment varAssignment = varAssignments.get(0);
                   if(varAssignment.type.equals(VarAssignments.VarAssignment.Type.STATEMENT_LVALUE)) {
@@ -75,8 +75,8 @@ public class Pass1EarlyConstantIdentification extends Pass1Base {
          }
       }
       // Remove the statements
-      for(ControlFlowBlock allBlock : getGraph().getAllBlocks()) {
-         allBlock.getStatements().removeIf(removeStmt::contains);
+      for(var block : getGraph().getAllBlocks()) {
+         block.getStatements().removeIf(removeStmt::contains);
       }
       // Replace all variable refs with constant refs
       ProgramValueIterator.execute(getProgram(), new AliasReplacer(aliases));
@@ -112,13 +112,13 @@ public class Pass1EarlyConstantIdentification extends Pass1Base {
     */
    private ConstantValue prepareConstantValue(Variable variable, ConstantValue constantValue) {
       // Perform type checking
-      SymbolType valueType = SymbolTypeInference.inferType(getScope(), constantValue);
+      SymbolType valueType = SymbolTypeInference.inferType(getProgramScope(), constantValue);
       SymbolType variableType = variable.getType();
 
       if(!SymbolTypeConversion.assignmentTypeMatch(variableType, valueType) || SymbolType.NUMBER.equals(valueType)) {
          ConstantLiteral constantLiteral = null;
          try {
-            constantLiteral = constantValue.calculateLiteral(getScope());
+            constantLiteral = constantValue.calculateLiteral(getProgramScope());
          } catch(ConstantNotLiteral e) {
             // ignore
          }
@@ -156,7 +156,7 @@ public class Pass1EarlyConstantIdentification extends Pass1Base {
     * @return true if the variable is a procedure parameter
     */
    public boolean isParameter(SymbolVariableRef variableRef) {
-      Variable var = getScope().getVariable(variableRef);
+      Variable var = getProgramScope().getVariable(variableRef);
       Scope varScope = var.getScope();
       if(varScope instanceof Procedure) {
          List<Variable> parameters = ((Procedure) varScope).getParameters();

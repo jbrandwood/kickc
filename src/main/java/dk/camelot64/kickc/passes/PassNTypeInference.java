@@ -22,19 +22,17 @@ public class PassNTypeInference extends Pass2SsaOptimization {
 
    @Override
    public boolean step() {
-      for(ControlFlowBlock block : getGraph().getAllBlocks()) {
-         for(Statement statement : block.getStatements()) {
-            try {
-               if(statement instanceof StatementLValue) {
-                  updateInferedTypeLValue(getProgram(), (StatementLValue) statement);
-               } else if(statement instanceof StatementPhiBlock) {
-                  for(StatementPhiBlock.PhiVariable phiVariable : ((StatementPhiBlock) statement).getPhiVariables()) {
-                     updateInferedTypePhiVariable(getProgram(), phiVariable);
-                  }
+      for(var statement : getProgram().getGraph().getAllStatements()) {
+         try {
+            if(statement instanceof final StatementLValue statementLValue) {
+               updateInferedTypeLValue(getProgram(), statementLValue);
+            } else if(statement instanceof final StatementPhiBlock statementPhiBlock) {
+               for(StatementPhiBlock.PhiVariable phiVariable : statementPhiBlock.getPhiVariables()) {
+                  updateInferedTypePhiVariable(getProgram(), phiVariable);
                }
-            } catch(CompileError e) {
-               throw new CompileError(e.getMessage(), statement.getSource());
             }
+         } catch(CompileError e) {
+            throw new CompileError(e.getMessage(), statement.getSource());
          }
       }
       return false;

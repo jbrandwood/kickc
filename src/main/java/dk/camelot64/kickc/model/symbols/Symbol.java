@@ -20,4 +20,6 @@ public interface Symbol extends Value {
    int getScopeDepth();
 
    SymbolRef getRef();
+
+   Procedure getContainingProcedure();
 }

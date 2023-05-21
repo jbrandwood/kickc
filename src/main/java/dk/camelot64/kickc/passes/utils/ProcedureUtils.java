@@ -10,13 +10,15 @@ public class ProcedureUtils {
    /**
     * Determines if a procedure is an entry point.
     * Entry points are:
-    * - the starting procedure (typically main())
-    * - interrupts
-    * - any procedure where address-of is used in the code.
+    * <ul>
+    * <li> the starting procedure (typically main())
+    * <li> interrupts
+    * <li> any procedure where address-of is used in the code.
+    * </ul>
     * TODO: Should all stack call procedures be included (probably no!)
     * TODO: Also look at kickasm/asm uses! (Maybe also look at some directive like "__export" )
     *
-    * @param procedure The procedure to examine
+    * @param procedureRef The procedure to examine
     * @param program The program
     * @return true if the procedure is an entry point
     */

@@ -5,17 +5,17 @@ import dk.camelot64.kickc.model.statements.*;
 import java.util.Collection;
 
 /** Base visitor for iterating through a control flow graph */
-public class ControlFlowGraphBaseVisitor<T> {
+public class GraphBaseVisitor<T> {
 
-   public T visitGraph(ControlFlowGraph graph) {
-      Collection<ControlFlowBlock> blocks = graph.getAllBlocks();
-      for(ControlFlowBlock block : blocks) {
+   public T visitGraph(Graph graph) {
+      Collection<Graph.Block> blocks = graph.getAllBlocks();
+      for(Graph.Block block : blocks) {
          this.visitBlock(block);
       }
       return null;
    }
 
-   public T visitBlock(ControlFlowBlock block) {
+   public T visitBlock(Graph.Block block) {
       for(Statement statement : block.getStatements()) {
          this.visitStatement(statement);
       }

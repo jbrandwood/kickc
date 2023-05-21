@@ -62,8 +62,8 @@ public class PassNCalcLiveRangesEffectiveSimple extends PassNCalcBase<LiveRangeV
 
       // Find all alive variables for all statements by adding everything alive outside each call (not including variables from the called scope)
       final LinkedHashMap<Integer, Collection<VariableRef>> statementAliveEffective = new LinkedHashMap<>();
-      for(ControlFlowBlock block : getGraph().getAllBlocks()) {
-         final Procedure procedure = block.getProcedure(getProgram());
+      for(var block : getGraph().getAllBlocks()) {
+         final Procedure procedure = getProgram().getProcedure(block);
          for(Statement statement : block.getStatements()) {
             final Collection<VariableRef> aliveStmt = new LinkedHashSet<>();
             final List<VariableRef> aliveStatement = liveRangeVariablesByStatement.getAlive(statement.getIndex());
@@ -78,7 +78,7 @@ public class PassNCalcLiveRangesEffectiveSimple extends PassNCalcBase<LiveRangeV
 
       // Find aliases inside each block
       Map<Integer, Pass2AliasElimination.Aliases> statementAliases = new LinkedHashMap<>();
-      for(ControlFlowBlock block : getGraph().getAllBlocks()) {
+      for(var block : getGraph().getAllBlocks()) {
          Pass2AliasElimination.Aliases blockAliases = new Pass2AliasElimination.Aliases();
          for(Statement statement : block.getStatements()) {
             if(statement instanceof StatementAssignment) {

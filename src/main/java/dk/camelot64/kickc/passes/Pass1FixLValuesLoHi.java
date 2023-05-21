@@ -1,6 +1,7 @@
 package dk.camelot64.kickc.passes;
 
 import dk.camelot64.kickc.model.ControlFlowBlock;
+import dk.camelot64.kickc.model.Graph;
 import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.VariableBuilder;
 import dk.camelot64.kickc.model.operators.Operator;
@@ -36,7 +37,7 @@ public class Pass1FixLValuesLoHi extends Pass1Base {
       List<VariableRef> intermediates = new ArrayList<>();
 
       ProgramScope programScope = getProgram().getScope();
-      for(ControlFlowBlock block : getProgram().getGraph().getAllBlocks()) {
+      for(var block : getProgram().getGraph().getAllBlocks()) {
          List<Statement> statements = block.getStatements();
          ListIterator<Statement> statementsIt = statements.listIterator();
          while(statementsIt.hasNext()) {

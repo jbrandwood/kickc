@@ -1,9 +1,6 @@
 package dk.camelot64.kickc.passes;
 
-import dk.camelot64.kickc.model.Comment;
-import dk.camelot64.kickc.model.CompileError;
-import dk.camelot64.kickc.model.ControlFlowBlock;
-import dk.camelot64.kickc.model.Program;
+import dk.camelot64.kickc.model.*;
 import dk.camelot64.kickc.model.statements.Statement;
 import dk.camelot64.kickc.model.statements.StatementCall;
 import dk.camelot64.kickc.model.symbols.Procedure;
@@ -71,7 +68,7 @@ public class Pass1PrintfIntrinsicRewrite extends Pass2SsaOptimization {
    @Override
    public boolean step() {
 
-      for(ControlFlowBlock block : getGraph().getAllBlocks()) {
+      for(var block : getGraph().getAllBlocks()) {
          final ListIterator<Statement> stmtIt = block.getStatements().listIterator();
          while(stmtIt.hasNext()) {
             Statement statement = stmtIt.next();
@@ -129,7 +126,7 @@ public class Pass1PrintfIntrinsicRewrite extends Pass2SsaOptimization {
       final String formatString = ((ConstantString) formatLiteral).getString();
       final StringEncoding formatEncoding = ((ConstantString) formatLiteral).getEncoding();
 
-      Symbol putcSymbol = getScope().getGlobalSymbol(putcName);
+      Symbol putcSymbol = getProgramScope().getGlobalSymbol(putcName);
       if(putcSymbol==null)
          throw new CompileError("Needed printf sub-procedure not found " + putcName + "().", ((Statement) printfCall).getSource());
       ConstantValue putcRef = new ConstantSymbolPointer(putcSymbol.getRef());
@@ -209,24 +206,24 @@ public class Pass1PrintfIntrinsicRewrite extends Pass2SsaOptimization {
             switch(typeField) {
                case "d":
                case "i":
-                  radix = getScope().getLocalConstant(DECIMAL).getRef();
+                  radix = getProgramScope().getLocalConstant(DECIMAL).getRef();
                   signed = true;
                   break;
                case "u":
-                  radix = getScope().getLocalConstant(DECIMAL).getRef();
+                  radix = getProgramScope().getLocalConstant(DECIMAL).getRef();
                   signed = false;
                   break;
                case "x":
-                  radix = getScope().getLocalConstant(HEXADECIMAL).getRef();
+                  radix = getProgramScope().getLocalConstant(HEXADECIMAL).getRef();
                   signed = false;
                   break;
                case "X":
-                  radix = getScope().getLocalConstant(HEXADECIMAL).getRef();
+                  radix = getProgramScope().getLocalConstant(HEXADECIMAL).getRef();
                   signed = false;
                   upperCase = 1l;
                   break;
                case "o":
-                  radix = getScope().getLocalConstant(OCTAL).getRef();
+                  radix = getProgramScope().getLocalConstant(OCTAL).getRef();
                   signed = false;
                   break;
                default:
@@ -236,7 +233,7 @@ public class Pass1PrintfIntrinsicRewrite extends Pass2SsaOptimization {
             if(lengthField == null) {
                // Check if the parameter type is 8-bit or 32-bit
                RValue paramValue = getParameterValue(parameters, paramIdx, printfCall);
-               SymbolType paramType = SymbolTypeInference.inferType(getScope(), paramValue);
+               SymbolType paramType = SymbolTypeInference.inferType(getProgramScope(), paramValue);
                if(SymbolType.BYTE.equals(paramType) || SymbolType.SBYTE.equals(paramType)) {
                   // Integer (8bit)
                   printf_number_procedure = signed ? PRINTF_SCHAR : PRINTF_UCHAR;
@@ -290,7 +287,7 @@ public class Pass1PrintfIntrinsicRewrite extends Pass2SsaOptimization {
                         new ConstantInteger(signAlways, SymbolType.BYTE),
                         new ConstantInteger(zeroPadding, SymbolType.BYTE),
                         new ConstantInteger(upperCase, SymbolType.BYTE),
-                        getScope().getLocalConstant(HEXADECIMAL).getRef()
+                        getProgramScope().getLocalConstant(HEXADECIMAL).getRef()
                   ));
             addPrintfCall(PRINTF_UINT, Arrays.asList(putcRef, new CastValue(SymbolType.WORD, getParameterValue(parameters, paramIdx, printfCall)), format_number_struct), stmtIt, printfCall);
             paramIdx++;
@@ -329,7 +326,7 @@ public class Pass1PrintfIntrinsicRewrite extends Pass2SsaOptimization {
     */
    private void addPrintfCall(String printfProcedureName, List<RValue> printfProcedureParameters, ListIterator<Statement> stmtIt, StatementCall printfCall) {
       final StatementCall call_printf_str_prefix = new StatementCall(null, printfProcedureName, printfProcedureParameters, printfCall.getSource(), Comment.NO_COMMENTS);
-      final Procedure printfProcedure = getScope().getLocalProcedure(call_printf_str_prefix.getProcedureName());
+      final Procedure printfProcedure = getProgramScope().getLocalProcedure(call_printf_str_prefix.getProcedureName());
       if(printfProcedure == null) {
          throw new CompileError("Needed printf sub-procedure not found " + printfProcedureName + "().", printfCall.getSource());
       }

@@ -1,6 +1,5 @@
 package dk.camelot64.kickc.passes;
 
-import dk.camelot64.kickc.model.ControlFlowBlock;
 import dk.camelot64.kickc.model.InternalError;
 import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.statements.Statement;
@@ -22,22 +21,20 @@ public class Pass3AssertNoNumbers extends Pass2SsaAssertion {
 
    @Override
    public void check() throws AssertionFailed {
-      for(ControlFlowBlock block : getGraph().getAllBlocks()) {
-         for(Statement statement : block.getStatements()) {
-            if(statement instanceof StatementAssignment) {
-               checkValue(((StatementAssignment) statement).getlValue(), statement);
-               checkValue(((StatementAssignment) statement).getrValue1(), statement);
-               checkValue(((StatementAssignment) statement).getrValue2(), statement);
-            } else if(statement instanceof StatementPhiBlock) {
-               for(StatementPhiBlock.PhiVariable phiVariable : ((StatementPhiBlock) statement).getPhiVariables()) {
-                  for(StatementPhiBlock.PhiRValue value : phiVariable.getValues()) {
-                     checkValue(value.getrValue(), statement);
-                  }
+      for(var statement : getGraph().getAllStatements()) {
+         if(statement instanceof final StatementAssignment assignment) {
+            checkValue(assignment.getlValue(), statement);
+            checkValue(assignment.getrValue1(), statement);
+            checkValue(assignment.getrValue2(), statement);
+         } else if(statement instanceof final StatementPhiBlock phiBlock) {
+            for(StatementPhiBlock.PhiVariable phiVariable : phiBlock.getPhiVariables()) {
+               for(StatementPhiBlock.PhiRValue value : phiVariable.getValues()) {
+                  checkValue(value.getrValue(), statement);
                }
-            } else if(statement instanceof StatementConditionalJump) {
-               checkValue(((StatementConditionalJump) statement).getrValue1(), statement);
-               checkValue(((StatementConditionalJump) statement).getrValue2(), statement);
             }
+         } else if(statement instanceof final StatementConditionalJump conditionalJump) {
+            checkValue(conditionalJump.getrValue1(), statement);
+            checkValue(conditionalJump.getrValue2(), statement);
          }
       }
    }

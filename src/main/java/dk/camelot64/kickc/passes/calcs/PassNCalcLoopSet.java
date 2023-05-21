@@ -26,11 +26,11 @@ public class PassNCalcLoopSet extends PassNCalcBase<NaturalLoopSet> {
    @Override
    public NaturalLoopSet calculate() {
       DominatorsGraph dominators = getProgram().getDominators();
-      Collection<ControlFlowBlock> blocks = getGraph().getAllBlocks();
+      Collection<Graph.Block> blocks = getGraph().getAllBlocks();
 
       // Look through graph for natural loop back edges
       NaturalLoopSet loopSet = new NaturalLoopSet();
-      for(ControlFlowBlock block : blocks) {
+      for(var block : blocks) {
          DominatorsBlock blockDominators = dominators.getDominators(block.getLabel());
          for(LabelRef successor : block.getSuccessors()) {
             if(blockDominators.contains(successor)) {
@@ -55,9 +55,9 @@ public class PassNCalcLoopSet extends PassNCalcBase<NaturalLoopSet> {
             if(block.equals(loop.getHead())) {
                continue;
             }
-            ControlFlowBlock controlFlowBlock = getGraph().getBlock(block);
-            List<ControlFlowBlock> predecessors = getGraph().getPredecessors(controlFlowBlock);
-            for(ControlFlowBlock predecessor : predecessors) {
+            Graph.Block controlFlowBlock = getGraph().getBlock(block);
+            List<Graph.Block> predecessors = getGraph().getPredecessors(controlFlowBlock);
+            for(var predecessor : predecessors) {
                if(!loopBlocks.contains(predecessor.getLabel()) && !todo.contains(predecessor.getLabel())) {
                   todo.add(predecessor.getLabel());
                }

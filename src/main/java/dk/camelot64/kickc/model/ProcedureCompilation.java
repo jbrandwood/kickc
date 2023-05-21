@@ -14,6 +14,9 @@ public class ProcedureCompilation {
    /** The statements of the procedure. */
    private StatementSequence statementSequence;
 
+   /** The control flow graph of the procedure. */
+   private ControlFlowGraph graph;
+
    public ProcedureCompilation(ProcedureRef procedureRef) {
       this.procedureRef = procedureRef;
       this.statementSequence = new StatementSequence();
@@ -25,6 +28,14 @@ public class ProcedureCompilation {
 
    public StatementSequence getStatementSequence() {
       return statementSequence;
+   }
+
+   public ControlFlowGraph getGraph() {
+      return graph;
+   }
+
+   public void setGraph(ControlFlowGraph graph) {
+      this.graph = graph;
    }
 
 }

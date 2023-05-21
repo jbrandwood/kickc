@@ -2,6 +2,7 @@ package dk.camelot64.kickc.passes;
 
 import dk.camelot64.kickc.CompileLog;
 import dk.camelot64.kickc.model.ControlFlowGraph;
+import dk.camelot64.kickc.model.Graph;
 import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.symbols.ProgramScope;
 
@@ -14,7 +15,7 @@ public abstract class Pass2SsaAssertion {
       this.program = program;
    }
 
-   public ControlFlowGraph getGraph() {
+   public Graph getGraph() {
       return program.getGraph();
    }
 

@@ -24,7 +24,7 @@ public class Pass1UnwindBlockScopes extends Pass1Base {
    @Override
    public boolean step() {
       Map<SymbolRef, SymbolRef> unwoundSymbols = new LinkedHashMap<>();
-      for(Procedure procedure : getScope().getAllProcedures(true)) {
+      for(Procedure procedure : getProgramScope().getAllProcedures(true)) {
          for(Scope subScope : procedure.getAllScopes(false)) {
             unwindSubScope(subScope, procedure, unwoundSymbols);
          }

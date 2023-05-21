@@ -72,7 +72,7 @@ public class Pass4CodeGeneration {
         this.warnFragmentMissing = warnFragmentMissing;
     }
 
-    ControlFlowGraph getGraph() {
+    Graph getGraph() {
         return program.getGraph();
     }
 
@@ -108,20 +108,20 @@ public class Pass4CodeGeneration {
         // Generate global ZP labels
         asm.startChunk(currentScope, null, "Global Constants & labels");
         addConstantsAndLabels(asm, currentScope);
-        for (ControlFlowBlock block : getGraph().getAllBlocks()) {
+        for (Graph.Block block : getGraph().getAllBlocks()) {
             if (!block.getScope().equals(currentScope)) {
                 // The current block is in a different scope. End the old scope.
                 generateScopeEnding(asm, currentScope);
                 currentScope = block.getScope();
-                if (block.isProcedureEntry(program)) {
-                    Procedure procedure = block.getProcedure(program);
+                if (program.isProcedureEntry(block)) {
+                    Procedure procedure = program.getProcedure(block);
                     currentCodeSegmentName = procedure.getSegmentCode();
                 }
                 setCurrentSegment(currentCodeSegmentName, asm);
                 asm.startChunk(currentScope, null, block.getLabel().getFullName());
                 // Add any procedure comments
-                if (block.isProcedureEntry(program)) {
-                    Procedure procedure = block.getProcedure(program);
+                if (program.isProcedureEntry(block)) {
+                    Procedure procedure = program.getProcedure(block);
                     generateComments(asm, procedure.getComments());
                     // Generate parameter information
                     generateSignatureComments(asm, procedure);
@@ -136,9 +136,9 @@ public class Pass4CodeGeneration {
             // Generate entry points (if needed)
             genBlockEntryPoints(asm, block);
 
-            if (block.isProcedureEntry(program)) {
+            if (program.isProcedureEntry(block)) {
                 // Generate interrupt entry if needed
-                Procedure procedure = block.getProcedure(program);
+                Procedure procedure = program.getProcedure(block);
                 if (procedure != null && procedure.getInterruptType() != null) {
                     generateInterruptEntry(asm, procedure);
                 }
@@ -150,7 +150,7 @@ public class Pass4CodeGeneration {
             // Generate statements
             genStatements(asm, block);
             // Generate exit
-            ControlFlowBlock defaultSuccessor = getGraph().getDefaultSuccessor(block);
+            Graph.Block defaultSuccessor = getGraph().getDefaultSuccessor(block);
             if (defaultSuccessor != null) {
                 if (defaultSuccessor.hasPhiBlock()) {
                     PhiTransitions.PhiTransition transition = getTransitions(defaultSuccessor).getTransition(block);
@@ -336,7 +336,7 @@ public class Pass4CodeGeneration {
                                     found = true;
                                     // Found the constant
                                     LabelRef pred = phiRValue.getPredecessor();
-                                    ControlFlowBlock predBlock = program.getGraph().getBlock(pred);
+                                    Graph.Block predBlock = program.getGraph().getBlock(pred);
                                     ScopeRef predScope = predBlock.getScope();
                                     if (!predScope.equals(scopeRef)) {
                                         // Scopes in PHI RValue differs from const scope - generate label
@@ -800,7 +800,7 @@ public class Pass4CodeGeneration {
         }
     }
 
-    private void genStatements(AsmProgram asm, ControlFlowBlock block) {
+    private void genStatements(AsmProgram asm, Graph.Block block) {
         Iterator<Statement> statementsIt = block.getStatements().iterator();
         while (statementsIt.hasNext()) {
             Statement statement = statementsIt.next();
@@ -833,7 +833,7 @@ public class Pass4CodeGeneration {
      * @param block     The block containing the statement
      * @param statement The statement to generate ASM code for
      */
-    void generateStatementAsm(AsmProgram asm, ControlFlowBlock block, Statement statement, boolean genCallPhiEntry) {
+    void generateStatementAsm(AsmProgram asm, Graph.Block block, Statement statement, boolean genCallPhiEntry) {
         asm.startChunk(block.getScope(), statement.getIndex(), statement.toString(program, verboseAliveInfo));
         generateComments(asm, statement.getComments());
         if (!(statement instanceof StatementPhiBlock)) {
@@ -857,7 +857,7 @@ public class Pass4CodeGeneration {
             } else if (statement instanceof StatementCall) {
                 StatementCall call = (StatementCall) statement;
                 Procedure toProcedure = getScope().getProcedure(call.getProcedure());
-                Procedure fromProcedure = block.getProcedure(this.program); // We obtain from where the procedure is called, to validate the bank equality.
+                Procedure fromProcedure = program.getProcedure(block); // We obtain from where the procedure is called, to validate the bank equality.
                 if (toProcedure.isDeclaredIntrinsic()) {
                     if (Pass1ByteXIntrinsicRewrite.INTRINSIC_MAKELONG4.equals(toProcedure.getFullName())) {
                         AsmFragmentCodeGenerator.generateAsm(asm, AsmFragmentInstanceSpecBuilder.makelong4(call, program), program);
@@ -867,7 +867,7 @@ public class Pass4CodeGeneration {
                 } else if (Procedure.CallingConvention.PHI_CALL.equals(toProcedure.getCallingConvention())) {
                     // Generate PHI transition
                     if (genCallPhiEntry) {
-                        ControlFlowBlock callSuccessor = getGraph().getCallSuccessor(block);
+                        Graph.Block callSuccessor = getGraph().getCallSuccessor(block);
                         if (callSuccessor != null && callSuccessor.hasPhiBlock()) {
                             PhiTransitions.PhiTransition transition = getTransitions(callSuccessor).getTransition(block);
                             if (transitionIsGenerated(transition)) {
@@ -896,7 +896,7 @@ public class Pass4CodeGeneration {
                 if(procedureRef != null) {
                     ProgramScope scope = getScope();
                     Procedure toProcedure = scope.getProcedure(procedureRef);
-                    Procedure fromProcedure = block.getProcedure(this.program);
+                    Procedure fromProcedure = program.getProcedure(block);
                     final Bank.CallingDistance callingDistance = Bank.CallingDistance.forCall(fromProcedure.getBank(), toProcedure.getBank());
                     if(Bank.CallingDistance.NEAR.equals(callingDistance)) {
                         AsmFragmentCodeGenerator.generateAsm(asm, AsmFragmentInstanceSpecBuilder.call(call, indirectCallCount++, program), program);
@@ -1031,9 +1031,9 @@ public class Pass4CodeGeneration {
      * @param asm     The ASM program to generate into
      * @param toBlock The block to generate remaining entry points for.
      */
-    private void genBlockEntryPoints(AsmProgram asm, ControlFlowBlock toBlock) {
+    private void genBlockEntryPoints(AsmProgram asm, Graph.Block toBlock) {
         PhiTransitions transitions = getTransitions(toBlock);
-        for (ControlFlowBlock fromBlock : transitions.getFromBlocks()) {
+        for (var fromBlock : transitions.getFromBlocks()) {
             PhiTransitions.PhiTransition transition = transitions.getTransition(fromBlock);
             if (!transitionIsGenerated(transition) && toBlock.getLabel().equals(fromBlock.getConditionalSuccessor())) {
                 genBlockPhiTransition(asm, fromBlock, toBlock, toBlock.getScope());
@@ -1054,19 +1054,19 @@ public class Pass4CodeGeneration {
      *                  If the transition code is inserted in the to-block, this is the scope of the to-block.
      *                  If the transition code is inserted in the from-block this is the scope of the from-block.
      */
-    private void genBlockPhiTransition(AsmProgram asm, ControlFlowBlock fromBlock, ControlFlowBlock toBlock, ScopeRef scope) {
+    private void genBlockPhiTransition(AsmProgram asm, Graph.Block fromBlock, Graph.Block toBlock, ScopeRef scope) {
         PhiTransitions transitions = getTransitions(toBlock);
         PhiTransitions.PhiTransition transition = transitions.getTransition(fromBlock);
         if (!transitionIsGenerated(transition)) {
             Statement toFirstStatement = toBlock.getStatements().get(0);
             String chunkSrc = "[" + toFirstStatement.getIndex() + "] phi from ";
-            for (ControlFlowBlock fBlock : transition.getFromBlocks()) {
+            for (var fBlock : transition.getFromBlocks()) {
                 chunkSrc += fBlock.getLabel().getFullName() + " ";
             }
             chunkSrc += "to " + toBlock.getLabel().getFullName();
             asm.startChunk(scope, toFirstStatement.getIndex(), chunkSrc);
             asm.getCurrentChunk().setSubStatementId(transition.getTransitionId());
-            for (ControlFlowBlock fBlock : transition.getFromBlocks()) {
+            for (var fBlock : transition.getFromBlocks()) {
                 asm.addLabel(AsmFormat.asmFix(toBlock.getLabel().getLocalName() + "_from_" + fBlock.getLabel().getLocalName()));
             }
             List<PhiTransitions.PhiTransition.PhiAssignment> assignments = transition.getAssignments();
@@ -1096,7 +1096,7 @@ public class Pass4CodeGeneration {
      * @param toBlock The block
      * @return The transitions into the block
      */
-    private PhiTransitions getTransitions(ControlFlowBlock toBlock) {
+    private PhiTransitions getTransitions(Graph.Block toBlock) {
         return program.getPhiTransitions().get(toBlock.getLabel());
     }
 

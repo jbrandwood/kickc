@@ -57,7 +57,7 @@ public class Pass2ConstantInlining extends Pass2SsaOptimization {
       final Set<ConstantRef> inlineRefs = inline.keySet();
       removeParameters(inlineRefs);
       // Remove from symbol table
-      deleteSymbols(getScope(), inlineRefs);
+      deleteSymbols(getProgramScope(), inlineRefs);
 
 
       for(ConstantRef constantRef : inlineRefs) {
@@ -70,8 +70,8 @@ public class Pass2ConstantInlining extends Pass2SsaOptimization {
 
    private void removeParameters(Set<ConstantRef> inlineRefs) {
       for(ConstantRef inlineRef : inlineRefs) {
-         final Scope scope = getScope().getConstant(inlineRef).getScope();
-         final Procedure procedure = getProcedure(scope);
+         final Scope scope = getProgramScope().getConstant(inlineRef).getScope();
+         final Procedure procedure = scope.getContainingProcedure();
          if(procedure!=null) {
             final List<Variable> parameters = procedure.getParameters();
             final boolean modified = parameters.removeIf(param -> param.getRef().equals(inlineRef));
@@ -81,15 +81,6 @@ public class Pass2ConstantInlining extends Pass2SsaOptimization {
             }
          }
       }
-   }
-
-   private static Procedure getProcedure(Scope scope) {
-      if(scope instanceof Procedure)
-         return (Procedure)  scope;
-      else if(scope instanceof ProgramScope)
-         return null;
-      else
-         return getProcedure(scope.getScope());
    }
 
    /**

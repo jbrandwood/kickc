@@ -85,7 +85,7 @@ public class PassNCalcLiveRangesEffectiveCallPaths extends PassNCalcBase<LiveRan
          for(CallGraph.CallBlock.Call caller : callers) {
             // Each caller creates its own call-paths
             int callStatementIdx = caller.getCallStatementIdx();
-            ControlFlowBlock callBlock = getProgram().getStatementInfos().getBlock(callStatementIdx);
+            Graph.Block callBlock = getProgram().getStatementInfos().getBlock(callStatementIdx);
             ScopeRef callScopeRef = callBlock.getScope();
             Scope callScope = getProgram().getScope().getScope(callScopeRef);
             if(callScope instanceof Procedure) {
@@ -136,12 +136,12 @@ public class PassNCalcLiveRangesEffectiveCallPaths extends PassNCalcBase<LiveRan
     * @param programScope The program scope
     * @return
     */
-   static Pass2AliasElimination.Aliases getCallAliases(CallGraph.CallBlock.Call call, StatementInfos statementInfos, ControlFlowGraph graph, ProgramScope programScope) {
+   static Pass2AliasElimination.Aliases getCallAliases(CallGraph.CallBlock.Call call, StatementInfos statementInfos, Graph graph, ProgramScope programScope) {
       final ProcedureRef procedureRef = call.getProcedure();
       Procedure procedure = programScope.getProcedure(procedureRef);
       if(procedure.isDeclaredIntrinsic()) return new Pass2AliasElimination.Aliases();
-      final ControlFlowBlock callBlock = statementInfos.getBlock(call.getCallStatementIdx());
-      ControlFlowBlock procedureBlock = graph.getBlock(procedure.getLabel().getRef());
+      final Graph.Block callBlock = statementInfos.getBlock(call.getCallStatementIdx());
+      Graph.Block procedureBlock = graph.getBlock(procedure.getLabel().getRef());
       StatementPhiBlock procedurePhiBlock = null;
       if(procedureBlock.hasPhiBlock()) {
          procedurePhiBlock = procedureBlock.getPhiBlock();

@@ -69,10 +69,10 @@ public class Pass2ConstantSimplification extends Pass2SsaOptimization {
             if(Operators.MULTIPLY.equals(binary.getOperator())) {
                if(binary.getLeft() instanceof ConstantInteger && ((ConstantInteger) binary.getLeft()).getValue() == 0) {
                   getLog().append("Simplifying constant multiply by zero " + binary);
-                  programValue.set(new ConstantInteger(0L, binary.getType(getScope())));
+                  programValue.set(new ConstantInteger(0L, binary.getType(getProgramScope())));
                } else if(binary.getRight() instanceof ConstantInteger && ((ConstantInteger) binary.getRight()).getValue() == 0) {
                   getLog().append("Simplifying constant multiply by zero " + binary);
-                  programValue.set(new ConstantInteger(0L, binary.getType(getScope())));
+                  programValue.set(new ConstantInteger(0L, binary.getType(getProgramScope())));
                }
             } else if(Operators.PLUS.equals(binary.getOperator())) {
                if(binary.getLeft() instanceof ConstantInteger && ((ConstantInteger) binary.getLeft()).getValue() == 0) {

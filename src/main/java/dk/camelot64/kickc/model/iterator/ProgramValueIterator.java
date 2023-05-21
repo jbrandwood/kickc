@@ -1,7 +1,7 @@
 package dk.camelot64.kickc.model.iterator;
 
 import dk.camelot64.kickc.model.ControlFlowBlock;
-import dk.camelot64.kickc.model.ControlFlowGraph;
+import dk.camelot64.kickc.model.Graph;
 import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.statements.*;
 import dk.camelot64.kickc.model.symbols.Label;
@@ -80,8 +80,8 @@ public class ProgramValueIterator {
     * @param graph The program control flow graph
     * @param handler The handler to execute
     */
-   public static void execute(ControlFlowGraph graph, ProgramValueHandler handler) {
-      for(ControlFlowBlock block : graph.getAllBlocks()) {
+   public static void execute(Graph graph, ProgramValueHandler handler) {
+      for(Graph.Block block : graph.getAllBlocks()) {
          execute(block, handler);
       }
    }
@@ -92,16 +92,17 @@ public class ProgramValueIterator {
     * @param block The control flow graph block
     * @param handler The handler to execute
     */
-   public static void execute(ControlFlowBlock block, ProgramValueHandler handler) {
+   public static void execute(Graph.Block block, ProgramValueHandler handler) {
       ListIterator<Statement> statementsIt = block.getStatements().listIterator();
       while(statementsIt.hasNext()) {
          Statement statement = statementsIt.next();
          execute(statement, handler, statementsIt, block);
       }
-      execute(new ProgramValue.BlockLabel(block), handler, null, null, block);
-      execute(new ProgramValue.BlockDefaultSuccessor(block), handler, null, null, block);
-      execute(new ProgramValue.BlockConditionalSuccessor(block), handler, null, null, block);
-      execute(new ProgramValue.BlockCallSuccessor(block), handler, null, null, block);
+      ControlFlowBlock mutableBlock = (ControlFlowBlock) block;
+      execute(new ProgramValue.BlockLabel(mutableBlock), handler, null, null, block);
+      execute(new ProgramValue.BlockDefaultSuccessor(mutableBlock), handler, null, null, block);
+      execute(new ProgramValue.BlockConditionalSuccessor(mutableBlock), handler, null, null, block);
+      execute(new ProgramValue.BlockCallSuccessor(mutableBlock), handler, null, null, block);
    }
 
    /**
@@ -110,14 +111,13 @@ public class ProgramValueIterator {
     * @param statement The statement
     * @param handler The handler to execute
     */
-   public static void execute(Statement statement, ProgramValueHandler handler, ListIterator<Statement> statementsIt, ControlFlowBlock block) {
+   public static void execute(Statement statement, ProgramValueHandler handler, ListIterator<Statement> statementsIt, Graph.Block block) {
       if(statement instanceof StatementAssignment) {
          // The sequence RValue1, RValue2, LValue is important - as it is essential for {@link dk.camelot64.kickc.passes.Pass1GenerateSingleStaticAssignmentForm} to create the correct SSA
          execute(new ProgramValue.RValue1((StatementAssignment) statement), handler, statement, statementsIt, block);
          execute(new ProgramValue.RValue2((StatementAssignment) statement), handler, statement, statementsIt, block);
          execute(new ProgramValue.ProgramValueLValue((StatementLValue) statement), handler, statement, statementsIt, block);
-      } else if(statement instanceof StatementCall) {
-         StatementCall call = (StatementCall) statement;
+      } else if(statement instanceof StatementCall call) {
          if(call.getParameters() != null) {
             int size = call.getParameters().size();
             for(int i = 0; i < size; i++) {
@@ -125,8 +125,7 @@ public class ProgramValueIterator {
             }
          }
          execute(new ProgramValue.ProgramValueLValue((StatementLValue) statement), handler, statement, statementsIt, block);
-      } else if(statement instanceof StatementCallPrepare) {
-         StatementCallPrepare call = (StatementCallPrepare) statement;
+      } else if(statement instanceof StatementCallPrepare call) {
          if(call.getParameters() != null) {
             int size = call.getParameters().size();
             for(int i = 0; i < size; i++) {
@@ -137,8 +136,7 @@ public class ProgramValueIterator {
          execute(new ProgramValue.CallExecuteProcedure((StatementCallExecute) statement), handler, statement, statementsIt, block);
       } else if(statement instanceof StatementCallFinalize) {
          execute(new ProgramValue.ProgramValueLValue((StatementLValue) statement), handler, statement, statementsIt, block);
-      } else if(statement instanceof StatementCallPointer) {
-         StatementCallPointer call = (StatementCallPointer) statement;
+      } else if(statement instanceof StatementCallPointer call) {
          execute(new ProgramValue.CallPointerProcedure((StatementCallPointer) statement), handler, statement, statementsIt, block);
          if(call.getParameters() != null) {
             int size = call.getParameters().size();
@@ -162,8 +160,7 @@ public class ProgramValueIterator {
             }
             execute(new ProgramValue.PhiVariable(phiVariable), handler, statement, statementsIt, block);
          }
-      } else if(statement instanceof StatementKickAsm) {
-         StatementKickAsm statementKickAsm = (StatementKickAsm) statement;
+      } else if(statement instanceof StatementKickAsm statementKickAsm) {
          RValue bytes = statementKickAsm.getBytes();
          if(bytes != null) {
             execute(new ProgramValue.ProgramValueKickAsmBytes(statementKickAsm), handler, statement, statementsIt, block);
@@ -176,14 +173,12 @@ public class ProgramValueIterator {
          for(int i = 0; i < uses.size(); i++) {
             execute(new ProgramValue.KickAsmUses(statementKickAsm, i), handler, statement, statementsIt, block);
          }
-      } else if(statement instanceof StatementAsm) {
-         StatementAsm statementAsm = (StatementAsm) statement;
+      } else if(statement instanceof StatementAsm statementAsm) {
          Map<String, SymbolRef> referenced = statementAsm.getReferenced();
          for(String label : referenced.keySet()) {
             execute(new ProgramValue.ProgramValueAsmReferenced(statementAsm, label), handler, statement, statementsIt, block);
          }
-      } else if(statement instanceof StatementExprSideEffect) {
-         StatementExprSideEffect statementExprSideEffect = (StatementExprSideEffect) statement;
+      } else if(statement instanceof StatementExprSideEffect statementExprSideEffect) {
          execute(new ProgramValue.ExprSideEffect(statementExprSideEffect), handler, statement, statementsIt, block);
       }
    }
@@ -194,7 +189,7 @@ public class ProgramValueIterator {
     * @param programValue The programValue value
     * @param handler The value handler
     */
-   public static void execute(ProgramValue programValue, ProgramValueHandler handler, Statement currentStmt, ListIterator<Statement> stmtIt, ControlFlowBlock currentBlock) {
+   public static void execute(ProgramValue programValue, ProgramValueHandler handler, Statement currentStmt, ListIterator<Statement> stmtIt, Graph.Block currentBlock) {
       handler.execute(programValue, currentStmt, stmtIt, currentBlock);
       for(ProgramValue subValue : getSubValues(programValue.get())) {
          execute(subValue, handler, currentStmt, stmtIt, currentBlock);
@@ -221,20 +216,17 @@ public class ProgramValueIterator {
          for(int i = 0; i < size; i++) {
             subValues.add(new ProgramValue.ProgramValueStructUnwoundPlaceholderMember((StructUnwoundPlaceholder) value, i));
          }
-      } else if(value instanceof ValueList) {
-         ValueList valueList = (ValueList) value;
+      } else if(value instanceof ValueList valueList) {
          int size = valueList.getList().size();
          for(int i = 0; i < size; i++) {
             subValues.add(new ProgramValue.ProgramValueListElement(valueList, i));
          }
-      } else if(value instanceof ConstantArrayList) {
-         ConstantArrayList constantArrayList = (ConstantArrayList) value;
+      } else if(value instanceof ConstantArrayList constantArrayList) {
          int size = constantArrayList.getElements().size();
          for(int i = 0; i < size; i++) {
             subValues.add(new ProgramValue.ProgramValueConstantArrayElement(constantArrayList, i));
          }
-      } else if(value instanceof ConstantStructValue) {
-         ConstantStructValue constantStructValue = (ConstantStructValue) value;
+      } else if(value instanceof ConstantStructValue constantStructValue) {
          for(SymbolVariableRef memberRef : constantStructValue.getMembers()) {
             subValues.add(new ProgramValue.ProgramValueConstantStructMember(constantStructValue, memberRef));
          }
@@ -254,8 +246,7 @@ public class ProgramValueIterator {
          subValues.add(new ProgramValue.ProgramValueConstantUnaryValue((ConstantUnary) value));
       } else if(value instanceof ConstantArrayFilled) {
          subValues.add(new ProgramValue.ProgramValueConstantArrayFilledSize((ConstantArrayFilled) value));
-      } else if(value instanceof ConstantArrayKickAsm) {
-         ConstantArrayKickAsm constantArrayKickAsm = (ConstantArrayKickAsm) value;
+      } else if(value instanceof ConstantArrayKickAsm constantArrayKickAsm) {
          List<SymbolRef> uses = constantArrayKickAsm.getUses();
          for(int i = 0; i < uses.size(); i++) {
             subValues.add(new ProgramValue.ProgramValueConstantArrayKickAsmUses(constantArrayKickAsm, i));

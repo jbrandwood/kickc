@@ -29,12 +29,12 @@ public class PassNTypeIdSimplification extends Pass2SsaOptimization {
             ProgramExpressionUnary unary = (ProgramExpressionUnary) programExpression;
             if(Operators.TYPEID.equals(unary.getOperator())) {
                RValue rValue = unary.getOperand();
-               SymbolType symbolType = SymbolTypeInference.inferType(getScope(), rValue);
+               SymbolType symbolType = SymbolTypeInference.inferType(getProgramScope(), rValue);
                if(SymbolType.VAR.equals(symbolType) || SymbolType.NUMBER.equals(symbolType)) {
 
                }  else {
                   getLog().append("Resolving typeid() " + currentStmt.toString(getProgram(), false));
-                  ConstantRef typeIDConstantVar = OperatorTypeId.getTypeIdConstantVar(getScope(), symbolType);
+                  ConstantRef typeIDConstantVar = OperatorTypeId.getTypeIdConstantVar(getProgramScope(), symbolType);
                   unary.set(typeIDConstantVar);
                   modified.set(true);
                }

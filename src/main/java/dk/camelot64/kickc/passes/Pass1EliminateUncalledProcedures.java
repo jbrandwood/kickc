@@ -1,14 +1,15 @@
 package dk.camelot64.kickc.passes;
 
-import dk.camelot64.kickc.model.ControlFlowBlock;
+import dk.camelot64.kickc.model.Graph;
 import dk.camelot64.kickc.model.Program;
+import dk.camelot64.kickc.model.statements.Statement;
+import dk.camelot64.kickc.model.statements.StatementCalling;
 import dk.camelot64.kickc.model.symbols.Procedure;
 import dk.camelot64.kickc.model.values.ProcedureRef;
 import dk.camelot64.kickc.passes.utils.ProcedureUtils;
 
 import java.util.Collection;
 import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Set;
 
 /** Eliminate uncalled methods */
@@ -18,10 +19,10 @@ public class Pass1EliminateUncalledProcedures extends Pass1Base {
       super(program);
    }
 
+
    @Override
    public boolean step() {
-      Set<ProcedureRef> calledProcedures = getGraph().getAllCalledProcedures();
-      //calledProcedures.add(getProgram().getStartProcedure());
+      Set<ProcedureRef> calledProcedures = getAllCalledProcedures(getGraph());
 
       Set<ProcedureRef> unusedProcedures = new LinkedHashSet<>();
       Collection<Procedure> allProcedures = getProgram().getScope().getAllProcedures(true);
@@ -39,6 +40,22 @@ public class Pass1EliminateUncalledProcedures extends Pass1Base {
    }
 
    /**
+    * Get all called procedures in a control flow graph
+    *
+    * @return All called procedures
+    */
+   public static Set<ProcedureRef> getAllCalledProcedures(Graph graph) {
+      Set<ProcedureRef> calledProcedures = new LinkedHashSet<>();
+      for(var statement : graph.getAllStatements()) {
+            if(statement instanceof StatementCalling call) {
+               ProcedureRef procedureRef = call.getProcedure();
+               calledProcedures.add(procedureRef);
+            }
+      }
+      return calledProcedures;
+   }
+
+   /**
     * Removed a procedure from the program (the symbol in the symbol table and all blocks in the control flow graph)
     *
     * @param program The program
@@ -48,12 +65,7 @@ public class Pass1EliminateUncalledProcedures extends Pass1Base {
       if(program.getLog().isVerbosePass1CreateSsa()) {
          program.getLog().append("Removing unused procedure " + procedureRef);
       }
-      Procedure procedure = program.getScope().getProcedure(procedureRef);
-      List<ControlFlowBlock> procedureBlocks = program.getGraph().getScopeBlocks(procedureRef);
-      for(ControlFlowBlock procedureBlock : procedureBlocks) {
-         program.getGraph().remove(procedureBlock.getLabel());
-      }
-      procedure.getScope().remove(procedure);
+      program.removeProcedure(procedureRef);
    }
 
 }

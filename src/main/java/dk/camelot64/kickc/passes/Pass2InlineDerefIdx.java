@@ -51,10 +51,10 @@ public class Pass2InlineDerefIdx extends Pass2SsaOptimization {
    public RValue attemptInlineDeref(RValue pointer) {
       if(pointer instanceof VariableRef) {
          VariableRef derefVar = (VariableRef) pointer;
-         final Variable var = getScope().getVar(derefVar);
+         final Variable var = getProgramScope().getVar(derefVar);
          if(var.isKindLoadStore())
             return null;
-         final List<VarAssignments.VarAssignment> varAssignments = VarAssignments.get(derefVar, getGraph(), getScope());
+         final List<VarAssignments.VarAssignment> varAssignments = VarAssignments.get(derefVar, getGraph(), getProgramScope());
          if(varAssignments.size()!=1)
             return null;
          final VarAssignments.VarAssignment varAssignment = varAssignments.get(0);
@@ -90,9 +90,9 @@ public class Pass2InlineDerefIdx extends Pass2SsaOptimization {
          return null;
       }
       if(Operators.PLUS.equals(derefAssignment.getOperator())) {
-         SymbolType derefLeftType = SymbolTypeInference.inferType(getScope(), derefAssignment.getrValue1());
+         SymbolType derefLeftType = SymbolTypeInference.inferType(getProgramScope(), derefAssignment.getrValue1());
          if(derefLeftType instanceof SymbolTypePointer) {
-            SymbolType derefIndexType = SymbolTypeInference.inferType(getScope(), derefAssignment.getrValue2());
+            SymbolType derefIndexType = SymbolTypeInference.inferType(getProgramScope(), derefAssignment.getrValue2());
             if(derefIndexType.getSizeBytes()==1) {
                // Only inline byte-based indices
                return new PointerDereferenceIndexed(derefAssignment.getrValue1(), derefAssignment.getrValue2());

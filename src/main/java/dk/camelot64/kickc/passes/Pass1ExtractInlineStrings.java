@@ -63,12 +63,12 @@ public class Pass1ExtractInlineStrings extends Pass1Base {
             // Struct member initialization
             final ProgramValue.ProgramValueConstantStructMember constantStructMember = (ProgramValue.ProgramValueConstantStructMember) programValue;
             final SymbolVariableRef memberRef = constantStructMember.getMemberRef();
-            final Variable memberDef = getScope().getVar(memberRef);
+            final Variable memberDef = getProgramScope().getVar(memberRef);
             if(memberDef.getType() instanceof SymbolTypePointer) {
                if(((SymbolTypePointer) memberDef.getType()).getArraySpec()==null) {
                   // Member is not an array - create a string.
                   nameHint = memberDef.getFullName().replace("::","_").toLowerCase();
-                  Variable strConst = Pass1ExtractInlineStrings.this.createStringConstantVar(getScope(), (ConstantString) programValue.get(), nameHint);
+                  Variable strConst = Pass1ExtractInlineStrings.this.createStringConstantVar(getProgramScope(), (ConstantString) programValue.get(), nameHint);
                   programValue.set(strConst.getRef());
                }
             }
@@ -79,7 +79,7 @@ public class Pass1ExtractInlineStrings extends Pass1Base {
             if(elementType instanceof SymbolTypePointer) {
                if(((SymbolTypePointer) elementType).getArraySpec()==null) {
                   // Element is not an array - create a string.
-                  Variable strConst = Pass1ExtractInlineStrings.this.createStringConstantVar(getScope(), (ConstantString) programValue.get(), null);
+                  Variable strConst = Pass1ExtractInlineStrings.this.createStringConstantVar(getProgramScope(), (ConstantString) programValue.get(), null);
                   programValue.set(strConst.getRef());
                }
             }

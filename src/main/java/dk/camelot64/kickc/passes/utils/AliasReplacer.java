@@ -1,6 +1,7 @@
 package dk.camelot64.kickc.passes.utils;
 
 import dk.camelot64.kickc.model.ControlFlowBlock;
+import dk.camelot64.kickc.model.Graph;
 import dk.camelot64.kickc.model.iterator.ProgramValue;
 import dk.camelot64.kickc.model.iterator.ProgramValueHandler;
 import dk.camelot64.kickc.model.iterator.ProgramValueIterator;
@@ -36,7 +37,7 @@ public class AliasReplacer implements ProgramValueHandler {
     * @param programValue The value
     */
    @Override
-   public void execute(ProgramValue programValue, Statement currentStmt, ListIterator<Statement> stmtIt, ControlFlowBlock currentBlock) {
+   public void execute(ProgramValue programValue, Statement currentStmt, ListIterator<Statement> stmtIt, Graph.Block currentBlock) {
       if(programValue.get() != null) {
          Value replacement = getReplacement(programValue.get(), aliases, 0);
          if(replacement != null) {

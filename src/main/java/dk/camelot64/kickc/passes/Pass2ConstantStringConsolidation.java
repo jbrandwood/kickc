@@ -33,7 +33,7 @@ public class Pass2ConstantStringConsolidation extends Pass2SsaOptimization {
       boolean modified = false;
       // Build a map with all constant strings
       Map<ConstantString, List<Variable>> constantStringMap = new LinkedHashMap<>();
-      for(Variable constVar : getScope().getAllConstants(true)) {
+      for(Variable constVar : getProgramScope().getAllConstants(true)) {
          ConstantValue constVal = constVar.getInitValue();
          if(constVal instanceof ConstantString) {
             ConstantString constString = (ConstantString) constVal;
@@ -89,7 +89,7 @@ public class Pass2ConstantStringConsolidation extends Pass2SsaOptimization {
             rootConstant = constantVars.get(0);
          } else {
             // Create a new root - and roll around again
-            ProgramScope rootScope = getScope();
+            ProgramScope rootScope = getProgramScope();
             String localName = getRootName(constantVars);
             final long stringLength = constString.getStringLength();
             final ConstantInteger arraySize = new ConstantInteger(stringLength, stringLength<256?SymbolType.BYTE : SymbolType.WORD);
@@ -117,7 +117,7 @@ public class Pass2ConstantStringConsolidation extends Pass2SsaOptimization {
       for(Variable constantVar : constantVars) {
          if(!constantVar.getRef().isIntermediate()) {
             String candidateName = constantVar.getLocalName();
-            if(getScope().getLocalSymbol(candidateName) == null) {
+            if(getProgramScope().getLocalSymbol(candidateName) == null) {
                if(constName == null || constName.length() > candidateName.length()) {
                   constName = candidateName;
                }
@@ -131,7 +131,7 @@ public class Pass2ConstantStringConsolidation extends Pass2SsaOptimization {
       int i = 0;
       do {
          String candidateName = "string_" + i;
-         if(getScope().getLocalSymbol(candidateName) == null) {
+         if(getProgramScope().getLocalSymbol(candidateName) == null) {
             return candidateName;
          }
          i++;

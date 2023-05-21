@@ -4,17 +4,16 @@ import dk.camelot64.kickc.CompileLog;
 import dk.camelot64.kickc.OutputFileManager;
 import dk.camelot64.kickc.asm.AsmProgram;
 import dk.camelot64.kickc.fragment.synthesis.AsmFragmentTemplateMasterSynthesizer;
-import dk.camelot64.kickc.model.statements.Statement;
-import dk.camelot64.kickc.model.symbols.ProgramScope;
+import dk.camelot64.kickc.model.statements.StatementPhiBlock;
+import dk.camelot64.kickc.model.symbols.*;
 import dk.camelot64.kickc.model.values.LabelRef;
 import dk.camelot64.kickc.model.values.ProcedureRef;
+import dk.camelot64.kickc.model.values.ScopeRef;
 import dk.camelot64.kickc.passes.calcs.*;
+import dk.camelot64.kickc.passes.utils.ProcedureUtils;
 
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /** A KickC Intermediate Compiler Language (ICL) Program */
 public class Program {
@@ -58,8 +57,6 @@ public class Program {
 
    /** The main scope. PASS 0-5 (DYNAMIC) */
    private ProgramScope scope;
-   /** The control flow graph. PASS 1-5 (DYNAMIC) */
-   private ControlFlowGraph graph;
    /** The procedure that starts the execution of the program. (Default: _start() which calls _init() and main() ) */
    private ProcedureRef startProcedure;
 
@@ -69,8 +66,8 @@ public class Program {
    /** Cached information about calls. PASS 1-4 (CACHED ON-DEMAND) */
    private CallGraph callGraph;
 
-   /** The procedures being compiled. */
-   private final Map<ProcedureRef, ProcedureCompilation> procedureCompilations;
+   /** The procedures being compiled. PASS 1-5 (DYNAMIC)*/
+   private List<ProcedureCompilation> procedureCompilations;
 
    /** Variables modified inside procedures. PASS 1 (STATIC) */
    private ProcedureModifiedVars procedureModifiedVars;
@@ -81,9 +78,6 @@ public class Program {
    private LiveRangeEquivalenceClassSet liveRangeEquivalenceClassSet;
    /** The 6502 ASM program. PASS 4-5 (DYNAMIC) */
    private AsmProgram asm;
-
-   /** A saved program snapshot that can be rolled back. Used to store the (DYNAMIC) state of the program while trying out a potential optimization. PASS 2 (DYNAMIC) */
-   private ProgramSnapshot snapshot;
 
    /** Cached information about the variables referenced by blocks/statements. PASS 1-4 (CACHED ON-DEMAND) */
    private VariableReferenceInfos variableReferenceInfos;
@@ -118,7 +112,7 @@ public class Program {
       this.loadedFiles = new ArrayList<>();
       this.asmResourceFiles = new ArrayList<>();
       this.reservedZps = new ArrayList<>();
-      this.procedureCompilations = new LinkedHashMap<>();
+      this.procedureCompilations = new ArrayList<>();
    }
 
    /**
@@ -137,7 +131,6 @@ public class Program {
     * Clears all data that is only used in PASS 2-4
     */
    public void endPass4() {
-      this.snapshot = null;
       this.mainFileComments = null;
       this.callGraph = null;
       this.variableReferenceInfos = null;
@@ -150,33 +143,47 @@ public class Program {
       this.registerUpliftProgram = null;
    }
 
-   /** Save a snapshot of the dynamic parts of the program. */
-   public void snapshotCreate() {
-      if(this.snapshot != null)
-         throw new InternalError("Snapshot already saved!");
-      if(this.liveRangeEquivalenceClassSet != null)
-         throw new InternalError("Compiler Program Snapshot does not support liveRangeEquivalenceClassSet!");
-      this.snapshot = new ProgramSnapshot(scope, graph);
+   /**
+    * Get a read-only control flow graph for the entire program.
+    * @return The control flow graph
+    */
+   public Graph getGraph() {
+      return new Graph() {
+         @Override
+         public Block getBlock(LabelRef symbol) {
+            return getProcedureCompilations().stream().map(ProcedureCompilation::getGraph).filter(Objects::nonNull).map(graph -> graph.getBlock(symbol)).filter(Objects::nonNull).findFirst().orElse(null);
+         }
+
+         @Override
+         public List<Block> getAllBlocks() {
+            return getProcedureCompilations().stream().map(ProcedureCompilation::getGraph).filter(Objects::nonNull).map(ControlFlowGraph::getAllBlocks).flatMap(Collection::stream).toList();
+         }
+
+         @Override
+         public void addBlock(Block block) {
+            throw new CompileError("Internal Error! Cannot add blocks to the read-only total control flow graph!");
+         }
+      };
    }
 
-   /** Restore the snapshot of the dynamic parts of the program. Clear all cached data and the snapshot. */
-   public void snapshotRestore() {
-      this.scope = snapshot.getScope();
-      this.graph = snapshot.getGraph();
-      this.snapshot = null;
-      this.callGraph = null;
-      this.variableReferenceInfos = null;
-      this.dominators = null;
-      this.loopSet = null;
-      this.statementInfos = null;
-      this.symbolInfos = null;
-      this.phiTransitions = null;
-      this.liveRangeVariables = null;
-      this.liveRangeVariablesEffective = null;
-      this.variableRegisterWeights = null;
-      this.registerPotentials = null;
-      this.registerUpliftProgram = null;
-      this.asm = null;
+   public List<ProcedureCompilation> getProcedureCompilations() {
+      return procedureCompilations;
+   }
+
+   public void setProcedureCompilations(List<ProcedureCompilation> procedureCompilations) {
+      this.procedureCompilations = procedureCompilations;
+   }
+
+   /**
+    * Pretty-print the entire control flow graph of all procedures.
+    * @return The pretty-printed control flow graph
+    */
+   public String prettyControlFlowGraph() {
+      StringBuilder graphPretty = new StringBuilder();
+      for(ProcedureCompilation procedureCompilation : getProcedureCompilations()) {
+         graphPretty.append(procedureCompilation.getGraph().toString(this));
+      }
+      return graphPretty.toString();
    }
 
    public OutputFileManager getOutputFileManager() {
@@ -272,15 +279,15 @@ public class Program {
    }
 
    public ProcedureCompilation createProcedureCompilation(ProcedureRef procedureRef) {
-      if(procedureCompilations.get(procedureRef)!=null)
+      if(getProcedureCompilation(procedureRef)!=null)
          throw new CompileError("Error! Procedure already defined "+procedureRef.getFullName());
       final ProcedureCompilation procedureCompilation = new ProcedureCompilation(procedureRef);
-      procedureCompilations.put(procedureRef, procedureCompilation);
+      procedureCompilations.add(procedureCompilation);
       return procedureCompilation;
    }
 
    public ProcedureCompilation getProcedureCompilation(ProcedureRef procedureRef) {
-      return procedureCompilations.get(procedureRef);
+      return procedureCompilations.stream().filter(pc -> pc.getProcedureRef().equals(procedureRef)).findFirst().orElse(null);
    }
 
    public ProgramScope getScope() {
@@ -289,14 +296,6 @@ public class Program {
 
    public void setScope(ProgramScope scope) {
       this.scope = scope;
-   }
-
-   public ControlFlowGraph getGraph() {
-      return graph;
-   }
-
-   public void setGraph(ControlFlowGraph graph) {
-      this.graph = graph;
    }
 
    public ProcedureRef getStartProcedure() {
@@ -413,11 +412,7 @@ public class Program {
     * Clear index numbers for all statements in the control flow graph.
     */
    public void clearStatementIndices() {
-      for(ControlFlowBlock block : getGraph().getAllBlocks()) {
-         for(Statement statement : block.getStatements()) {
-            statement.setIndex(null);
-         }
-      }
+      getProcedureCompilations().stream().map(ProcedureCompilation::getGraph).filter(Objects::nonNull).forEach(ControlFlowGraph::clearStatementIndices);
    }
 
    public SymbolInfos getSymbolInfos() {
@@ -487,9 +482,6 @@ public class Program {
       this.registerPotentials = registerPotentials;
    }
 
-
-
-
    /**
     * Adds a bunch of reserved zero-page addresses that the compiler is not allowed to use.
     *
@@ -527,7 +519,14 @@ public class Program {
    public String getSizeInfo() {
       StringBuilder sizeInfo = new StringBuilder();
       sizeInfo.append(getScope().getSizeInfo());
-      sizeInfo.append(getGraph().getSizeInfo());
+
+      final List<Graph.Block> allBlocks = getProcedureCompilations().stream().map(ProcedureCompilation::getGraph).map(ControlFlowGraph::getAllBlocks).flatMap(Collection::stream).toList();
+      sizeInfo.append("SIZE blocks ").append(allBlocks.size()).append("\n");
+      int numStmt = allBlocks.stream().mapToInt(block -> block.getStatements().size()).sum();
+      sizeInfo.append("SIZE statements ").append(numStmt).append("\n");
+      int numPhiVars = allBlocks.stream().mapToInt(value -> value.getStatements().stream().mapToInt(value1 -> (value1 instanceof StatementPhiBlock) ? ((StatementPhiBlock) value1).getPhiVariables().size() : 0).sum()).sum();
+      sizeInfo.append("SIZE phi variables ").append(numPhiVars).append("\n");
+
       if(variableReferenceInfos != null)
          sizeInfo.append(variableReferenceInfos.getSizeInfo());
       if(getLiveRangeEquivalenceClassSet() != null)
@@ -537,6 +536,63 @@ public class Program {
       if(getAsm() != null)
          sizeInfo.append(getAsm().getSizeInfo());
       return sizeInfo.toString();
+   }
+
+   /**
+    * Get the procedure, that the block is part of. Null if the block is not part of a procedure.
+    *
+    * @param block The control flow graph block
+    * @return the procedure, that the block is part of
+    */
+   public Procedure getProcedure(Graph.Block block) {
+      final ScopeRef scopeRef = block.getScope();
+      final Scope scope = getScope().getScope(scopeRef);
+      if(scope instanceof Procedure) {
+         return (Procedure) scope;
+      } else {
+         return null;
+      }
+   }
+
+   /**
+    * Delete an entire procedure.
+    * Removes the entire control flow graph and all symbols.
+    * Does not check that the removal results in a legal program.
+    * @param procedureRef The procedure to remove.
+    */
+   public void removeProcedure(ProcedureRef procedureRef) {
+      Procedure procedure = getScope().getProcedure(procedureRef);
+      procedure.getScope().remove(procedure);
+      procedureCompilations.remove(getProcedureCompilation(procedureRef));
+   }
+
+   /**
+    * Is the block the entry of a procedure, ie. the first block of the code of the procedure.
+    *
+    * @param block
+    * @return true if this is the entry of a procedure
+    */
+   public boolean isProcedureEntry(Graph.Block block) {
+      Symbol symbol = getScope().getSymbol(block.getLabel());
+      return (symbol instanceof Procedure);
+   }
+
+   /**
+    * Get all blocks that are program entry points.
+    * This is the start-block and any blocks referenced by the address-off operator (&)
+    */
+   public List<Graph.Block> getEntryPointBlocks() {
+      final Graph graph = getGraph();
+      List<Graph.Block> entryPointBlocks = new ArrayList<>();
+      for(Procedure procedure : getScope().getAllProcedures(true)) {
+         if(ProcedureUtils.isEntrypoint(procedure.getRef(), this) || Procedure.CallingConvention.STACK_CALL.equals(procedure.getCallingConvention()) || Procedure.CallingConvention.VAR_CALL.equals(procedure.getCallingConvention())) {
+            // Address-of is used on the procedure
+            Label procedureLabel = procedure.getLabel();
+            Graph.Block procedureBlock = graph.getBlock(procedureLabel.getRef());
+            entryPointBlocks.add(procedureBlock);
+         }
+      }
+      return entryPointBlocks;
    }
 
 }

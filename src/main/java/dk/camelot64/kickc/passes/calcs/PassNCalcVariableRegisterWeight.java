@@ -35,7 +35,7 @@ public class PassNCalcVariableRegisterWeight extends PassNCalcBase<VariableRegis
       VariableRegisterWeights variableRegisterWeights = new VariableRegisterWeights();
       final StatementInfos statementInfos = getProgram().getStatementInfos();
 
-      for(ControlFlowBlock block : getProgram().getGraph().getAllBlocks()) {
+      for(var block : getProgram().getGraph().getAllBlocks()) {
          for(Statement statement : block.getStatements()) {
             if(statement instanceof StatementPhiBlock) {
                for(StatementPhiBlock.PhiVariable phiVariable : ((StatementPhiBlock) statement).getPhiVariables()) {
@@ -108,7 +108,7 @@ public class PassNCalcVariableRegisterWeight extends PassNCalcBase<VariableRegis
             maxCallDepth = 1;
          } else {
             final Integer callStatementIdx = caller.getCallStatementIdx();
-            final ControlFlowBlock callBlock = statementInfos.getBlock(callStatementIdx);
+            final Graph.Block callBlock = statementInfos.getBlock(callStatementIdx);
             int callDepth = getLoopCallDepth(callBlock.getLabel(), loopSet, callGraph, statementInfos) + 1;
             if(callDepth > maxCallDepth)
                maxCallDepth = callDepth;

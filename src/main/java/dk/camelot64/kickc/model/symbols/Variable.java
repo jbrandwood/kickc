@@ -531,6 +531,11 @@ public class Variable implements Symbol {
       return false;
    }
 
+   @Override
+   public Procedure getContainingProcedure() {
+      return scope.getContainingProcedure();
+   }
+
    public boolean isDeclarationOnly() {
       return declarationOnly;
    }

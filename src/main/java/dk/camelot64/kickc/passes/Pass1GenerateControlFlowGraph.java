@@ -4,20 +4,16 @@ import dk.camelot64.kickc.model.*;
 import dk.camelot64.kickc.model.statements.*;
 import dk.camelot64.kickc.model.symbols.*;
 import dk.camelot64.kickc.model.values.LabelRef;
-import dk.camelot64.kickc.model.values.ProcedureRef;
 import dk.camelot64.kickc.model.values.ScopeRef;
 import dk.camelot64.kickc.model.values.SymbolRef;
-import org.antlr.v4.runtime.RuleContext;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Stack;
 
 /** Pass that generates a control flow graph for the program */
 public class Pass1GenerateControlFlowGraph extends Pass1Base {
 
-   private List<ControlFlowBlock> blocks;
 
    public Pass1GenerateControlFlowGraph(Program program) {
       super(program);
@@ -25,8 +21,7 @@ public class Pass1GenerateControlFlowGraph extends Pass1Base {
 
    @Override
    public boolean step() {
-      this.blocks = new ArrayList<>();
-      ProgramScope programScope = getScope();
+      ProgramScope programScope = getProgramScope();
       final Collection<Procedure> allProcedures = getProgram().getScope().getAllProcedures(true);
       for(Procedure procedure : allProcedures) {
          if(procedure.isDeclaredIntrinsic())
@@ -34,10 +29,13 @@ public class Pass1GenerateControlFlowGraph extends Pass1Base {
          final ProcedureCompilation procedureCompilation = getProgram().getProcedureCompilation(procedure.getRef());
          final StatementSequence sequence = procedureCompilation.getStatementSequence();
          if(sequence.getStatements().size()==0)
-            // Empry procedures should not produce any blocks
+            // Empty procedures should not produce any blocks
             continue;
-         ControlFlowBlock currentBlock = null;
-         ControlFlowBlock procBlock = getOrCreateBlock(procedure.getLabel().getRef(), procedure.getRef());
+
+         List<Graph.Block> blocks =  new ArrayList<>();
+
+         Graph.Block currentBlock;
+         Graph.Block procBlock = getOrCreateBlock(procedure.getLabel().getRef(), procedure.getRef(), blocks);
          currentBlock = procBlock;
          for(Statement statement : sequence.getStatements()) {
             Symbol currentBlockLabel = getProgram().getScope().getSymbol(currentBlock.getLabel());
@@ -52,48 +50,44 @@ public class Pass1GenerateControlFlowGraph extends Pass1Base {
             } else if(statement instanceof StatementProcedureEnd) {
                // Procedure strategy implemented is currently variable-based transfer of parameters/return values
                currentBlock.setDefaultSuccessor(new Label(SymbolRef.PROCEXIT_BLOCK_NAME, programScope, false).getRef());
-            } else if(statement instanceof StatementLabel) {
-               StatementLabel statementLabel = (StatementLabel) statement;
-               ControlFlowBlock nextBlock = getOrCreateBlock(statementLabel.getLabel(), currentBlock.getScope());
+            } else if(statement instanceof StatementLabel statementLabel) {
+               Graph.Block nextBlock = getOrCreateBlock(statementLabel.getLabel(), currentBlock.getScope(), blocks);
                nextBlock.setComments(statementLabel.getComments());
                currentBlock.setDefaultSuccessor(nextBlock.getLabel());
                currentBlock = nextBlock;
-            } else if(statement instanceof StatementJump) {
-               StatementJump statementJump = (StatementJump) statement;
-               ControlFlowBlock jmpBlock = getOrCreateBlock(statementJump.getDestination(), currentBlock.getScope());
+            } else if(statement instanceof StatementJump statementJump) {
+               Graph.Block jmpBlock = getOrCreateBlock(statementJump.getDestination(), currentBlock.getScope(), blocks);
                currentBlock.setDefaultSuccessor(jmpBlock.getLabel());
-               ControlFlowBlock nextBlock = getOrCreateBlock(currentBlockScope.addLabelIntermediate().getRef(), currentBlock.getScope());
+               Graph.Block nextBlock = getOrCreateBlock(currentBlockScope.addLabelIntermediate().getRef(), currentBlock.getScope(), blocks);
                currentBlock = nextBlock;
-            } else if(statement instanceof StatementConditionalJump) {
+            } else if(statement instanceof StatementConditionalJump statementConditionalJump) {
                currentBlock.addStatement(statement);
-               StatementConditionalJump statementConditionalJump = (StatementConditionalJump) statement;
-               ControlFlowBlock jmpBlock = getOrCreateBlock(statementConditionalJump.getDestination(), currentBlock.getScope());
-               ControlFlowBlock nextBlock = getOrCreateBlock(currentBlockScope.addLabelIntermediate().getRef(), currentBlock.getScope());
+               Graph.Block jmpBlock = getOrCreateBlock(statementConditionalJump.getDestination(), currentBlock.getScope(), blocks);
+               Graph.Block nextBlock = getOrCreateBlock(currentBlockScope.addLabelIntermediate().getRef(), currentBlock.getScope(), blocks);
                currentBlock.setDefaultSuccessor(nextBlock.getLabel());
                currentBlock.setConditionalSuccessor(jmpBlock.getLabel());
                currentBlock = nextBlock;
-            } else if(statement instanceof StatementReturn) {
+            } else if(statement instanceof StatementReturn aReturn) {
                // Procedure strategy implemented is currently variable-based transfer of parameters/return values
-               StatementReturn aReturn = (StatementReturn) statement;
                currentBlock.addStatement(aReturn);
-               // TODO: Make all returns exit through the same exit-block!
             } else {
                currentBlock.addStatement(statement);
             }
          }
+         ControlFlowGraph controlFlowGraph = new ControlFlowGraph(blocks);
+         procedureCompilation.setGraph(controlFlowGraph);
+
       }
-      ControlFlowGraph controlFlowGraph = new ControlFlowGraph(blocks);
-      getProgram().setGraph(controlFlowGraph);
       return false;
    }
 
-   private ControlFlowBlock getOrCreateBlock(LabelRef label, ScopeRef scope) {
-      for(ControlFlowBlock block : blocks) {
+   private Graph.Block getOrCreateBlock(LabelRef label, ScopeRef scope, List<Graph.Block> blocks) {
+      for(var block : blocks) {
          if(block.getLabel().equals(label)) {
             return block;
          }
       }
-      ControlFlowBlock block = new ControlFlowBlock(label, scope);
+      Graph.Block block = new ControlFlowBlock(label, scope);
       blocks.add(block);
       return block;
    }

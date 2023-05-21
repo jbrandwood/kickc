@@ -22,8 +22,8 @@ public class Pass2MultiplyToShiftRewriting extends Pass2SsaOptimization {
    @Override
    public boolean step() {
       boolean optimized = false;
-      for(ControlFlowBlock block : getGraph().getAllBlocks()) {
-         Scope scope = getScope().getScope(block.getScope());
+      for(var block : getGraph().getAllBlocks()) {
+         Scope scope = getProgramScope().getScope(block.getScope());
          ListIterator<Statement> stmtIt = block.getStatements().listIterator();
          while(stmtIt.hasNext()) {
             Statement statement = stmtIt.next();
@@ -82,7 +82,7 @@ public class Pass2MultiplyToShiftRewriting extends Pass2SsaOptimization {
          // Multiplication by constant
          getLog().append("Rewriting multiplication to use shift and addition" + assignment.toString(getProgram(), false));
          stmtIt.previous();
-         SymbolType resultType = SymbolTypeInference.inferType(getScope(), varValue);
+         SymbolType resultType = SymbolTypeInference.inferType(getProgramScope(), varValue);
          long pow2 = (long) power2;
          long remains = constValue - (1L << pow2);
          RValue building = varValue;
@@ -150,7 +150,7 @@ public class Pass2MultiplyToShiftRewriting extends Pass2SsaOptimization {
       if(rValue instanceof ConstantValue) {
          ConstantValue constantValue = (ConstantValue) rValue;
          try {
-            final ConstantLiteral constantLiteral = constantValue.calculateLiteral(getScope());
+            final ConstantLiteral constantLiteral = constantValue.calculateLiteral(getProgramScope());
             if(constantLiteral instanceof ConstantInteger)
                return ((ConstantInteger) constantLiteral).getInteger();
          } catch(ConstantNotLiteral e) {

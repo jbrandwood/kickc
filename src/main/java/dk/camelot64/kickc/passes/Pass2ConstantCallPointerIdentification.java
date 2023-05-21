@@ -2,6 +2,7 @@ package dk.camelot64.kickc.passes;
 
 import dk.camelot64.kickc.model.CompileError;
 import dk.camelot64.kickc.model.ControlFlowBlock;
+import dk.camelot64.kickc.model.Graph;
 import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.statements.Statement;
 import dk.camelot64.kickc.model.statements.StatementCallExecute;
@@ -24,7 +25,7 @@ public class Pass2ConstantCallPointerIdentification extends Pass2SsaOptimization
    @Override
    public boolean step() {
       boolean optimized = false;
-      for(ControlFlowBlock block : getGraph().getAllBlocks()) {
+      for(var block : getGraph().getAllBlocks()) {
          ListIterator<Statement> statementsIt = block.getStatements().listIterator();
          while(statementsIt.hasNext()) {
             Statement statement = statementsIt.next();
@@ -39,7 +40,7 @@ public class Pass2ConstantCallPointerIdentification extends Pass2SsaOptimization
                      optimized = true;
                   }
                } else if(procedure instanceof ConstantRef) {
-                  Variable procedureVariable = getScope().getConstant((ConstantRef) procedure);
+                  Variable procedureVariable = getProgramScope().getConstant((ConstantRef) procedure);
                   SymbolType procedureVariableType = procedureVariable.getType();
                   if(procedureVariableType instanceof SymbolTypePointer) {
                      if(((SymbolTypePointer) procedureVariableType).getElementType() instanceof SymbolTypeProcedure) {
@@ -63,12 +64,12 @@ public class Pass2ConstantCallPointerIdentification extends Pass2SsaOptimization
     * @param constProcedureRef The constant procedure pointed to
     * @param block The block containing the call
     */
-   private void replacePointerCall(StatementCallExecute callPointer, ProcedureRef constProcedureRef, ControlFlowBlock block) {
+   private void replacePointerCall(StatementCallExecute callPointer, ProcedureRef constProcedureRef, Graph.Block block) {
       callPointer.setProcedure(constProcedureRef);
       if(block.getCallSuccessor()!=null)
          throw new CompileError("Internal error! Block has two calls!", callPointer);
       block.setCallSuccessor(constProcedureRef.getLabelRef());
-      final Procedure procedure = getScope().getProcedure(constProcedureRef);
+      final Procedure procedure = getProgramScope().getProcedure(constProcedureRef);
       procedure.setCallingConvention(Procedure.CallingConvention.STACK_CALL);
       getLog().append("Replacing constant pointer function " + callPointer.toString(getProgram(), false));
    }
@@ -82,7 +83,7 @@ public class Pass2ConstantCallPointerIdentification extends Pass2SsaOptimization
     */
    private ProcedureRef findConstProcedure(RValue procedurePointer) {
       if(procedurePointer instanceof ConstantRef) {
-         Variable constant = getScope().getConstant((ConstantRef) procedurePointer);
+         Variable constant = getProgramScope().getConstant((ConstantRef) procedurePointer);
          return findConstProcedure(constant.getInitValue());
       } else if(procedurePointer instanceof ConstantSymbolPointer) {
          ConstantSymbolPointer pointer = (ConstantSymbolPointer) procedurePointer;

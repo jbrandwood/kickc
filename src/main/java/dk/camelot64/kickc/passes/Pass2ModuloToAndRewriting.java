@@ -54,7 +54,7 @@ public class Pass2ModuloToAndRewriting extends Pass2SsaOptimization {
     */
    private ConstantLiteral getConstantLiteral(ConstantValue constantValue) {
       try {
-         return constantValue.calculateLiteral(getScope());
+         return constantValue.calculateLiteral(getProgramScope());
       } catch(ConstantNotLiteral e) {
          return null;
       }

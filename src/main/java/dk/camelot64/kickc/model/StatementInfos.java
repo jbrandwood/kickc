@@ -9,15 +9,15 @@ import java.util.Map;
 public class StatementInfos {
 
    /** The control flow graph. */
-   private ControlFlowGraph graph;
+   private Graph graph;
 
    /** Maps statement index to block. */
-   private Map<Integer, ControlFlowBlock> stmtBlocks;
+   private Map<Integer, Graph.Block> stmtBlocks;
 
    /** Maps statement index to statement. */
    private Map<Integer, Statement> stmtIdx;
 
-   public StatementInfos(Program program, Map<Integer, ControlFlowBlock> stmtBlocks, Map<Integer, Statement> stmtIdx) {
+   public StatementInfos(Program program, Map<Integer, Graph.Block> stmtBlocks, Map<Integer, Statement> stmtIdx) {
       this.graph = program.getGraph();
       this.stmtBlocks = stmtBlocks;
       this.stmtIdx = stmtIdx;
@@ -49,7 +49,7 @@ public class StatementInfos {
     * @param stmt The statement
     * @return The containing block
     */
-   public ControlFlowBlock getBlock(Statement stmt) {
+   public Graph.Block getBlock(Statement stmt) {
       return stmtBlocks.get(stmt.getIndex());
    }
 
@@ -59,7 +59,7 @@ public class StatementInfos {
     * @param stmtIdx The statement index
     * @return The containing block
     */
-   public ControlFlowBlock getBlock(Integer stmtIdx) {
+   public Graph.Block getBlock(Integer stmtIdx) {
       return graph.getBlock(getBlockRef(stmtIdx));
    }
 

@@ -1,9 +1,6 @@
 package dk.camelot64.kickc.passes;
 
-import dk.camelot64.kickc.model.ControlFlowBlock;
-import dk.camelot64.kickc.model.DominatorsBlock;
-import dk.camelot64.kickc.model.DominatorsGraph;
-import dk.camelot64.kickc.model.Program;
+import dk.camelot64.kickc.model.*;
 import dk.camelot64.kickc.model.iterator.ProgramValue;
 import dk.camelot64.kickc.model.iterator.ProgramValueHandler;
 import dk.camelot64.kickc.model.iterator.ProgramValueIterator;
@@ -17,6 +14,7 @@ import dk.camelot64.kickc.model.types.SymbolType;
 import dk.camelot64.kickc.model.types.SymbolTypeInference;
 import dk.camelot64.kickc.model.values.*;
 
+import java.lang.InternalError;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -39,7 +37,7 @@ public class Pass2DuplicateRValueIdentification extends Pass2SsaOptimization {
       // All RValues in the program
       Set<AssignmentWithRValue> rValues = new HashSet<>();
 
-      for(ControlFlowBlock block : getGraph().getAllBlocks()) {
+      for(var block : getGraph().getAllBlocks()) {
          for(Statement statement : block.getStatements()) {
             if(statement instanceof StatementAssignment) {
                StatementAssignment thisAssignment = (StatementAssignment) statement;
@@ -115,7 +113,7 @@ public class Pass2DuplicateRValueIdentification extends Pass2SsaOptimization {
             }
             , null, null, null);
       for(SymbolVariableRef varRef : varRefs) {
-         Variable var = getScope().getVariable(varRef);
+         Variable var = getProgramScope().getVariable(varRef);
          if(!var.getScope().getRef().equals(scopeRef))
             return false;
       }
@@ -148,13 +146,13 @@ public class Pass2DuplicateRValueIdentification extends Pass2SsaOptimization {
     * Represents an RValue of an assignment.
     */
    private class AssignmentWithRValue {
-      private ControlFlowBlock block;
+      private Graph.Block block;
       private StatementAssignment assignment;
       private RValue rValue1;
       private Operator operator;
       private RValue rValue2;
 
-      public AssignmentWithRValue(StatementAssignment assignment, ControlFlowBlock block) {
+      public AssignmentWithRValue(StatementAssignment assignment, Graph.Block block) {
          this.block = block;
          this.assignment = assignment;
          this.rValue1 = assignment.getrValue1();
@@ -175,7 +173,7 @@ public class Pass2DuplicateRValueIdentification extends Pass2SsaOptimization {
          ProgramValueHandler loadStoreIdentificator = (programValue, currentStmt, stmtIt, currentBlock) -> {
             Value value = programValue.get();
             if(value instanceof VariableRef) {
-               Variable var = getScope().getVar((VariableRef) value);
+               Variable var = getProgramScope().getVar((VariableRef) value);
                if(var.isKindLoadStore())
                   isLoadStore.set(true);
             }
@@ -191,7 +189,7 @@ public class Pass2DuplicateRValueIdentification extends Pass2SsaOptimization {
             if(programValue.get() instanceof PointerDereference)
                isVol.set(true);
             if(programValue.get() instanceof VariableRef) {
-               Variable variable = getScope().getVariable((VariableRef) programValue.get());
+               Variable variable = getProgramScope().getVariable((VariableRef) programValue.get());
                if(variable.isVolatile())
                   isVol.set(true);
             }
@@ -222,11 +220,11 @@ public class Pass2DuplicateRValueIdentification extends Pass2SsaOptimization {
          if(operator.equals(Operators.WORD0)) return true;
          if(operator.equals(Operators.WORD1)) return true;
          if(operator.equals(Operators.PLUS) && rValue2 instanceof ConstantValue) {
-            final SymbolType type1 = SymbolTypeInference.inferType(getScope(), rValue1);
+            final SymbolType type1 = SymbolTypeInference.inferType(getProgramScope(), rValue1);
             return type1.getSizeBytes() == 1;
          }
          if(operator.equals(Operators.PLUS) && rValue1 instanceof ConstantValue) {
-            final SymbolType type2 = SymbolTypeInference.inferType(getScope(), rValue2);
+            final SymbolType type2 = SymbolTypeInference.inferType(getProgramScope(), rValue2);
             return type2.getSizeBytes() == 1;
          }
          return false;

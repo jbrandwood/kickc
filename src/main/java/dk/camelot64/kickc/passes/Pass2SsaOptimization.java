@@ -56,8 +56,8 @@ public abstract class Pass2SsaOptimization extends Pass1Base implements PassStep
     *
     * @param replacements Variables that have alias values.
     */
-   public void replaceLabels(ControlFlowBlock block, final Map<LabelRef, LabelRef> replacements) {
-      ControlFlowGraphBaseVisitor<Void> visitor = getLabelReplaceVisitor(replacements);
+   public void replaceLabels(Graph.Block block, final Map<LabelRef, LabelRef> replacements) {
+      GraphBaseVisitor<Void> visitor = getLabelReplaceVisitor(replacements);
       visitor.visitBlock(block);
    }
 
@@ -67,13 +67,13 @@ public abstract class Pass2SsaOptimization extends Pass1Base implements PassStep
     * @param replacements Variables that have alias values.
     */
    public void replaceLabels(Statement statement, final Map<LabelRef, LabelRef> replacements) {
-      ControlFlowGraphBaseVisitor<Void> visitor = getLabelReplaceVisitor(replacements);
+      GraphBaseVisitor<Void> visitor = getLabelReplaceVisitor(replacements);
       visitor.visitStatement(statement);
    }
 
    /** Creates a visitor that can replace labels. */
-   private ControlFlowGraphBaseVisitor<Void> getLabelReplaceVisitor(final Map<LabelRef, LabelRef> replacements) {
-      return new ControlFlowGraphBaseVisitor<Void>() {
+   private GraphBaseVisitor<Void> getLabelReplaceVisitor(final Map<LabelRef, LabelRef> replacements) {
+      return new GraphBaseVisitor<Void>() {
 
          @Override
          public Void visitConditionalJump(StatementConditionalJump conditionalJump) {
@@ -110,8 +110,8 @@ public abstract class Pass2SsaOptimization extends Pass1Base implements PassStep
     *
     * @param variables The variables to eliminate
     */
-   public static void removeAssignments(ControlFlowGraph graph, Collection<? extends LValue> variables) {
-      for(ControlFlowBlock block : graph.getAllBlocks()) {
+   public static void removeAssignments(Graph graph, Collection<? extends LValue> variables) {
+      for(var block : graph.getAllBlocks()) {
          for(Iterator<Statement> iterator = block.getStatements().iterator(); iterator.hasNext(); ) {
             Statement statement = iterator.next();
             if(statement instanceof StatementAssignment) {

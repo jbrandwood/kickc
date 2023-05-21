@@ -2,6 +2,7 @@ package dk.camelot64.kickc.passes;
 
 import dk.camelot64.kickc.model.CompileError;
 import dk.camelot64.kickc.model.ControlFlowBlock;
+import dk.camelot64.kickc.model.Graph;
 import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.statements.Statement;
 import dk.camelot64.kickc.model.statements.StatementCall;
@@ -20,12 +21,12 @@ public class Pass1Procedures extends Pass2SsaOptimization {
 
    @Override
    public boolean step() {
-      for(ControlFlowBlock block : getGraph().getAllBlocks()) {
+      for(var block : getGraph().getAllBlocks()) {
          for(Statement statement : block.getStatements()) {
             if(statement instanceof StatementCall) {
                StatementCall call = (StatementCall) statement;
                String procedureName = call.getProcedureName();
-               Scope localScope = (Scope) getScope().getSymbol(block.getScope());
+               Scope localScope = (Scope) getProgramScope().getSymbol(block.getScope());
                final Symbol procedureSymbol = localScope.findSymbol(procedureName);
                if(procedureSymbol == null)
                   throw new CompileError("Called procedure not found. " + procedureName, statement.getSource());

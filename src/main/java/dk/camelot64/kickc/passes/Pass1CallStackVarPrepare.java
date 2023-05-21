@@ -2,6 +2,7 @@ package dk.camelot64.kickc.passes;
 
 import dk.camelot64.kickc.model.Comment;
 import dk.camelot64.kickc.model.ControlFlowBlock;
+import dk.camelot64.kickc.model.Graph;
 import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.statements.StatementAssignment;
 import dk.camelot64.kickc.model.symbols.Procedure;
@@ -26,11 +27,11 @@ public class Pass1CallStackVarPrepare extends Pass2SsaOptimization {
    public boolean step() {
 
       // Set variables modified in STACK_CALL/VAR_CALL procedures to load/store
-      for(Procedure procedure : getScope().getAllProcedures(true)) {
+      for(Procedure procedure : getProgramScope().getAllProcedures(true)) {
          if(Procedure.CallingConvention.STACK_CALL.equals(procedure.getCallingConvention()) || Procedure.CallingConvention.VAR_CALL.equals(procedure.getCallingConvention())) {
             Set<VariableRef> modifiedVars = getProgram().getProcedureModifiedVars().getModifiedVars(procedure.getRef());
             for(VariableRef modifiedVar : modifiedVars) {
-               final Variable variable = getScope().getVariable(modifiedVar);
+               final Variable variable = getProgramScope().getVariable(modifiedVar);
                if(variable.isKindPhiMaster()) {
                   getLog().append("Converting variable modified inside "+procedure.getCallingConvention().getName()+" procedure "+procedure.getFullName()+"() to load/store "+variable.toString(getProgram()));
                   variable.setKind(Variable.Kind.LOAD_STORE);
@@ -40,7 +41,7 @@ public class Pass1CallStackVarPrepare extends Pass2SsaOptimization {
       }
 
       // Set all parameter/return variables in VAR_CALL procedures to LOAD/STORE
-      for(Procedure procedure : getScope().getAllProcedures(true)) {
+      for(Procedure procedure : getProgramScope().getAllProcedures(true)) {
          if(Procedure.CallingConvention.VAR_CALL.equals(procedure.getCallingConvention())) {
             for(Variable parameter : procedure.getParameters()) {
                parameter.setKind(Variable.Kind.LOAD_STORE);
@@ -55,10 +56,10 @@ public class Pass1CallStackVarPrepare extends Pass2SsaOptimization {
       }
 
       // Add parameter assignments at start of procedure in STACK_CALL procedures
-      for(Procedure procedure : getScope().getAllProcedures(true)) {
+      for(Procedure procedure : getProgramScope().getAllProcedures(true)) {
          if(procedure.isDeclaredIntrinsic()) continue;
          if(Procedure.CallingConvention.STACK_CALL.equals(procedure.getCallingConvention())) {
-            final ControlFlowBlock procedureBlock = getGraph().getBlock(procedure.getLabel().getRef());
+            final Graph.Block procedureBlock = getGraph().getBlock(procedure.getLabel().getRef());
             final ArrayList<Variable> params = new ArrayList<>(procedure.getParameters());
             Collections.reverse(params);
             for(Variable param : params) {

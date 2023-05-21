@@ -1,16 +1,18 @@
 package dk.camelot64.kickc.passes;
 
 import dk.camelot64.kickc.model.CompileError;
-import dk.camelot64.kickc.model.ControlFlowBlock;
 import dk.camelot64.kickc.model.Program;
-import dk.camelot64.kickc.model.statements.Statement;
 import dk.camelot64.kickc.model.statements.StatementAssignment;
 import dk.camelot64.kickc.model.symbols.Variable;
 import dk.camelot64.kickc.model.types.SymbolType;
 import dk.camelot64.kickc.model.types.SymbolTypeConversion;
 import dk.camelot64.kickc.model.types.SymbolTypeInference;
 import dk.camelot64.kickc.model.types.SymbolTypePointer;
-import dk.camelot64.kickc.model.values.*;
+import dk.camelot64.kickc.model.values.AssignmentRValue;
+import dk.camelot64.kickc.model.values.ConstantInteger;
+import dk.camelot64.kickc.model.values.ConstantValue;
+import dk.camelot64.kickc.model.values.LValue;
+import dk.camelot64.kickc.model.values.RValue;
 
 /**
  * Asserts that types match in all assignments and calculations
@@ -23,13 +25,11 @@ public class PassNAssertTypeMatch extends Pass2SsaAssertion {
 
    @Override
    public void check() throws AssertionFailed {
-      for(ControlFlowBlock block : getGraph().getAllBlocks()) {
-         for(Statement statement : block.getStatements()) {
-            if(statement instanceof StatementAssignment) {
-               checkAssignment((StatementAssignment) statement);
-            }
-            // TODO: Implement checking for calls / ...
+      for(var statement : getGraph().getAllStatements()) {
+         if(statement instanceof final StatementAssignment assignment) {
+            checkAssignment(assignment);
          }
+         // TODO: Implement checking for calls / ...
       }
       for(Variable var : getScope().getAllVars(true)) {
          if(var.getInitValue()!=null) {

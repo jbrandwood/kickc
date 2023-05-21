@@ -1,9 +1,6 @@
 package dk.camelot64.kickc.passes;
 
-import dk.camelot64.kickc.model.CompileError;
-import dk.camelot64.kickc.model.ControlFlowBlock;
-import dk.camelot64.kickc.model.Program;
-import dk.camelot64.kickc.model.VariableReferenceInfos;
+import dk.camelot64.kickc.model.*;
 import dk.camelot64.kickc.model.iterator.ProgramValue;
 import dk.camelot64.kickc.model.iterator.ProgramValueIterator;
 import dk.camelot64.kickc.model.statements.*;
@@ -35,10 +32,10 @@ public class Pass1AssertUsedVars extends Pass1Base {
       getProgram().clearControlFlowBlockSuccessorClosure();
       VariableReferenceInfos referenceInfos = getProgram().getVariableReferenceInfos();
 
-      ControlFlowBlock startBlock = getProgram().getGraph().getBlock(new LabelRef(SymbolRef.START_PROC_NAME));
+      Graph.Block startBlock = getProgram().getGraph().getBlock(new LabelRef(SymbolRef.START_PROC_NAME));
       final LinkedHashSet<SymbolVariableRef> defined = new LinkedHashSet<>();
       // Add all variables with an init-value
-      for(Variable var : getScope().getAllVars(true)) {
+      for(Variable var : getProgramScope().getAllVars(true)) {
          if(var.getInitValue()!=null) {
             defined.add(var.getRef());
          }
@@ -61,7 +58,7 @@ public class Pass1AssertUsedVars extends Pass1Base {
     * @param defined Variables already assigned a value at the point of the first execution of the block
     * @param visited Blocks already visited
     */
-   public void assertUsedVars(ControlFlowBlock block, LabelRef predecessor, VariableReferenceInfos referenceInfos, Collection<SymbolVariableRef> defined, Collection<LabelRef> visited) {
+   public void assertUsedVars(Graph.Block block, LabelRef predecessor, VariableReferenceInfos referenceInfos, Collection<SymbolVariableRef> defined, Collection<LabelRef> visited) {
       // If the block has a phi statement it is always examined (to not skip any of the predecessor checks)
       assertUsedVarsPhi(block, predecessor, referenceInfos, defined);
       // If we have already visited the block - skip it
@@ -91,7 +88,7 @@ public class Pass1AssertUsedVars extends Pass1Base {
             for(String paramName : procedure.getParameterNames()) {
                defined.add(procedure.getLocalVariable(paramName).getRef());
             }
-            ControlFlowBlock procedureStart = getProgram().getGraph().getBlock(call.getProcedure().getLabelRef());
+            Graph.Block procedureStart = getProgram().getGraph().getBlock(call.getProcedure().getLabelRef());
             assertUsedVars(procedureStart, block.getLabel(), referenceInfos, defined, visited);
          } else if(statement instanceof StatementCallPrepare) {
             StatementCallPrepare call = (StatementCallPrepare) statement;
@@ -101,15 +98,15 @@ public class Pass1AssertUsedVars extends Pass1Base {
             }
          } else if(statement instanceof StatementCallExecute) {
             StatementCallExecute call = (StatementCallExecute) statement;
-            ControlFlowBlock procedureStart = getProgram().getGraph().getBlock(call.getProcedure().getLabelRef());
+            Graph.Block procedureStart = getProgram().getGraph().getBlock(call.getProcedure().getLabelRef());
             assertUsedVars(procedureStart, block.getLabel(), referenceInfos, defined, visited);
          } else if(statement instanceof StatementConditionalJump) {
             StatementConditionalJump cond = (StatementConditionalJump) statement;
-            ControlFlowBlock jumpTo = getProgram().getGraph().getBlock(cond.getDestination());
+            Graph.Block jumpTo = getProgram().getGraph().getBlock(cond.getDestination());
             assertUsedVars(jumpTo, block.getLabel(), referenceInfos, defined, visited);
          }
       }
-      ControlFlowBlock successor = getProgram().getGraph().getBlock(block.getDefaultSuccessor());
+      Graph.Block successor = getProgram().getGraph().getBlock(block.getDefaultSuccessor());
       if(successor != null) {
          assertUsedVars(successor, block.getLabel(), referenceInfos, defined, visited);
       }
@@ -122,10 +119,9 @@ public class Pass1AssertUsedVars extends Pass1Base {
     * @param predecessor The block jumping into this block (used for phi analysis)
     * @param referenceInfos Information about assigned/used variables in statements
     * @param defined Variables already assigned a value at the point of the first execution of the block
-    * @param visited Blocks already visited
     */
 
-   private void assertUsedVarsPhi(ControlFlowBlock block, LabelRef predecessor, VariableReferenceInfos referenceInfos, Collection<SymbolVariableRef> defined) {
+   private void assertUsedVarsPhi(Graph.Block block, LabelRef predecessor, VariableReferenceInfos referenceInfos, Collection<SymbolVariableRef> defined) {
       if(predecessor != null && block.hasPhiBlock()) {
          StatementPhiBlock phiBlock = block.getPhiBlock();
          ArrayList<SymbolVariableRef> used = new ArrayList<>();
@@ -148,7 +144,7 @@ public class Pass1AssertUsedVars extends Pass1Base {
                throw new CompileError("Variable used before being defined " + usedRef.toString(getProgram()) + " in " + phiBlock.toString(getProgram(), false), phiBlock.getSource());
             }
          }
-         // Add all variables fefined by the PHI block
+         // Add all variables defined by the PHI block
          Collection<VariableRef> defd = referenceInfos.getDefinedVars(phiBlock);
          for(VariableRef definedRef : defd) {
             defined.add(definedRef);

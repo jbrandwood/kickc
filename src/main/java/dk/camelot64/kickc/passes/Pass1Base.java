@@ -1,7 +1,7 @@
 package dk.camelot64.kickc.passes;
 
 import dk.camelot64.kickc.CompileLog;
-import dk.camelot64.kickc.model.ControlFlowGraph;
+import dk.camelot64.kickc.model.Graph;
 import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.symbols.ProgramScope;
 
@@ -37,17 +37,16 @@ public abstract class Pass1Base implements PassStep {
       return program;
    }
 
-   public ProgramScope getScope() {
+   public Graph getGraph() {
+      return program.getGraph();
+   }
+
+   public ProgramScope getProgramScope() {
       return program.getScope();
    }
 
    public CompileLog getLog() {
       return program.getLog();
    }
-
-   public ControlFlowGraph getGraph() {
-      return program.getGraph();
-   }
-
 
 }

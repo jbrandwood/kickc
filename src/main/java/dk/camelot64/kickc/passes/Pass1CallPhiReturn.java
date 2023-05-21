@@ -23,7 +23,7 @@ public class Pass1CallPhiReturn {
    }
 
    public void execute() {
-      for(ControlFlowBlock block : program.getGraph().getAllBlocks()) {
+      for(var block : program.getGraph().getAllBlocks()) {
          ListIterator<Statement> stmtIt = block.getStatements().listIterator();
          while(stmtIt.hasNext()) {
             Statement statement = stmtIt.next();
@@ -38,11 +38,11 @@ public class Pass1CallPhiReturn {
          }
       }
 
-      for(ControlFlowBlock block : program.getGraph().getAllBlocks()) {
+      for(var block : program.getGraph().getAllBlocks()) {
          for(Statement statement : block.getStatements()) {
             if(statement instanceof StatementReturn) {
                StatementReturn statementReturn = (StatementReturn) statement;
-               Procedure procedure = block.getProcedure(program);
+               Procedure procedure = program.getProcedure(block);
                if(Procedure.CallingConvention.PHI_CALL.equals(procedure.getCallingConvention())) {
                   statementReturn.setValue(null);
                }
@@ -60,12 +60,12 @@ public class Pass1CallPhiReturn {
     * @param callBlock The block containing the call
     * @param stmtIt Iterator used for adding statements
     */
-   void handlePhiCall(StatementCall call, Procedure procedure, ControlFlowBlock callBlock, ListIterator<Statement> stmtIt) {
+   void handlePhiCall(StatementCall call, Procedure procedure, Graph.Block callBlock, ListIterator<Statement> stmtIt) {
       // Generate return value assignment (call finalize)
       if(!SymbolType.VOID.equals(procedure.getReturnType())) {
          // Find return variable final version
          Label returnBlockLabel = procedure.getLocalLabel(SymbolRef.PROCEXIT_BLOCK_NAME);
-         ControlFlowBlock returnBlock = program.getGraph().getBlock(returnBlockLabel.getRef());
+         Graph.Block returnBlock = program.getGraph().getBlock(returnBlockLabel.getRef());
          RValue returnVarFinal = null;
          for(Statement statement : returnBlock.getStatements()) {
             if(statement instanceof StatementReturn) {
@@ -91,7 +91,7 @@ public class Pass1CallPhiReturn {
 
       // Patch versions of rValues in assignments for vars modified in the call (call finalize)
       LabelRef successor = callBlock.getDefaultSuccessor();
-      ControlFlowBlock successorBlock = program.getGraph().getBlock(successor);
+      Graph.Block successorBlock = program.getGraph().getBlock(successor);
       Set<VariableRef> modifiedVars = program.getProcedureModifiedVars().getModifiedVars(procedure.getRef());
       for(Statement statement : successorBlock.getStatements()) {
          if(statement instanceof StatementPhiBlock) {
@@ -115,7 +115,7 @@ public class Pass1CallPhiReturn {
    private VariableRef findReturnVersion(Procedure procedure, VariableRef assignedVar) {
       String unversionedName = assignedVar.getFullNameUnversioned();
       LabelRef returnBlock = new LabelRef(procedure.getRef().getFullName() + "::@return");
-      ControlFlowBlock block = program.getGraph().getBlock(returnBlock);
+      Graph.Block block = program.getGraph().getBlock(returnBlock);
       for(Statement statement : block.getStatements()) {
          if(statement instanceof StatementAssignment) {
             StatementAssignment assignment = (StatementAssignment) statement;

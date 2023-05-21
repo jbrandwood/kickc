@@ -5,6 +5,7 @@ import dk.camelot64.kickc.model.values.LabelRef;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * A set of blocks
@@ -22,14 +23,8 @@ public interface BlockSet {
     * @param graph The control flow graph containing the blocks
     * @return The blocks of the loop (in the same order as they appear in the control flow graph.)
     */
-   default List<ControlFlowBlock> getBlocks(ControlFlowGraph graph) {
-      ArrayList<ControlFlowBlock> controlFlowBlocks = new ArrayList<>();
-      for(ControlFlowBlock block : graph.getAllBlocks()) {
-         if(getBlocks().contains(block.getLabel())) {
-            controlFlowBlocks.add(block);
-         }
-      }
-      return controlFlowBlocks;
+   default List<Graph.Block> getBlocks(Graph graph) {
+      return  graph.getAllBlocks().stream().filter(block -> getBlocks().contains(block.getLabel())).collect(Collectors.toList());
    }
 
    /**

@@ -4,10 +4,7 @@ import dk.camelot64.kickc.asm.AsmFormat;
 import dk.camelot64.kickc.fragment.signature.AsmFragmentBindings;
 import dk.camelot64.kickc.fragment.signature.AsmFragmentSignature;
 import dk.camelot64.kickc.fragment.signature.AsmFragmentSignatureExpr;
-import dk.camelot64.kickc.model.CompileError;
-import dk.camelot64.kickc.model.ControlFlowBlock;
-import dk.camelot64.kickc.model.ControlFlowGraph;
-import dk.camelot64.kickc.model.Program;
+import dk.camelot64.kickc.model.*;
 import dk.camelot64.kickc.model.operators.Operator;
 import dk.camelot64.kickc.model.operators.OperatorBinary;
 import dk.camelot64.kickc.model.operators.OperatorUnary;
@@ -92,7 +89,7 @@ final public class AsmFragmentInstanceSpecBuilder {
         return new AsmFragmentInstanceSpec(program, signature, bindings, codeScope);
     }
 
-    public static AsmFragmentInstanceSpec conditionalJump(StatementConditionalJump conditionalJump, ControlFlowBlock block, Program program) {
+    public static AsmFragmentInstanceSpec conditionalJump(StatementConditionalJump conditionalJump, Graph.Block block, Program program) {
         AsmFragmentBindings bindings = new AsmFragmentBindings(program);
         ScopeRef codeScope = program.getStatementInfos().getBlock(conditionalJump).getScope();
         AsmFragmentSignature signature = conditionalJumpSignature(bindings, conditionalJump, block, program.getGraph());
@@ -185,8 +182,8 @@ final public class AsmFragmentInstanceSpecBuilder {
     private static AsmFragmentSignature conditionalJumpSignature(
             AsmFragmentBindings bindings,
             StatementConditionalJump conditionalJump,
-            ControlFlowBlock block,
-            ControlFlowGraph graph) {
+            Graph.Block block,
+            Graph graph) {
         AsmFragmentSignatureExpr rVal1SignatureExpr = null;
         if (conditionalJump.getrValue1() instanceof ConstantInteger && ((ConstantInteger) conditionalJump.getrValue1()).getValue() == 0) {
             rVal1SignatureExpr = new AsmFragmentSignatureExpr.Number(new ConstantInteger(0L));
@@ -212,7 +209,7 @@ final public class AsmFragmentInstanceSpecBuilder {
         }
 
         LabelRef destination = conditionalJump.getDestination();
-        ControlFlowBlock destinationBlock = graph.getBlock(destination);
+        Graph.Block destinationBlock = graph.getBlock(destination);
         String destinationLabel;
         if (destinationBlock.hasPhiBlock()) {
             destinationLabel =

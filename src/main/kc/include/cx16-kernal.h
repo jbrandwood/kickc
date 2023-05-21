@@ -1,18 +1,21 @@
-/// @file
+/**
+ * @file cx16-kernal.h
+ * @author Sven Van de Velde (sven.van.de.velde@telenet.be)
+ * @brief CBM kernal API dialect and additions to the Commander X16 platform.
+ * Please refer to https://github.com/commanderx16/x16-docs/blob/master/X16%20Reference%20-%2004%20-%20KERNAL.md for the detailed list
+ * of APIs backward compatible with the C64.
+ *
+ * @version 1.0
+ * @date 2023-03-22
+ *
+ * @copyright Copyright (c) 2023
+ *
+ */
+
+const unsigned int CX16_SCREEN_SET_CHARSET = 0xFF62;  ///< CX16 Set character set.
+const unsigned int CX16_MACPTR = 0xFF44; ///< CX16 Faster loading from SDCARD.
 
 
-/// Kernal SETNAM function
-/// SETNAM. Set file name parameters.
-void setnam(char* filename);
+unsigned int cx16_k_macptr(unsigned char bytes, void* buffer);
+void cx16_k_screen_set_charset(char charset, char *offset);
 
-/// SETLFS. Set file parameters.
-void setlfs(char device);
-
-/// LOAD. Load or verify file. (Must call SETLFS and SETNAM beforehands.)
-/// - verify: 0 = Load, 1-255 = Verify
-/// Returns a status, 0xff: Success other: Kernal Error Code
-char load(char* address, char verify);
-
-/// GETIN. Read a byte from the input channel
-/// return: next byte in buffer or 0 if buffer is empty.
-char getin();

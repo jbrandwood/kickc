@@ -223,10 +223,9 @@ public class CPreprocessor implements TokenSource {
       pragmaTokens.add(pragmaType);
       pragmaTokens.addAll(skipWhitespace(cTokenSource));
       ArrayList<Token> pragmaBody = readBody(cTokenSource);
-      final Token pragmaBodyStart = pragmaBody.get(0);
       // Convert space-based pragma to parenthesis-based for easier parsing
       // #pragma NAME XXX YYY \n  =>   #pragma NAME (  XXX , YYY ) \n
-      if(pragmaBodyStart.getType() != KickCLexer.PAR_BEGIN) {
+      if(pragmaBody.isEmpty() || pragmaBody.get(0).getType() != KickCLexer.PAR_BEGIN) {
          ArrayList<Token> parenthesizedBody = new ArrayList<>();
          parenthesizedBody.add(new CommonToken(KickCLexer.PAR_BEGIN, "("));
          // Parenthesize the parameter list

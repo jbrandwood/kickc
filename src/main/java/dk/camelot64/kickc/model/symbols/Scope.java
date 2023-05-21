@@ -30,7 +30,7 @@ public abstract class Scope implements Symbol {
       this.name = name;
       this.parentScope = parentScope;
       this.symbols = new LinkedHashMap<>();
-      this.segmentData = segmentData;
+      this.segmentData = Objects.requireNonNull(segmentData);
       setFullName();
    }
 
@@ -54,6 +54,10 @@ public abstract class Scope implements Symbol {
 
    public String getSegmentData() {
       return segmentData;
+   }
+
+   public void setSegmentData(String segmentData) {
+      this.segmentData = segmentData;
    }
 
    public HashMap<String, Symbol> getSymbols() {

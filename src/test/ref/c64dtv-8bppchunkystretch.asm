@@ -365,7 +365,7 @@ dtvSetCpuBankSegment1: {
     // asm
     .byte $32, $dd
     lda.z $ff
-    .byte $32, $00
+    .byte $32, 0
     // }
     rts
 }

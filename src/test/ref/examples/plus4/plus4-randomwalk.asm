@@ -18,7 +18,7 @@
 .segmentdef Code [start=$100d]
 .segmentdef Data [startAfter="Code"]
 .segment Basic
-:BasicUpstart(main)
+:BasicUpstart(__start)
   .const OFFSET_STRUCT_MOS7360_TED_BG_COLOR = $15
   .const OFFSET_STRUCT_MOS7360_TED_BORDER_COLOR = $19
   .const OFFSET_STRUCT_MOS7360_TED_RASTER_LO = $1d
@@ -29,18 +29,27 @@
   /// The TED chip controlling video and sound on the Plus/4 and Commodore 16
   .label TED = $ff00
   // The random state variable
-  .label rand_state = 2
+  .label rand_state = $11
 .segment Code
+__start: {
+    // volatile unsigned int rand_state = 1
+    lda #<1
+    sta.z rand_state
+    lda #>1
+    sta.z rand_state+1
+    jsr main
+    rts
+}
 main: {
-    .label __3 = $d
-    .label __6 = $11
-    .label __8 = $d
+    .label __3 = 2
+    .label __6 = $f
+    .label __8 = 2
     .label __10 = $b
-    .label __24 = $d
-    .label offset = $d
+    .label __24 = 2
+    .label offset = 2
     .label y = 6
-    .label __29 = $f
-    .label __30 = $d
+    .label __29 = $d
+    .label __30 = 2
     // memset(DEFAULT_SCREEN, 0xa0, 1000)
     ldx #$a0
     lda #<DEFAULT_SCREEN
@@ -67,10 +76,6 @@ main: {
     sta TED+OFFSET_STRUCT_MOS7360_TED_BG_COLOR
     // TED->BORDER_COLOR = 0
     sta TED+OFFSET_STRUCT_MOS7360_TED_BORDER_COLOR
-    lda #<1
-    sta.z rand_state
-    lda #>1
-    sta.z rand_state+1
     ldx #$14
     lda #$c
     sta.z y

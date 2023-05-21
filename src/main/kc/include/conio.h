@@ -4,7 +4,7 @@
 /// Implements similar functions as conio.h from CC65 for compatibility
 /// See https://github.com/cc65/cc65/blob/master/include/conio.h
 //
-/// Currently C64/PLUS4/VIC20 platforms are supported
+/// Currently CX16/C64/PLUS4/VIC20 platforms are supported
 
 /// clears the screen and moves the cursor to the upper left-hand corner of the screen.
 void clrscr(void);

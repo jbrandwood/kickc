@@ -18,20 +18,14 @@
   // The current cursor x-position
   .label conio_cursor_x = $12
   // The current cursor y-position
-  .label conio_cursor_y = $15
+  .label conio_cursor_y = $13
   // The current text cursor line start
-  .label conio_line_text = $18
+  .label conio_line_text = $16
   // The current color cursor line start
-  .label conio_line_color = $1a
-  /// The capacity of the buffer (n passed to snprintf())
-  /// Used to hold state while printing
-  .label __snprintf_capacity = $1c
-  // The number of chars that would have been filled when printing without capacity. Grows even after size>capacity.
-  /// Used to hold state while printing
-  .label __snprintf_size = $13
+  .label conio_line_color = $18
   /// Current position in the buffer being filled ( initially *s passed to snprintf()
   /// Used to hold state while printing
-  .label __snprintf_buffer = $16
+  .label __snprintf_buffer = $14
 .segment Code
 __start: {
     // __ma char conio_cursor_x = 0
@@ -49,14 +43,8 @@ __start: {
     sta.z conio_line_color
     lda #>COLORRAM
     sta.z conio_line_color+1
-    // volatile size_t __snprintf_capacity
-    lda #<0
-    sta.z __snprintf_capacity
-    sta.z __snprintf_capacity+1
-    // volatile size_t __snprintf_size
-    sta.z __snprintf_size
-    sta.z __snprintf_size+1
     // char * __snprintf_buffer
+    lda #<0
     sta.z __snprintf_buffer
     sta.z __snprintf_buffer+1
     // #pragma constructor_for(conio_c64_init, cputc, clrscr, cscroll)
@@ -74,16 +62,16 @@ snputc: {
     lda STACK_BASE+OFFSET_STACK_C,x
     tax
     // ++__snprintf_size;
-    inc.z __snprintf_size
+    inc __snprintf_size
     bne !+
-    inc.z __snprintf_size+1
+    inc __snprintf_size+1
   !:
     // if(__snprintf_size > __snprintf_capacity)
-    lda.z __snprintf_size+1
-    cmp.z __snprintf_capacity+1
+    lda __snprintf_size+1
+    cmp __snprintf_capacity+1
     bne !+
-    lda.z __snprintf_size
-    cmp.z __snprintf_capacity
+    lda __snprintf_size
+    cmp __snprintf_capacity
     beq __b1
   !:
     bcc __b1
@@ -91,11 +79,11 @@ snputc: {
     rts
   __b1:
     // if(__snprintf_size==__snprintf_capacity)
-    lda.z __snprintf_size+1
-    cmp.z __snprintf_capacity+1
+    lda __snprintf_size+1
+    cmp __snprintf_capacity+1
     bne __b2
-    lda.z __snprintf_size
-    cmp.z __snprintf_capacity
+    lda __snprintf_size
+    cmp __snprintf_capacity
     bne __b2
     ldx #0
   __b2:
@@ -389,13 +377,13 @@ snprintf_init: {
     .label s = $a
     // __snprintf_capacity = n
     lda #<$14
-    sta.z __snprintf_capacity
+    sta __snprintf_capacity
     lda #>$14
-    sta.z __snprintf_capacity+1
+    sta __snprintf_capacity+1
     // __snprintf_size = 0
     lda #<0
-    sta.z __snprintf_size
-    sta.z __snprintf_size+1
+    sta __snprintf_size
+    sta __snprintf_size+1
     // __snprintf_buffer = s
     lda.z s
     sta.z __snprintf_buffer
@@ -585,3 +573,9 @@ memset: {
 .segment Data
   BUF1: .fill $14, 0
   BUF2: .fill $14, 0
+  /// The capacity of the buffer (n passed to snprintf())
+  /// Used to hold state while printing
+  __snprintf_capacity: .word 0
+  // The number of chars that would have been filled when printing without capacity. Grows even after size>capacity.
+  /// Used to hold state while printing
+  __snprintf_size: .word 0

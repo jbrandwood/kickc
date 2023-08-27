@@ -499,25 +499,34 @@ public class KickC implements Callable<Integer> {
 
          // Execute the binary file if instructed
          if(emulator != null) {
+            List<String> emulatorCommand = new ArrayList<>();
+            emulatorCommand.addAll(Arrays.asList(emulator.split(" ")));
+
             // Find commandline options for the emulator
-            String emuOptions = "";
-            if(emulator.equals("C64Debugger")) {
+            if( emulator.equals("C64Debugger") ) {
                Path viceSymbolsPath = program.getOutputFileManager().getOutputFile("vs");
-               emuOptions = "-symbols " + viceSymbolsPath + " -autojmp -prg ";
+               emulatorCommand.add("-symbol");
+               emulatorCommand.add(viceSymbolsPath.toString());
+               emulatorCommand.add("-autojmp");
+               emulatorCommand.add("-prg");
             }
             // The program names used by VICE emulators
             List<String> viceEmus = Arrays.asList("x64", "x64sc", "x128", "x64dtv", "xcbm2", "xcbm5x0", "xpet", "xplus4", "xscpu64", "xvic");
             if(viceEmus.contains(emulator)) {
                Path viceSymbolsPath = program.getOutputFileManager().getOutputFile("vs");
-               emuOptions = "-moncommands " + viceSymbolsPath.toAbsolutePath().toString() + " ";
+               emulatorCommand.add("-moncommands");
+               emulatorCommand.add(viceSymbolsPath.toAbsolutePath().toString());
             }
+            emulatorCommand.add(outputBinaryFilePath.toAbsolutePath().toString());
             System.out.println("Executing " + outputBinaryFilePath + " using " + emulator);
-            String executeCommand = emulator + " " + emuOptions + outputBinaryFilePath.toAbsolutePath().toString();
             if(verbose) {
-               System.out.println("Executing command:  " + executeCommand);
+               System.out.println("Executing command:  " + String.join(" ", emulatorCommand));
             }
             try {
-               Process process = Runtime.getRuntime().exec(executeCommand);
+               ProcessBuilder processBuilder = new ProcessBuilder();
+               processBuilder.command(emulatorCommand);
+               processBuilder.inheritIO();
+               Process process = processBuilder.start();
                process.waitFor();
             } catch(Throwable e) {
                System.err.println("Executing emulator failed! " + e.getMessage());

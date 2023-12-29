@@ -37,7 +37,21 @@ struct MOS6526_CIA {
 };
 
 /// Value that disables all CIA interrupts when stored to the CIA Interrupt registers
-const char CIA_INTERRUPT_CLEAR = $7f;
+const char CIA_INTERRUPT_CLEAR_ALL = $7f;
+/// CIA Interrupt: Mask for clearing CIA interrupt flags.
+const char CIA_INTERRUPT_CLEAR  = 0x00;
+/// CIA Interrupt: Mask for setting CIA interrupt flags.
+const char CIA_INTERRUPT_SET    = 0x80;
+/// CIA Interrupt: Mask modifying Timer A interrupt. Must be combined the SET/CLEAR.
+const char CIA_INTERRUPT_TIMERA = 0x01;
+/// CIA Interrupt: Mask modifying Timer B interrupt. Must be combined the SET/CLEAR.
+const char CIA_INTERRUPT_TIMERB = 0x02;
+/// CIA Interrupt: Mask modifying TOD alarm interrupt. Must be combined the SET/CLEAR.
+const char CIA_INTERRUPT_ALARM = 0x04;
+/// CIA Interrupt: Mask modifying Serial Data Register Full/Empty interrupt. Must be combined the SET/CLEAR.
+const char CIA_INTERRUPT_SP = 0x08;
+/// CIA Interrupt: Mask modifying FLAG pin interrupt. Must be combined the SET/CLEAR.
+const char CIA_INTERRUPT_FLAG = 0x10;
 
 /// Timer Control - Start/stop timer (0:stop, 1: start)
 const char CIA_TIMER_CONTROL_STOP = 0b00000000;
@@ -47,6 +61,8 @@ const char CIA_TIMER_CONTROL_START = 0b00000001;
 const char CIA_TIMER_CONTROL_CONTINUOUS = 0b00000000;
 /// Timer Control - Time CONTINUOUS/ONE-SHOT (0:CONTINUOUS, 1: ONE-SHOT)
 const char CIA_TIMER_CONTROL_ONESHOT = 0b00001000;
+/// Timer Control - FORCE LOAD (this is a STROBE input) (1: FORCE LOAD)
+const char CIA_TIMER_CONTROL_FORCELOAD = 0b00010000;
 /// Timer A Control - Timer counts (0:system cycles, 1: CNT pulses)
 const char CIA_TIMER_CONTROL_A_COUNT_CYCLES = 0b00000000;
 /// Timer A Control - Timer counts (0:system cycles, 1: CNT pulses)

@@ -61,6 +61,10 @@ typedef void (*IRQ_TYPE)(void);
 IRQ_TYPE * const KERNEL_IRQ = (IRQ_TYPE*)0x0314;
 /// The vector used when the KERNAL serves NMI interrupts
 IRQ_TYPE * const  KERNEL_NMI = (IRQ_TYPE*)0x0318;
+/// The vector used when the HARDWARE serves NMI interrupts
+IRQ_TYPE * const  HARDWARE_NMI = (IRQ_TYPE*)0xfffa;
+/// The vector used when the HARDWARE is RESET
+IRQ_TYPE * const  HARDWARE_RESET = (IRQ_TYPE*)0xfffc;
 /// The vector used when the HARDWARE serves IRQ interrupts
 IRQ_TYPE * const  HARDWARE_IRQ = (IRQ_TYPE*)0xfffe;
 

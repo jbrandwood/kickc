@@ -59,7 +59,7 @@ void memoryRemapBlock(unsigned char blockPage, unsigned int memoryPage) {
     // Find the page offset (the number of pages to offset the block)
     unsigned int pageOffset = memoryPage-blockPage;
     // Which block is being remapped? (0-7)
-    char block = blockPage / $20;
+    char block = blockPage / 0x20;
     char blockBits = 1<<block;
     memoryRemap(blockBits, pageOffset, pageOffset);
 }

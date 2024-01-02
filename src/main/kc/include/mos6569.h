@@ -216,19 +216,19 @@ char*  const VICII_CONTROL1 = (char*)0xd011;
 /// @see #VICII_CONTROL1
 char*  const D011 = (char*)0xd011;
 /// $D011 Control Register #1 Bit#7: RST8 9th Bit for $D012 Rasterline counter
-const char VICII_RST8 = %10000000;
+const char VICII_RST8 = 0b10000000;
 /// $D011 Control Register #1 Bit#6: ECM Turn Extended Color Mode on/off
-const char VICII_ECM =  %01000000;
+const char VICII_ECM =  0b01000000;
 /// $D011 Control Register #1  Bit#5: BMM Turn Bitmap Mode on/off
-const char VICII_BMM =  %00100000;
+const char VICII_BMM =  0b00100000;
 /// $D011 Control Register #1  Bit#4: DEN Switch VIC-II output on/off
-const char VICII_DEN =  %00010000;
+const char VICII_DEN =  0b00010000;
 /// $D011 Control Register #1  Bit#3: RSEL Switch betweem 25 or 24 visible rows
 ///          RSEL|  Display window height   | First line  | Last line
 ///          ----+--------------------------+-------------+----------
 ///            0 | 24 text lines/192 pixels |   55 ($37)  | 246 ($f6)
 ///            1 | 25 text lines/200 pixels |   51 ($33)  | 250 ($fa)
-const char VICII_RSEL = %00001000;
+const char VICII_RSEL = 0b00001000;
 
 /// $D016 Control register 2
 /// -  Bit#0-#2: XSCROLL Screen Soft Scroll Horizontal
@@ -245,13 +245,13 @@ char*  const VICII_CONTROL2 = (char*)0xd016;
 /// @see #VICII_CONTROL2
 char*  const D016 = (char*)0xd016;
 /// $D016 Control register #2 Bit#4: MCM Turn Multicolor Mode on/off
-const char VICII_MCM =  %00010000;
+const char VICII_MCM =  0b00010000;
 /// $D016 Control register #2 Bit#3: CSEL Switch betweem 40 or 38 visible columns
 ///           CSEL|   Display window width   | First X coo. | Last X coo.
 ///           ----+--------------------------+--------------+------------
 ///             0 | 38 characters/304 pixels |   31 ($1f)   |  334 ($14e)
 ///             1 | 40 characters/320 pixels |   24 ($18)   |  343 ($157)
-const char VICII_CSEL = %00001000;
+const char VICII_CSEL = 0b00001000;
 
 /// $D018 VIC-II base addresses
 /// - Bit#0: not used
@@ -275,20 +275,20 @@ char*  const IRQ_ENABLE = (char*)0xd01a;
 ///    |    | the VIC for the raster compare. The test for reaching the
 ///    |    | interrupt raster line is done in cycle 0 of every line (for line
 ///    |    | 0, in cycle 1).
-const char IRQ_RASTER = %00000001;
+const char IRQ_RASTER = 0b00000001;
 /// VICII IRQ Status/Enable Background Collision
 // @see #IRQ_ENABLE #IRQ_STATUS
 ///  1 | MBC| Collision of at least one sprite with the text/bitmap graphics
 ///    |    | (one sprite data sequencer outputs non-transparent pixel at the
 ///    |    | same time at which the graphics data sequencer outputs a
 ///    |    | foreground pixel)
-const char IRQ_COLLISION_BG = %00000010;
+const char IRQ_COLLISION_BG = 0b00000010;
 /// VICII IRQ Status/Enable Sprite Collision
 // @see #IRQ_ENABLE #IRQ_STATUS
 ///  2 | MMC| Collision of two or more sprites (two sprite data sequencers
 ///    |    | output a non-transparent pixel at the same time)
-const char IRQ_COLLISION_SPRITE = %00000100;
+const char IRQ_COLLISION_SPRITE = 0b00000100;
 /// VICII IRQ Status/Enable Lightpen
 // @see #IRQ_ENABLE #IRQ_STATUS
 ///  3 | LP | Negative edge on the LP input (lightpen)const char IRQ_RASTER = %00000001;
-const char IRQ_LIGHTPEN = %00001000;
+const char IRQ_LIGHTPEN = 0b00001000;

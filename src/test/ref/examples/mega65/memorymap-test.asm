@@ -141,7 +141,7 @@ memoryRemapBlock: {
     lda #>$100
     sbc #0
     sta.z pageOffset+1
-    // char block = blockPage / $20
+    // char block = blockPage / 0x20
     // Which block is being remapped? (0-7)
     txa
     lsr

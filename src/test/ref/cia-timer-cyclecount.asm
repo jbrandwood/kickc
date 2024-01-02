@@ -180,11 +180,11 @@ print_uchar_at: {
     sta.z print_char_at.at+1
   // Table of hexadecimal digits
     jsr print_char_at
-    // b&$f
+    // b&0xf
     lda #$f
     and.z b
     tay
-    // print_char_at(print_hextab[b&$f], at+1)
+    // print_char_at(print_hextab[b&0xf], at+1)
     clc
     lda.z at
     adc #1

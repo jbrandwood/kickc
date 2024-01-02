@@ -16,19 +16,19 @@ const char bitmap_plot_bit[256];
 void bitmap_init(char* gfx, char* screen) {
     bitmap_gfx = gfx;
     bitmap_screen = screen;
-    char bits = $80;
+    char bits = 0x80;
     for(char x : 0..255) {
         bitmap_plot_bit[x] = bits;
         bits >>= 1;
         if(bits==0) {
-          bits = $80;
+          bits = 0x80;
         }
     }
     char* yoffs = gfx;
     for(char y : 0..255) {
-        bitmap_plot_ylo[y] = y&$7 | BYTE0(yoffs);
+        bitmap_plot_ylo[y] = y&0x7 | BYTE0(yoffs);
         bitmap_plot_yhi[y] = BYTE1(yoffs);
-        if((y&$7)==7) {
+        if((y&0x7)==7) {
             yoffs = yoffs + 40*8;
         }
     }
@@ -46,13 +46,13 @@ void bitmap_clear(char bgcol, char fgcol) {
 // Plot a single dot in the bitmap
 void bitmap_plot(unsigned int x, char y) {
     char* plotter = (char*) MAKEWORD( bitmap_plot_yhi[y], bitmap_plot_ylo[y] );
-    plotter += ( x & $fff8 );
+    plotter += ( x & 0xfff8 );
     *plotter |= bitmap_plot_bit[BYTE0(x)];
 }
 
 void bitmap_unplot(unsigned int x, char y) {
     char* plotter = (char*) MAKEWORD( bitmap_plot_yhi[y], bitmap_plot_ylo[y] );
-    plotter += ( x & $fff8 );
+    plotter += ( x & 0xfff8 );
     *plotter &= ~(bitmap_plot_bit[BYTE0(x)]);
 }
 

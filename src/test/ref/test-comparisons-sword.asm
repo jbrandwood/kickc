@@ -310,7 +310,7 @@ compare: {
 // Print a newline
 print_ln: {
   __b1:
-    // print_line_cursor + $28
+    // print_line_cursor + 0x28
     lda #$28
     clc
     adc.z print_line_cursor
@@ -458,10 +458,10 @@ print_uchar: {
     lda print_hextab,y
   // Table of hexadecimal digits
     jsr print_char
-    // b&$f
+    // b&0xf
     lda #$f
     axs #0
-    // print_char(print_hextab[b&$f])
+    // print_char(print_hextab[b&0xf])
     lda print_hextab,x
     jsr print_char
     // }

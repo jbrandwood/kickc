@@ -94,20 +94,20 @@ bitmap_init: {
     sta.z yoffs+1
     ldx #0
   __b3:
-    // y&$7
+    // y&0x7
     lda #7
     sax.z __7
     // BYTE0(yoffs)
     lda.z yoffs
-    // y&$7 | BYTE0(yoffs)
+    // y&0x7 | BYTE0(yoffs)
     ora.z __7
-    // bitmap_plot_ylo[y] = y&$7 | BYTE0(yoffs)
+    // bitmap_plot_ylo[y] = y&0x7 | BYTE0(yoffs)
     sta bitmap_plot_ylo,x
     // BYTE1(yoffs)
     lda.z yoffs+1
     // bitmap_plot_yhi[y] = BYTE1(yoffs)
     sta bitmap_plot_yhi,x
-    // if((y&$7)==7)
+    // if((y&0x7)==7)
     lda #7
     cmp.z __7
     bne __b4
@@ -515,14 +515,14 @@ bitmap_plot: {
     sta.z plotter+1
     lda bitmap_plot_ylo,x
     sta.z plotter
-    // x & $fff8
+    // x & 0xfff8
     lda.z x
     and #<$fff8
     sta.z __1
     lda.z x+1
     and #>$fff8
     sta.z __1+1
-    // plotter += ( x & $fff8 )
+    // plotter += ( x & 0xfff8 )
     clc
     lda.z plotter
     adc.z __1

@@ -1917,11 +1917,11 @@ divr8u: {
   __b1:
     // rem = rem << 1
     asl.z rem
-    // dividend & $80
+    // dividend & 0x80
     lda #$80
     and.z dividend
     sta.z __1
-    // if( (dividend & $80) != 0 )
+    // if( (dividend & 0x80) != 0 )
     beq __b2
     // rem = rem | 1
     lda #1

@@ -234,10 +234,10 @@ print_uchar: {
     lda print_hextab,y
   // Table of hexadecimal digits
     jsr print_char
-    // b&$f
+    // b&0xf
     lda #$f
     axs #0
-    // print_char(print_hextab[b&$f])
+    // print_char(print_hextab[b&0xf])
     lda print_hextab,x
     jsr print_char
     // }

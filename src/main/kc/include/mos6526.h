@@ -37,7 +37,7 @@ struct MOS6526_CIA {
 };
 
 /// Value that disables all CIA interrupts when stored to the CIA Interrupt registers
-const char CIA_INTERRUPT_CLEAR_ALL = $7f;
+const char CIA_INTERRUPT_CLEAR_ALL = 0x7f;
 /// CIA Interrupt: Mask for clearing CIA interrupt flags.
 const char CIA_INTERRUPT_CLEAR  = 0x00;
 /// CIA Interrupt: Mask for setting CIA interrupt flags.

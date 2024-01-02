@@ -262,10 +262,10 @@ divr8u: {
     tya
     asl
     tay
-    // dividend & $80
+    // dividend & 0x80
     lda #$80
     and.z dividend
-    // if( (dividend & $80) != 0 )
+    // if( (dividend & 0x80) != 0 )
     cmp #0
     beq __b2
     // rem = rem | 1

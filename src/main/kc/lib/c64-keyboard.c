@@ -25,25 +25,25 @@ const char keyboard_char_keycodes[] = {
     /*@*/KEY_AT,    /*a*/KEY_A,   /*b*/KEY_B,        /*c*/KEY_C,         /*d*/KEY_D,     /*e*/KEY_E,      /*f*/KEY_F,        /*g*/KEY_G,
     /*h*/KEY_H,     /*i*/KEY_I,   /*j*/KEY_J,        /*k*/KEY_K,         /*l*/KEY_L,     /*m*/KEY_M,      /*n*/KEY_N,        /*o*/KEY_O,
     /*p*/KEY_P,     /*q*/KEY_Q,   /*r*/KEY_R,        /*s*/KEY_S,         /*t*/KEY_T,     /*u*/KEY_U,      /*v*/KEY_V,        /*w*/KEY_W,
-    /*x*/KEY_X,     /*y*/KEY_Y,   /*z*/KEY_Z,        /*[*/$3f,           /*£*/KEY_POUND, /*]*/$3f,        /*^*/KEY_ARROW_UP, /*<-*/KEY_ARROW_LEFT,
-    /* */KEY_SPACE, /*!*/$3f,     /*"*/$3f,          /*#*/$3f,           /*$*/$3f,       /*%*/$3f,        /*&*/$3f,          /*´*/$3f,
-    /*(*/$3f,       /*)*/$3f,     /***/KEY_ASTERISK, /*+*/KEY_PLUS,      /*,*/KEY_COMMA, /*-*/KEY_MINUS,  /*.*/KEY_DOT,      /*/*/KEY_SLASH,
+    /*x*/KEY_X,     /*y*/KEY_Y,   /*z*/KEY_Z,        /*[*/0x3f,          /*£*/KEY_POUND, /*]*/0x3f,       /*^*/KEY_ARROW_UP, /*<-*/KEY_ARROW_LEFT,
+    /* */KEY_SPACE, /*!*/0x3f,    /*"*/0x3f,         /*#*/0x3f,          /*$*/0x3f,      /*%*/0x3f,       /*&*/0x3f,         /*´*/0x3f,
+    /*(*/0x3f,      /*)*/0x3f,    /***/KEY_ASTERISK, /*+*/KEY_PLUS,      /*,*/KEY_COMMA, /*-*/KEY_MINUS,  /*.*/KEY_DOT,      /*/*/KEY_SLASH,
     /*0*/KEY_0,     /*1*/KEY_1,   /*2*/KEY_2,        /*3*/KEY_3,         /*4*/KEY_4,     /*5*/KEY_5,      /*6*/KEY_6,        /*7*/KEY_7,
-    /*8*/KEY_8,     /*9*/KEY_9,   /*:*/KEY_COLON,    /*;*/KEY_SEMICOLON, /*<*/$3f,       /*=*/KEY_EQUALS, /*>*/$3f,          /*?*/$3f
+    /*8*/KEY_8,     /*9*/KEY_9,   /*:*/KEY_COLON,    /*;*/KEY_SEMICOLON, /*<*/0x3f,      /*=*/KEY_EQUALS, /*>*/0x3f,         /*?*/0x3f
 };
 
 // Keyboard row bitmask as expected by CIA#1 Port A when reading a specific keyboard matrix row (rows are numbered 0-7)
-char keyboard_matrix_row_bitmask[8] = { %11111110, %11111101, %11111011, %11110111, %11101111, %11011111, %10111111, %01111111 };
+char keyboard_matrix_row_bitmask[8] = { 0b11111110, 0b11111101, 0b11111011, 0b11110111, 0b11101111, 0b11011111, 0b10111111, 0b01111111 };
 
 // Keyboard matrix column bitmasks for a specific keybooard matrix column when reading the keyboard. (columns are numbered 0-7)
-char keyboard_matrix_col_bitmask[8] = { %00000001, %00000010, %00000100, %00001000, %00010000, %00100000, %01000000, %10000000 };
+char keyboard_matrix_col_bitmask[8] = { 0b00000001, 0b00000010, 0b00000100, 0b00001000, 0b00010000, 0b00100000, 0b01000000, 0b10000000 };
 
 // Initialize keyboard reading by setting CIA#1 Data Direction Registers
 void keyboard_init() {
     // Keyboard Matrix Columns Write Mode
-    CIA1->PORT_A_DDR = $ff;
+    CIA1->PORT_A_DDR = 0xff;
     // Keyboard Matrix Columns Read Mode
-    CIA1->PORT_B_DDR = $00;
+    CIA1->PORT_B_DDR = 0x00;
 }
 
 // Check if any key is currently pressed on the keyboard matrix
@@ -121,7 +121,7 @@ void keyboard_event_scan() {
                         char event_type = row_scan&keyboard_matrix_col_bitmask[col];
                         if(event_type==0) {
                             // Key released
-                            keyboard_events[keyboard_events_size++] = keycode|$40;
+                            keyboard_events[keyboard_events_size++] = keycode|0x40;
                         } else {
                             // Key pressed
                             keyboard_events[keyboard_events_size++] = keycode;
@@ -165,7 +165,7 @@ char keyboard_event_pressed(char keycode) {
 // The buffer is filled by keyboard_event_scan()
 char keyboard_event_get() {
     if(keyboard_events_size==0) {
-        return $ff;
+        return 0xff;
     } else {
         return keyboard_events[--keyboard_events_size];
     }

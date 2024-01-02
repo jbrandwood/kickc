@@ -428,7 +428,7 @@ sin16s: {
     sta.z mulu16_sel.return_1
     lda.z mulu16_sel.return+1
     sta.z mulu16_sel.return_1+1
-    // unsigned int x3_6 = mulu16_sel(x3, $10000/6, 1)
+    // unsigned int x3_6 = mulu16_sel(x3, 0x10000/6, 1)
   // u[2.14] x^3
     ldx #1
     lda #<$10000/6
@@ -436,7 +436,7 @@ sin16s: {
     lda #>$10000/6
     sta.z mulu16_sel.v2+1
     jsr mulu16_sel
-    // unsigned int x3_6 = mulu16_sel(x3, $10000/6, 1)
+    // unsigned int x3_6 = mulu16_sel(x3, 0x10000/6, 1)
     // unsigned int usinx = x1 - x3_6
     // u[1.15] x^3/6;
     lda.z x1
@@ -582,9 +582,9 @@ divr16u: {
     rol.z rem+1
     // BYTE1(dividend)
     lda.z dividend+1
-    // BYTE1(dividend) & $80
+    // BYTE1(dividend) & 0x80
     and #$80
-    // if( (BYTE1(dividend) & $80) != 0 )
+    // if( (BYTE1(dividend) & 0x80) != 0 )
     cmp #0
     beq __b2
     // rem = rem | 1
@@ -678,10 +678,10 @@ print_uchar: {
     lda print_hextab,y
   // Table of hexadecimal digits
     jsr print_char
-    // b&$f
+    // b&0xf
     lda #$f
     axs #0
-    // print_char(print_hextab[b&$f])
+    // print_char(print_hextab[b&0xf])
     lda print_hextab,x
     jsr print_char
     // }

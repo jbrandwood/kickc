@@ -258,11 +258,11 @@ print_uchar_at: {
     ldx print_hextab,y
   // Table of hexadecimal digits
     jsr print_char_at
-    // b&$f
+    // b&0xf
     lda #$f
     and.z b
     tay
-    // print_char_at(print_hextab[b&$f], at+1)
+    // print_char_at(print_hextab[b&0xf], at+1)
     inc.z print_char_at.at
     bne !+
     inc.z print_char_at.at+1

@@ -3545,17 +3545,17 @@ bitmap_init: {
     // [23] phi bitmap_init::y#2 = bitmap_init::y#1 [phi:bitmap_init::@4->bitmap_init::@3#1] -- register_copy 
     // bitmap_init::@3
   __b3:
-    // y&$7
+    // y&0x7
     // [24] bitmap_init::$7 = bitmap_init::y#2 & 7 -- vbuz1=vbuxx_band_vbuc1 
     lda #7
     sax.z __7
     // BYTE0(yoffs)
     // [25] bitmap_init::$4 = byte0  bitmap_init::yoffs#2 -- vbuaa=_byte0_pbuz1 
     lda.z yoffs
-    // y&$7 | BYTE0(yoffs)
+    // y&0x7 | BYTE0(yoffs)
     // [26] bitmap_init::$5 = bitmap_init::$7 | bitmap_init::$4 -- vbuaa=vbuz1_bor_vbuaa 
     ora.z __7
-    // bitmap_plot_ylo[y] = y&$7 | BYTE0(yoffs)
+    // bitmap_plot_ylo[y] = y&0x7 | BYTE0(yoffs)
     // [27] bitmap_plot_ylo[bitmap_init::y#2] = bitmap_init::$5 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta bitmap_plot_ylo,x
     // BYTE1(yoffs)
@@ -3564,7 +3564,7 @@ bitmap_init: {
     // bitmap_plot_yhi[y] = BYTE1(yoffs)
     // [29] bitmap_plot_yhi[bitmap_init::y#2] = bitmap_init::$6 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta bitmap_plot_yhi,x
-    // if((y&$7)==7)
+    // if((y&0x7)==7)
     // [30] if(bitmap_init::$7!=7) goto bitmap_init::@4 -- vbuz1_neq_vbuc1_then_la1 
     lda #7
     cmp.z __7
@@ -4115,7 +4115,7 @@ bitmap_plot: {
     sta.z plotter+1
     lda bitmap_plot_ylo,x
     sta.z plotter
-    // x & $fff8
+    // x & 0xfff8
     // [114] bitmap_plot::$1 = bitmap_plot::x#4 & $fff8 -- vwuz1=vwuz2_band_vwuc1 
     lda.z x
     and #<$fff8
@@ -4123,7 +4123,7 @@ bitmap_plot: {
     lda.z x+1
     and #>$fff8
     sta.z __1+1
-    // plotter += ( x & $fff8 )
+    // plotter += ( x & 0xfff8 )
     // [115] bitmap_plot::plotter#1 = (char *)bitmap_plot::plotter#0 + bitmap_plot::$1 -- pbuz1=pbuz1_plus_vwuz2 
     clc
     lda.z plotter

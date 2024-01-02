@@ -1,7 +1,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-char* print_screen = (char*)$0400;
+char* print_screen = (char*)0x0400;
 char* print_line_cursor = print_screen;
 char* print_char_cursor = print_line_cursor;
 
@@ -41,7 +41,7 @@ void print_str_at(char* str, char* at) {
 // Print a newline
 void print_ln() {
     do {
-        print_line_cursor = print_line_cursor + $28;
+        print_line_cursor = print_line_cursor + 0x28;
     } while (print_line_cursor<print_char_cursor);
     print_char_cursor = print_line_cursor;
 }
@@ -163,7 +163,7 @@ const char print_hextab[] = "0123456789abcdef"z;
 void print_uchar(char b) {
     // Table of hexadecimal digits
     print_char(print_hextab[b>>4]);
-    print_char(print_hextab[b&$f]);
+    print_char(print_hextab[b&0xf]);
 }
 
 // Prints a char as HEX at a specific position on the screen
@@ -176,7 +176,7 @@ inline void print_uchar_pos(char b, char row, char col) {
 void print_uchar_at(char b, char* at) {
     // Table of hexadecimal digits
     print_char_at(print_hextab[b>>4], at);
-    print_char_at(print_hextab[b&$f], at+1);
+    print_char_at(print_hextab[b&0xf], at+1);
 }
 
 // Print a single char

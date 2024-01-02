@@ -13,7 +13,7 @@
 .segment Code
 main: {
     .const vicSelectGfxBank1_toDd001_return = 3
-    // CIA2->PORT_A_DDR = %00000011
+    // CIA2->PORT_A_DDR = 0b00000011
     lda #3
     sta CIA2+OFFSET_STRUCT_MOS6526_CIA_PORT_A_DDR
     // CIA2->PORT_A = toDd00(gfx)

@@ -84,7 +84,7 @@ print_str: {
 // Print a newline
 print_ln: {
   __b1:
-    // print_line_cursor + $28
+    // print_line_cursor + 0x28
     lda #$28
     clc
     adc.z print_line_cursor

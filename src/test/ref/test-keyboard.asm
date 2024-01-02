@@ -213,11 +213,11 @@ main: {
 }
 // Initialize keyboard reading by setting CIA#1 Data Direction Registers
 keyboard_init: {
-    // CIA1->PORT_A_DDR = $ff
+    // CIA1->PORT_A_DDR = 0xff
     // Keyboard Matrix Columns Write Mode
     lda #$ff
     sta CIA1+OFFSET_STRUCT_MOS6526_CIA_PORT_A_DDR
-    // CIA1->PORT_B_DDR = $00
+    // CIA1->PORT_B_DDR = 0x00
     // Keyboard Matrix Columns Read Mode
     lda #0
     sta CIA1+OFFSET_STRUCT_MOS6526_CIA_PORT_B_DDR

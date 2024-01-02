@@ -391,7 +391,7 @@ void vera_layer_set_tilebase_address(byte layer, dword tilebase_address) {
 dword vera_layer_get_tilebase_address(byte layer) {
     byte tilebase = *vera_layer_tilebase[layer];
     dword address = tilebase;
-    address &= $FC;
+    address &= 0xFC;
     address <<= 8;
     address <<= 1;
     return address;

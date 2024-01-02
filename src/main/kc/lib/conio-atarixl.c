@@ -233,8 +233,8 @@ inline unsigned char convertToScreenCode(unsigned char* v) {
 char rawmap[0x100] = kickasm {{
 	.var ht = Hashtable().put(0,64, 1,0, 2,32, 3,96) // the table for converting bit 6,7 into ora value
 	.for(var i=0; i<256; i++) {
-		.var idx = (i & $60) / 32
-		.var mask = i & $9f
+		.var idx = (i & 0x60) / 32
+		.var mask = i & 0x9f
 		.byte mask | ht.get(idx)
 	}
 }};

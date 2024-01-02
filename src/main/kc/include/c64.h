@@ -47,8 +47,18 @@ char * const DEFAULT_FONT_MIXED = (char*)0x1800;
 struct MOS6526_CIA * const CIA1 = (struct MOS6526_CIA *)0xdc00;
 /// The CIA#2: Serial bus, RS-232, VIC memory bank
 struct MOS6526_CIA * const CIA2 = (struct MOS6526_CIA *)0xdd00;
+/// CIA#1 timer A
+unsigned int* const CIA1_TIMER_A = (unsigned int*)0xdc04;
+/// CIA#1 timer B
+unsigned int* const CIA1_TIMER_B = (unsigned int*)0xdc06;
+/// CIA#1 timer A&B as one single 32-bit value
+unsigned long* const CIA1_TIMER_AB = (unsigned long*)0xdc04;
 /// CIA#1 Interrupt for reading in ASM
 char * const CIA1_INTERRUPT = (char*)0xdc0d;
+/// CIA#2 timer A
+unsigned int* const CIA2_TIMER_A = (unsigned int*)0xdd04;
+/// CIA#2 timer B
+unsigned int* const CIA2_TIMER_B = (unsigned int*)0xdd06;
 /// CIA#2 timer A&B as one single 32-bit value
 unsigned long* const CIA2_TIMER_AB = (unsigned long*)0xdd04;
 /// CIA#2 Interrupt for reading in ASM

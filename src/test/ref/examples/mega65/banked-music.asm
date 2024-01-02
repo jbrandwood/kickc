@@ -17,7 +17,7 @@
 .text toIntString(main)                                   //         NNNN
 .byte $00, $00, $00                                     // 
   /// Value that disables all CIA interrupts when stored to the CIA Interrupt registers
-  .const CIA_INTERRUPT_CLEAR = $7f
+  .const CIA_INTERRUPT_CLEAR_ALL = $7f
   /// VICII IRQ Status/Enable Raster
   // @see #IRQ_ENABLE #IRQ_STATUS
   ///  0 | RST| Reaching a certain raster line. The line is specified by writing
@@ -179,10 +179,10 @@ main: {
     sta.z memoryRemap.lowerPageOffset
     sta.z memoryRemap.lowerPageOffset+1
     jsr memoryRemap
-    // CIA1->INTERRUPT = CIA_INTERRUPT_CLEAR
+    // CIA1->INTERRUPT = CIA_INTERRUPT_CLEAR_ALL
     // Set up raster interrupts C64 style
     // Disable CIA 1 Timer IRQ
-    ldz #CIA_INTERRUPT_CLEAR
+    ldz #CIA_INTERRUPT_CLEAR_ALL
     stz CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT
     // VICII->RASTER = 0xff
     // Set raster line to 0xff

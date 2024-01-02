@@ -12,7 +12,7 @@ main: scope:[main]  from __start::@1
   callexecute *musicInit 
   to:main::@1
 main::@1: scope:[main]  from main
-  *((char *)CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) = CIA_INTERRUPT_CLEAR
+  *((char *)CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) = CIA_INTERRUPT_CLEAR_ALL
   *((char *)VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1) = *((char *)VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1) & $7f
   *((char *)VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER) = $fd
   *((char *)VICII+OFFSET_STRUCT_MOS6569_VICII_IRQ_ENABLE) = IRQ_RASTER
@@ -52,7 +52,7 @@ __start::@return: scope:[__start]  from __start::@2
 
 SYMBOL TABLE SSA
 __constant struct MOS6526_CIA * const CIA1 = (struct MOS6526_CIA *)$dc00
-__constant const char CIA_INTERRUPT_CLEAR = $7f
+__constant const char CIA_INTERRUPT_CLEAR_ALL = $7f
 __constant const char IRQ_RASTER = 1
 __constant void (** const KERNEL_IRQ)() = (void (**)())$314
 __constant char MUSIC[] = kickasm {{ .const music = LoadSid("toiletrensdyr.sid")
@@ -125,7 +125,7 @@ main: scope:[main]  from
   [6] callexecute *musicInit 
   to:main::@1
 main::@1: scope:[main]  from main
-  [7] *((char *)CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) = CIA_INTERRUPT_CLEAR
+  [7] *((char *)CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) = CIA_INTERRUPT_CLEAR_ALL
   [8] *((char *)VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1) = *((char *)VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1) & $7f
   [9] *((char *)VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER) = $fd
   [10] *((char *)VICII+OFFSET_STRUCT_MOS6569_VICII_IRQ_ENABLE) = IRQ_RASTER
@@ -147,7 +147,7 @@ REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [1] callexecute *musicPlay  [ ] (  [ ] { }  ) always clobbers reg byte a reg byte x reg byte y 
 Statement [2] *((char *)VICII+OFFSET_STRUCT_MOS6569_VICII_IRQ_STATUS) = IRQ_RASTER [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [6] callexecute *musicInit  [ ] (  [ ] { }  ) always clobbers reg byte a reg byte x reg byte y 
-Statement [7] *((char *)CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) = CIA_INTERRUPT_CLEAR [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [7] *((char *)CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) = CIA_INTERRUPT_CLEAR_ALL [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [8] *((char *)VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1) = *((char *)VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1) & $7f [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [9] *((char *)VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER) = $fd [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [10] *((char *)VICII+OFFSET_STRUCT_MOS6569_VICII_IRQ_ENABLE) = IRQ_RASTER [ ] (  [ ] { }  ) always clobbers reg byte a 
@@ -188,7 +188,7 @@ ASSEMBLER BEFORE OPTIMIZATION
 :BasicUpstart(main)
   // Global Constants & labels
   /// Value that disables all CIA interrupts when stored to the CIA Interrupt registers
-  .const CIA_INTERRUPT_CLEAR = $7f
+  .const CIA_INTERRUPT_CLEAR_ALL = $7f
   /// VICII IRQ Status/Enable Raster
   // @see #IRQ_ENABLE #IRQ_STATUS
   ///  0 | RST| Reaching a certain raster line. The line is specified by writing
@@ -249,9 +249,9 @@ main: {
     jmp __b1
     // main::@1
   __b1:
-    // [7] *((char *)CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) = CIA_INTERRUPT_CLEAR -- _deref_pbuc1=vbuc2 
+    // [7] *((char *)CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) = CIA_INTERRUPT_CLEAR_ALL -- _deref_pbuc1=vbuc2 
     // Disable CIA 1 Timer IRQ
-    lda #CIA_INTERRUPT_CLEAR
+    lda #CIA_INTERRUPT_CLEAR_ALL
     sta CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT
     // [8] *((char *)VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1) = *((char *)VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1) & $7f -- _deref_pbuc1=_deref_pbuc1_band_vbuc2 
     // Set raster line to $fd
@@ -302,7 +302,7 @@ Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
 __constant struct MOS6526_CIA * const CIA1 = (struct MOS6526_CIA *) 56320
-__constant const char CIA_INTERRUPT_CLEAR = $7f
+__constant const char CIA_INTERRUPT_CLEAR_ALL = $7f
 __constant const char IRQ_RASTER = 1
 __constant void (** const KERNEL_IRQ)() = (void (**)()) 788
 __constant char MUSIC[] = kickasm {{ .const music = LoadSid("toiletrensdyr.sid")
@@ -344,7 +344,7 @@ Score: 110
 :BasicUpstart(main)
   // Global Constants & labels
   /// Value that disables all CIA interrupts when stored to the CIA Interrupt registers
-  .const CIA_INTERRUPT_CLEAR = $7f
+  .const CIA_INTERRUPT_CLEAR_ALL = $7f
   /// VICII IRQ Status/Enable Raster
   // @see #IRQ_ENABLE #IRQ_STATUS
   ///  0 | RST| Reaching a certain raster line. The line is specified by writing
@@ -406,10 +406,10 @@ main: {
     // [6] callexecute *musicInit  -- call__deref_pprc1 
     jsr musicInit
     // main::@1
-    // CIA1->INTERRUPT = CIA_INTERRUPT_CLEAR
-    // [7] *((char *)CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) = CIA_INTERRUPT_CLEAR -- _deref_pbuc1=vbuc2 
+    // CIA1->INTERRUPT = CIA_INTERRUPT_CLEAR_ALL
+    // [7] *((char *)CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) = CIA_INTERRUPT_CLEAR_ALL -- _deref_pbuc1=vbuc2 
     // Disable CIA 1 Timer IRQ
-    lda #CIA_INTERRUPT_CLEAR
+    lda #CIA_INTERRUPT_CLEAR_ALL
     sta CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT
     // VICII->CONTROL1 &=$7f
     // [8] *((char *)VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1) = *((char *)VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1) & $7f -- _deref_pbuc1=_deref_pbuc1_band_vbuc2 

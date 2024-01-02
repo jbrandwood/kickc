@@ -17,7 +17,7 @@ const byte WHITE = 1;
 const byte BLACK = 0;
 
 byte* const CIA1_INTERRUPT = (byte*)$dc0d;
-const byte CIA_INTERRUPT_CLEAR = $7f;
+const byte CIA_INTERRUPT_CLEAR_ALL = $7f;
 
 // Processor port data direction register
 byte* const PROCPORT_DDR = (byte*)$00;
@@ -36,7 +36,7 @@ void main() {
     *PROCPORT_DDR = PROCPORT_DDR_MEMORY_MASK;
     *PROCPORT = PROCPORT_RAM_IO;
     // Disable CIA 1 Timer IRQ
-    *CIA1_INTERRUPT = CIA_INTERRUPT_CLEAR;
+    *CIA1_INTERRUPT = CIA_INTERRUPT_CLEAR_ALL;
     // Set raster line to $100
     *VICII_CONTROL1 |=$80;
     *RASTER = $00;

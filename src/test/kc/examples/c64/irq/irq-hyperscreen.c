@@ -7,7 +7,7 @@ void main() {
     *GHOST_BYTE = 0;
     asm { sei }
     // Disable CIA 1 Timer IRQ
-    CIA1->INTERRUPT = CIA_INTERRUPT_CLEAR;
+    CIA1->INTERRUPT = CIA_INTERRUPT_CLEAR_ALL;
     // Set raster line to 0xfa
     VICII->CONTROL1 &= 0x7f;
     VICII->RASTER = 0xfa;

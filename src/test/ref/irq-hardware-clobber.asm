@@ -10,7 +10,7 @@
   .const IRQ_RASTER = 1
   .const WHITE = 1
   .const BLACK = 0
-  .const CIA_INTERRUPT_CLEAR = $7f
+  .const CIA_INTERRUPT_CLEAR_ALL = $7f
   // Mask for PROCESSOR_PORT_DDR which allows only memory configuration to be written
   .const PROCPORT_DDR_MEMORY_MASK = 7
   // RAM in $A000, $E000 I/O in $D000
@@ -57,9 +57,9 @@ main: {
     // *PROCPORT = PROCPORT_RAM_IO
     lda #PROCPORT_RAM_IO
     sta.z PROCPORT
-    // *CIA1_INTERRUPT = CIA_INTERRUPT_CLEAR
+    // *CIA1_INTERRUPT = CIA_INTERRUPT_CLEAR_ALL
     // Disable CIA 1 Timer IRQ
-    lda #CIA_INTERRUPT_CLEAR
+    lda #CIA_INTERRUPT_CLEAR_ALL
     sta CIA1_INTERRUPT
     // *VICII_CONTROL1 |=$80
     // Set raster line to $100

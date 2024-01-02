@@ -10,7 +10,7 @@
 .segment Basic
 :BasicUpstart(__start)
   /// Value that disables all CIA interrupts when stored to the CIA Interrupt registers
-  .const CIA_INTERRUPT_CLEAR = $7f
+  .const CIA_INTERRUPT_CLEAR_ALL = $7f
   .const SAMPLE_SIZE = $6100
   .const OFFSET_STRUCT_MOS6526_CIA_INTERRUPT = $d
   .const OFFSET_STRUCT_MOS6526_CIA_TIMER_A = 4
@@ -124,8 +124,8 @@ main: {
     sta $d40b
     sta $d412
     sei
-    // CIA2->INTERRUPT = CIA_INTERRUPT_CLEAR
-    lda #CIA_INTERRUPT_CLEAR
+    // CIA2->INTERRUPT = CIA_INTERRUPT_CLEAR_ALL
+    lda #CIA_INTERRUPT_CLEAR_ALL
     sta CIA2+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT
     // *KERNEL_NMI = &nmi
     lda #<nmi

@@ -18,7 +18,7 @@
 .segment Basic
 :BasicUpstart(__start)
   /// Value that disables all CIA interrupts when stored to the CIA Interrupt registers
-  .const CIA_INTERRUPT_CLEAR = $7f
+  .const CIA_INTERRUPT_CLEAR_ALL = $7f
   /// VICII IRQ Status/Enable Raster
   // @see #IRQ_ENABLE #IRQ_STATUS
   ///  0 | RST| Reaching a certain raster line. The line is specified by writing
@@ -508,9 +508,9 @@ main: {
     // asm
     // Set up raster interrupts C64 style
     sei
-    // CIA1->INTERRUPT = CIA_INTERRUPT_CLEAR
+    // CIA1->INTERRUPT = CIA_INTERRUPT_CLEAR_ALL
     // Disable CIA 1 Timer IRQ
-    ldz #CIA_INTERRUPT_CLEAR
+    ldz #CIA_INTERRUPT_CLEAR_ALL
     stz CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT
     // VICII->RASTER = IRQ_Y
     // Set raster line to 0x16

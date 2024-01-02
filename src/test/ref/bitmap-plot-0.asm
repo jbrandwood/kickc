@@ -15,7 +15,7 @@
 .segment Basic
 :BasicUpstart(__start)
   /// Value that disables all CIA interrupts when stored to the CIA Interrupt registers
-  .const CIA_INTERRUPT_CLEAR = $7f
+  .const CIA_INTERRUPT_CLEAR_ALL = $7f
   /// $D011 Control Register #1  Bit#5: BMM Turn Bitmap Mode on/off
   .const VICII_BMM = $20
   /// $D011 Control Register #1  Bit#4: DEN Switch VIC-II output on/off
@@ -298,9 +298,9 @@ init_irq: {
     // *PROCPORT = PROCPORT_RAM_IO
     lda #PROCPORT_RAM_IO
     sta.z PROCPORT
-    // CIA1->INTERRUPT = CIA_INTERRUPT_CLEAR
+    // CIA1->INTERRUPT = CIA_INTERRUPT_CLEAR_ALL
     // Disable CIA 1 Timer IRQ
-    lda #CIA_INTERRUPT_CLEAR
+    lda #CIA_INTERRUPT_CLEAR_ALL
     sta CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT
     // *VICII_CONTROL1 |=$80
     // Set raster line to $100

@@ -24,7 +24,7 @@ void main() {
 				sta $d412	    
     }
     asm { sei }
-    CIA2->INTERRUPT = CIA_INTERRUPT_CLEAR;
+    CIA2->INTERRUPT = CIA_INTERRUPT_CLEAR_ALL;
     *KERNEL_NMI = &nmi;
     CIA2->TIMER_A = 0x88; // speed
     CIA2->INTERRUPT = 0x81;

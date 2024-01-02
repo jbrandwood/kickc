@@ -54,7 +54,7 @@ void init_irq() {
     *PROCPORT_DDR = PROCPORT_DDR_MEMORY_MASK;
     *PROCPORT = PROCPORT_RAM_IO;
     // Disable CIA 1 Timer IRQ
-    CIA1->INTERRUPT = CIA_INTERRUPT_CLEAR;
+    CIA1->INTERRUPT = CIA_INTERRUPT_CLEAR_ALL;
     // Set raster line to $100
     *VICII_CONTROL1 |=$80;
     *RASTER = $00;

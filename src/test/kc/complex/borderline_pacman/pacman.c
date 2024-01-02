@@ -203,7 +203,7 @@ void splash_run() {
     // Stop kernel IRQ
     SEI();
     // Disable CIA 1 Timer IRQ
-    CIA1->INTERRUPT = CIA_INTERRUPT_CLEAR;
+    CIA1->INTERRUPT = CIA_INTERRUPT_CLEAR_ALL;
     // Disable kernal & basic & IO
     *PROCPORT_DDR = PROCPORT_DDR_MEMORY_MASK;
     *PROCPORT = PROCPORT_RAM_ALL;

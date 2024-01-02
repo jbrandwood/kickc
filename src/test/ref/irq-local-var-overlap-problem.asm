@@ -8,7 +8,7 @@
 .segment Basic
 :BasicUpstart(main)
   .const IRQ_RASTER = 1
-  .const CIA_INTERRUPT_CLEAR = $7f
+  .const CIA_INTERRUPT_CLEAR_ALL = $7f
   .label KERNEL_IRQ = $314
   .label RASTER = $d012
   .label VICII_CONTROL1 = $d011
@@ -71,9 +71,9 @@ main: {
     .label i = 7
     // asm
     sei
-    // *CIA1_INTERRUPT = CIA_INTERRUPT_CLEAR
+    // *CIA1_INTERRUPT = CIA_INTERRUPT_CLEAR_ALL
     // Disable CIA 1 Timer IRQ
-    lda #CIA_INTERRUPT_CLEAR
+    lda #CIA_INTERRUPT_CLEAR_ALL
     sta CIA1_INTERRUPT
     // *VICII_CONTROL1 &=$7f
     // Set raster line to $0fd

@@ -170,7 +170,7 @@ main::@1: scope:[main]  from main::@7
   call memoryRemap
   to:main::@8
 main::@8: scope:[main]  from main::@1
-  *((char *)CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) = CIA_INTERRUPT_CLEAR
+  *((char *)CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) = CIA_INTERRUPT_CLEAR_ALL
   *((char *)VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER) = $ff
   *((char *)VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1) = *((char *)VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1) & $7f
   *((char *)VICII+OFFSET_STRUCT_MOS6569_VICII_IRQ_ENABLE) = IRQ_RASTER
@@ -248,7 +248,7 @@ __start::@return: scope:[__start]  from __start::@2
 
 SYMBOL TABLE SSA
 __constant struct MOS6526_CIA * const CIA1 = (struct MOS6526_CIA *)$dc00
-__constant const char CIA_INTERRUPT_CLEAR = $7f
+__constant const char CIA_INTERRUPT_CLEAR_ALL = $7f
 __constant char * const DEFAULT_SCREEN = (char *)$800
 __constant struct F018_DMAGIC * const DMA = (struct F018_DMAGIC *)$d700
 __constant const char DMA_COMMAND_COPY = 0
@@ -717,7 +717,7 @@ main::@1: scope:[main]  from main::@7
   [26] call memoryRemap
   to:main::@8
 main::@8: scope:[main]  from main::@1
-  [27] *((char *)CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) = CIA_INTERRUPT_CLEAR
+  [27] *((char *)CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) = CIA_INTERRUPT_CLEAR_ALL
   [28] *((char *)VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER) = $ff
   [29] *((char *)VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1) = *((char *)VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1) & $7f
   [30] *((char *)VICII+OFFSET_STRUCT_MOS6569_VICII_IRQ_ENABLE) = IRQ_RASTER
@@ -901,7 +901,7 @@ Statement [18] *PROCPORT = PROCPORT_RAM_IO [ memcpy_dma_command4 ] (  [ memcpy_d
 Statement [19] *((char *)VICIV+OFFSET_STRUCT_MEGA65_VICIV_SIDBDRWD_LO) = 1 [ memcpy_dma_command4 ] (  [ memcpy_dma_command4 ] { }  ) always clobbers reg byte z 
 Statement asm { lda#0  } always clobbers reg byte a 
 Statement [24] callexecute *musicInit  [ ] (  [ ] { }  ) always clobbers reg byte a reg byte x reg byte y reg byte z 
-Statement [27] *((char *)CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) = CIA_INTERRUPT_CLEAR [ ] (  [ ] { }  ) always clobbers reg byte z 
+Statement [27] *((char *)CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) = CIA_INTERRUPT_CLEAR_ALL [ ] (  [ ] { }  ) always clobbers reg byte z 
 Statement [28] *((char *)VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER) = $ff [ ] (  [ ] { }  ) always clobbers reg byte z 
 Statement [29] *((char *)VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1) = *((char *)VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1) & $7f [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [30] *((char *)VICII+OFFSET_STRUCT_MOS6569_VICII_IRQ_ENABLE) = IRQ_RASTER [ ] (  [ ] { }  ) always clobbers reg byte z 
@@ -943,7 +943,7 @@ Statement [18] *PROCPORT = PROCPORT_RAM_IO [ memcpy_dma_command4 ] (  [ memcpy_d
 Statement [19] *((char *)VICIV+OFFSET_STRUCT_MEGA65_VICIV_SIDBDRWD_LO) = 1 [ memcpy_dma_command4 ] (  [ memcpy_dma_command4 ] { }  ) always clobbers reg byte z 
 Statement asm { lda#0  } always clobbers reg byte a 
 Statement [24] callexecute *musicInit  [ ] (  [ ] { }  ) always clobbers reg byte a reg byte x reg byte y reg byte z 
-Statement [27] *((char *)CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) = CIA_INTERRUPT_CLEAR [ ] (  [ ] { }  ) always clobbers reg byte z 
+Statement [27] *((char *)CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) = CIA_INTERRUPT_CLEAR_ALL [ ] (  [ ] { }  ) always clobbers reg byte z 
 Statement [28] *((char *)VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER) = $ff [ ] (  [ ] { }  ) always clobbers reg byte z 
 Statement [29] *((char *)VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1) = *((char *)VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1) & $7f [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [30] *((char *)VICII+OFFSET_STRUCT_MOS6569_VICII_IRQ_ENABLE) = IRQ_RASTER [ ] (  [ ] { }  ) always clobbers reg byte z 
@@ -1065,7 +1065,7 @@ ASSEMBLER BEFORE OPTIMIZATION
 .byte $00, $00, $00                                     // 
   // Global Constants & labels
   /// Value that disables all CIA interrupts when stored to the CIA Interrupt registers
-  .const CIA_INTERRUPT_CLEAR = $7f
+  .const CIA_INTERRUPT_CLEAR_ALL = $7f
   /// VICII IRQ Status/Enable Raster
   // @see #IRQ_ENABLE #IRQ_STATUS
   ///  0 | RST| Reaching a certain raster line. The line is specified by writing
@@ -1299,10 +1299,10 @@ main: {
     jmp __b8
     // main::@8
   __b8:
-    // [27] *((char *)CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) = CIA_INTERRUPT_CLEAR -- _deref_pbuc1=vbuc2 
+    // [27] *((char *)CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) = CIA_INTERRUPT_CLEAR_ALL -- _deref_pbuc1=vbuc2 
     // Set up raster interrupts C64 style
     // Disable CIA 1 Timer IRQ
-    ldz #CIA_INTERRUPT_CLEAR
+    ldz #CIA_INTERRUPT_CLEAR_ALL
     stz CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT
     // [28] *((char *)VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER) = $ff -- _deref_pbuc1=vbuc2 
     // Set raster line to 0xff
@@ -1633,7 +1633,7 @@ Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
 __constant struct MOS6526_CIA * const CIA1 = (struct MOS6526_CIA *) 56320
-__constant const char CIA_INTERRUPT_CLEAR = $7f
+__constant const char CIA_INTERRUPT_CLEAR_ALL = $7f
 __constant char * const DEFAULT_SCREEN = (char *) 2048
 __constant struct F018_DMAGIC * const DMA = (struct F018_DMAGIC *) 55040
 __constant const char DMA_COMMAND_COPY = 0
@@ -1769,7 +1769,7 @@ Score: 3045
 .byte $00, $00, $00                                     // 
   // Global Constants & labels
   /// Value that disables all CIA interrupts when stored to the CIA Interrupt registers
-  .const CIA_INTERRUPT_CLEAR = $7f
+  .const CIA_INTERRUPT_CLEAR_ALL = $7f
   /// VICII IRQ Status/Enable Raster
   // @see #IRQ_ENABLE #IRQ_STATUS
   ///  0 | RST| Reaching a certain raster line. The line is specified by writing
@@ -1987,11 +1987,11 @@ main: {
     sta.z memoryRemap.lowerPageOffset+1
     jsr memoryRemap
     // main::@8
-    // CIA1->INTERRUPT = CIA_INTERRUPT_CLEAR
-    // [27] *((char *)CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) = CIA_INTERRUPT_CLEAR -- _deref_pbuc1=vbuc2 
+    // CIA1->INTERRUPT = CIA_INTERRUPT_CLEAR_ALL
+    // [27] *((char *)CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) = CIA_INTERRUPT_CLEAR_ALL -- _deref_pbuc1=vbuc2 
     // Set up raster interrupts C64 style
     // Disable CIA 1 Timer IRQ
-    ldz #CIA_INTERRUPT_CLEAR
+    ldz #CIA_INTERRUPT_CLEAR_ALL
     stz CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT
     // VICII->RASTER = 0xff
     // [28] *((char *)VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER) = $ff -- _deref_pbuc1=vbuc2 

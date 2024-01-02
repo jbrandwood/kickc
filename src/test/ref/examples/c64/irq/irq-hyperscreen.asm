@@ -14,7 +14,7 @@
 .segment Basic
 :BasicUpstart(main)
   /// Value that disables all CIA interrupts when stored to the CIA Interrupt registers
-  .const CIA_INTERRUPT_CLEAR = $7f
+  .const CIA_INTERRUPT_CLEAR_ALL = $7f
   /// $D011 Control Register #1  Bit#3: RSEL Switch betweem 25 or 24 visible rows
   ///          RSEL|  Display window height   | First line  | Last line
   ///          ----+--------------------------+-------------+----------
@@ -123,9 +123,9 @@ main: {
     sta GHOST_BYTE
     // asm
     sei
-    // CIA1->INTERRUPT = CIA_INTERRUPT_CLEAR
+    // CIA1->INTERRUPT = CIA_INTERRUPT_CLEAR_ALL
     // Disable CIA 1 Timer IRQ
-    lda #CIA_INTERRUPT_CLEAR
+    lda #CIA_INTERRUPT_CLEAR_ALL
     sta CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT
     // VICII->CONTROL1 &= 0x7f
     // Set raster line to 0xfa

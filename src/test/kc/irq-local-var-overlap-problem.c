@@ -11,13 +11,13 @@ byte* const BG_COLOR = (byte*)$d020;
 byte* const FGCOL = (byte*)$d021;
 
 byte* const CIA1_INTERRUPT = (byte*)$dc0d;
-const byte CIA_INTERRUPT_CLEAR = $7f;
+const byte CIA_INTERRUPT_CLEAR_ALL = $7f;
 
 
 void main() {
     asm { sei }
     // Disable CIA 1 Timer IRQ
-    *CIA1_INTERRUPT = CIA_INTERRUPT_CLEAR;
+    *CIA1_INTERRUPT = CIA_INTERRUPT_CLEAR_ALL;
     // Set raster line to $0fd
     *VICII_CONTROL1 &=$7f;
     *RASTER = $fd;

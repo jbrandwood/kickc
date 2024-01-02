@@ -5,7 +5,7 @@ CONTROL FLOW GRAPH SSA
 void main()
 main: scope:[main]  from __start
   asm { sei  }
-  *CIA1_INTERRUPT = CIA_INTERRUPT_CLEAR
+  *CIA1_INTERRUPT = CIA_INTERRUPT_CLEAR_ALL
   *VICII_CONTROL1 = *VICII_CONTROL1 | $80
   *RASTER = 0
   *IRQ_ENABLE = IRQ_RASTER
@@ -40,7 +40,7 @@ SYMBOL TABLE SSA
 __constant char * const BG_COLOR = (char *)$d020
 __constant const char BLACK = 0
 __constant char * const CIA1_INTERRUPT = (char *)$dc0d
-__constant const char CIA_INTERRUPT_CLEAR = $7f
+__constant const char CIA_INTERRUPT_CLEAR_ALL = $7f
 __constant char * const IRQ_ENABLE = (char *)$d01a
 __constant const char IRQ_RASTER = 1
 __constant char * const IRQ_STATUS = (char *)$d019
@@ -95,7 +95,7 @@ irq::@return: scope:[irq]  from irq
 void main()
 main: scope:[main]  from
   asm { sei  }
-  [5] *CIA1_INTERRUPT = CIA_INTERRUPT_CLEAR
+  [5] *CIA1_INTERRUPT = CIA_INTERRUPT_CLEAR_ALL
   [6] *VICII_CONTROL1 = *VICII_CONTROL1 | $80
   [7] *RASTER = 0
   [8] *IRQ_ENABLE = IRQ_RASTER
@@ -117,7 +117,7 @@ REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [0] *BG_COLOR = WHITE [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [1] *BG_COLOR = BLACK [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [2] *IRQ_STATUS = IRQ_RASTER [ ] (  [ ] { }  ) always clobbers reg byte a 
-Statement [5] *CIA1_INTERRUPT = CIA_INTERRUPT_CLEAR [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [5] *CIA1_INTERRUPT = CIA_INTERRUPT_CLEAR_ALL [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [6] *VICII_CONTROL1 = *VICII_CONTROL1 | $80 [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [7] *RASTER = 0 [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [8] *IRQ_ENABLE = IRQ_RASTER [ ] (  [ ] { }  ) always clobbers reg byte a 
@@ -148,7 +148,7 @@ ASSEMBLER BEFORE OPTIMIZATION
   .const IRQ_RASTER = 1
   .const WHITE = 1
   .const BLACK = 0
-  .const CIA_INTERRUPT_CLEAR = $7f
+  .const CIA_INTERRUPT_CLEAR_ALL = $7f
   .label KERNEL_IRQ = $314
   .label RASTER = $d012
   .label VICII_CONTROL1 = $d011
@@ -182,9 +182,9 @@ irq: {
 main: {
     // asm { sei  }
     sei
-    // [5] *CIA1_INTERRUPT = CIA_INTERRUPT_CLEAR -- _deref_pbuc1=vbuc2 
+    // [5] *CIA1_INTERRUPT = CIA_INTERRUPT_CLEAR_ALL -- _deref_pbuc1=vbuc2 
     // Disable CIA 1 Timer IRQ
-    lda #CIA_INTERRUPT_CLEAR
+    lda #CIA_INTERRUPT_CLEAR_ALL
     sta CIA1_INTERRUPT
     // [6] *VICII_CONTROL1 = *VICII_CONTROL1 | $80 -- _deref_pbuc1=_deref_pbuc1_bor_vbuc2 
     // Set raster line to $100
@@ -226,7 +226,7 @@ FINAL SYMBOL TABLE
 __constant char * const BG_COLOR = (char *) 53280
 __constant const char BLACK = 0
 __constant char * const CIA1_INTERRUPT = (char *) 56333
-__constant const char CIA_INTERRUPT_CLEAR = $7f
+__constant const char CIA_INTERRUPT_CLEAR_ALL = $7f
 __constant char * const IRQ_ENABLE = (char *) 53274
 __constant const char IRQ_RASTER = 1
 __constant char * const IRQ_STATUS = (char *) 53273
@@ -257,7 +257,7 @@ Score: 98
   .const IRQ_RASTER = 1
   .const WHITE = 1
   .const BLACK = 0
-  .const CIA_INTERRUPT_CLEAR = $7f
+  .const CIA_INTERRUPT_CLEAR_ALL = $7f
   .label KERNEL_IRQ = $314
   .label RASTER = $d012
   .label VICII_CONTROL1 = $d011
@@ -294,10 +294,10 @@ main: {
     // asm
     // asm { sei  }
     sei
-    // *CIA1_INTERRUPT = CIA_INTERRUPT_CLEAR
-    // [5] *CIA1_INTERRUPT = CIA_INTERRUPT_CLEAR -- _deref_pbuc1=vbuc2 
+    // *CIA1_INTERRUPT = CIA_INTERRUPT_CLEAR_ALL
+    // [5] *CIA1_INTERRUPT = CIA_INTERRUPT_CLEAR_ALL -- _deref_pbuc1=vbuc2 
     // Disable CIA 1 Timer IRQ
-    lda #CIA_INTERRUPT_CLEAR
+    lda #CIA_INTERRUPT_CLEAR_ALL
     sta CIA1_INTERRUPT
     // *VICII_CONTROL1 |=$80
     // [6] *VICII_CONTROL1 = *VICII_CONTROL1 | $80 -- _deref_pbuc1=_deref_pbuc1_bor_vbuc2 

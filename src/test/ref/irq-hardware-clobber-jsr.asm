@@ -14,7 +14,7 @@
 .segment Basic
 :BasicUpstart(main)
   /// Value that disables all CIA interrupts when stored to the CIA Interrupt registers
-  .const CIA_INTERRUPT_CLEAR = $7f
+  .const CIA_INTERRUPT_CLEAR_ALL = $7f
   /// VICII IRQ Status/Enable Raster
   // @see #IRQ_ENABLE #IRQ_STATUS
   ///  0 | RST| Reaching a certain raster line. The line is specified by writing
@@ -83,9 +83,9 @@ main: {
     // *PROCPORT = PROCPORT_RAM_IO
     lda #PROCPORT_RAM_IO
     sta.z PROCPORT
-    // CIA1->INTERRUPT = CIA_INTERRUPT_CLEAR
+    // CIA1->INTERRUPT = CIA_INTERRUPT_CLEAR_ALL
     // Disable CIA 1 Timer IRQ
-    lda #CIA_INTERRUPT_CLEAR
+    lda #CIA_INTERRUPT_CLEAR_ALL
     sta CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT
     // *VICII_CONTROL1 |=$80
     // Set raster line to $100

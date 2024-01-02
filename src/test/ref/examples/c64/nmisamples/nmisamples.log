@@ -9,7 +9,7 @@ void main()
 main: scope:[main]  from __start::@1
   asm { lda#$ff sta$d406 sta$d40d sta$d414 lda#$49 sta$d404 sta$d40b sta$d412  }
   asm { sei  }
-  *((char *)CIA2+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) = CIA_INTERRUPT_CLEAR
+  *((char *)CIA2+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) = CIA_INTERRUPT_CLEAR_ALL
   *KERNEL_NMI = &nmi
   *((unsigned int *)CIA2+OFFSET_STRUCT_MOS6526_CIA_TIMER_A) = $88
   *((char *)CIA2+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) = $81
@@ -74,7 +74,7 @@ __start::@return: scope:[__start]  from __start::@2
 SYMBOL TABLE SSA
 __constant struct MOS6526_CIA * const CIA2 = (struct MOS6526_CIA *)$dd00
 __constant char * const CIA2_INTERRUPT = (char *)$dd0d
-__constant const char CIA_INTERRUPT_CLEAR = $7f
+__constant const char CIA_INTERRUPT_CLEAR_ALL = $7f
 __constant void (** const KERNEL_NMI)() = (void (**)())$318
 __constant char OFFSET_STRUCT_MOS6526_CIA_INTERRUPT = $d
 __constant char OFFSET_STRUCT_MOS6526_CIA_TIMER_A = 4
@@ -199,7 +199,7 @@ void main()
 main: scope:[main]  from __start::@1
   asm { lda#$ff sta$d406 sta$d40d sta$d414 lda#$49 sta$d404 sta$d40b sta$d412  }
   asm { sei  }
-  [25] *((char *)CIA2+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) = CIA_INTERRUPT_CLEAR
+  [25] *((char *)CIA2+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) = CIA_INTERRUPT_CLEAR_ALL
   [26] *KERNEL_NMI = &nmi
   [27] *((unsigned int *)CIA2+OFFSET_STRUCT_MOS6526_CIA_TIMER_A) = $88
   [28] *((char *)CIA2+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) = $81
@@ -247,7 +247,7 @@ Statement [18] nmi::$1 = *sample & $f [ nmi::$1 ] (  [ nmi::$1 ] { }  ) always c
 Statement [20] *KERNEL_NMI = &nmi2 [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [22] return  [ ] (  [ ] { }  ) always clobbers reg byte a reg byte x reg byte y 
 Statement asm { lda#$ff sta$d406 sta$d40d sta$d414 lda#$49 sta$d404 sta$d40b sta$d412  } always clobbers reg byte a 
-Statement [25] *((char *)CIA2+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) = CIA_INTERRUPT_CLEAR [ ] ( main:3 [ ] { }  ) always clobbers reg byte a 
+Statement [25] *((char *)CIA2+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) = CIA_INTERRUPT_CLEAR_ALL [ ] ( main:3 [ ] { }  ) always clobbers reg byte a 
 Statement [26] *KERNEL_NMI = &nmi [ ] ( main:3 [ ] { }  ) always clobbers reg byte a 
 Statement [27] *((unsigned int *)CIA2+OFFSET_STRUCT_MOS6526_CIA_TIMER_A) = $88 [ ] ( main:3 [ ] { }  ) always clobbers reg byte a 
 Statement [28] *((char *)CIA2+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) = $81 [ ] ( main:3 [ ] { }  ) always clobbers reg byte a 
@@ -295,7 +295,7 @@ ASSEMBLER BEFORE OPTIMIZATION
 :BasicUpstart(__start)
   // Global Constants & labels
   /// Value that disables all CIA interrupts when stored to the CIA Interrupt registers
-  .const CIA_INTERRUPT_CLEAR = $7f
+  .const CIA_INTERRUPT_CLEAR_ALL = $7f
   .const SAMPLE_SIZE = $6100
   .const OFFSET_STRUCT_MOS6526_CIA_INTERRUPT = $d
   .const OFFSET_STRUCT_MOS6526_CIA_TIMER_A = 4
@@ -442,8 +442,8 @@ main: {
     sta $d412
     // asm { sei  }
     sei
-    // [25] *((char *)CIA2+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) = CIA_INTERRUPT_CLEAR -- _deref_pbuc1=vbuc2 
-    lda #CIA_INTERRUPT_CLEAR
+    // [25] *((char *)CIA2+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) = CIA_INTERRUPT_CLEAR_ALL -- _deref_pbuc1=vbuc2 
+    lda #CIA_INTERRUPT_CLEAR_ALL
     sta CIA2+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT
     // [26] *KERNEL_NMI = &nmi -- _deref_qprc1=pprc2 
     lda #<nmi
@@ -499,7 +499,7 @@ Succesful ASM optimization Pass5UnusedLabelElimination
 FINAL SYMBOL TABLE
 __constant struct MOS6526_CIA * const CIA2 = (struct MOS6526_CIA *) 56576
 __constant char * const CIA2_INTERRUPT = (char *) 56589
-__constant const char CIA_INTERRUPT_CLEAR = $7f
+__constant const char CIA_INTERRUPT_CLEAR_ALL = $7f
 __constant void (** const KERNEL_NMI)() = (void (**)()) 792
 __constant char OFFSET_STRUCT_MOS6526_CIA_INTERRUPT = $d
 __constant char OFFSET_STRUCT_MOS6526_CIA_TIMER_A = 4
@@ -543,7 +543,7 @@ Score: 579
 :BasicUpstart(__start)
   // Global Constants & labels
   /// Value that disables all CIA interrupts when stored to the CIA Interrupt registers
-  .const CIA_INTERRUPT_CLEAR = $7f
+  .const CIA_INTERRUPT_CLEAR_ALL = $7f
   .const SAMPLE_SIZE = $6100
   .const OFFSET_STRUCT_MOS6526_CIA_INTERRUPT = $d
   .const OFFSET_STRUCT_MOS6526_CIA_TIMER_A = 4
@@ -696,9 +696,9 @@ main: {
     sta $d412
     // asm { sei  }
     sei
-    // CIA2->INTERRUPT = CIA_INTERRUPT_CLEAR
-    // [25] *((char *)CIA2+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) = CIA_INTERRUPT_CLEAR -- _deref_pbuc1=vbuc2 
-    lda #CIA_INTERRUPT_CLEAR
+    // CIA2->INTERRUPT = CIA_INTERRUPT_CLEAR_ALL
+    // [25] *((char *)CIA2+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) = CIA_INTERRUPT_CLEAR_ALL -- _deref_pbuc1=vbuc2 
+    lda #CIA_INTERRUPT_CLEAR_ALL
     sta CIA2+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT
     // *KERNEL_NMI = &nmi
     // [26] *KERNEL_NMI = &nmi -- _deref_qprc1=pprc2 

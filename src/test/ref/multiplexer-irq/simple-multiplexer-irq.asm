@@ -14,7 +14,7 @@
 .segment Basic
 :BasicUpstart(__start)
   /// Value that disables all CIA interrupts when stored to the CIA Interrupt registers
-  .const CIA_INTERRUPT_CLEAR = $7f
+  .const CIA_INTERRUPT_CLEAR_ALL = $7f
   /// $D011 Control Register #1  Bit#4: DEN Switch VIC-II output on/off
   .const VICII_DEN = $10
   /// $D011 Control Register #1  Bit#3: RSEL Switch betweem 25 or 24 visible rows
@@ -312,8 +312,8 @@ init: {
     // asm
     // enable the interrupt
     sei
-    // CIA1->INTERRUPT = CIA_INTERRUPT_CLEAR
-    lda #CIA_INTERRUPT_CLEAR
+    // CIA1->INTERRUPT = CIA_INTERRUPT_CLEAR_ALL
+    lda #CIA_INTERRUPT_CLEAR_ALL
     sta CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT
     // *IRQ_ENABLE = IRQ_RASTER
     lda #IRQ_RASTER

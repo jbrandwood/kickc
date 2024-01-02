@@ -333,7 +333,7 @@ init_irq: scope:[init_irq]  from main::@7
   asm { sei  }
   *PROCPORT_DDR = PROCPORT_DDR_MEMORY_MASK
   *PROCPORT = PROCPORT_RAM_IO
-  *((char *)CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) = CIA_INTERRUPT_CLEAR
+  *((char *)CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) = CIA_INTERRUPT_CLEAR_ALL
   *VICII_CONTROL1 = *VICII_CONTROL1 | $80
   *RASTER = 0
   *IRQ_ENABLE = IRQ_RASTER
@@ -394,7 +394,7 @@ __constant char * const BG_COLOR = (char *)$d021
 __constant char *BITMAP = (char *)$2000
 __constant const char BLACK = 0
 __constant struct MOS6526_CIA * const CIA1 = (struct MOS6526_CIA *)$dc00
-__constant const char CIA_INTERRUPT_CLEAR = $7f
+__constant const char CIA_INTERRUPT_CLEAR_ALL = $7f
 __constant char * const D011 = (char *)$d011
 __constant char * const D018 = (char *)$d018
 __constant void (** const HARDWARE_IRQ)() = (void (**)())$fffe
@@ -1272,7 +1272,7 @@ init_irq: scope:[init_irq]  from main::@7
   asm { sei  }
   [62] *PROCPORT_DDR = PROCPORT_DDR_MEMORY_MASK
   [63] *PROCPORT = PROCPORT_RAM_IO
-  [64] *((char *)CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) = CIA_INTERRUPT_CLEAR
+  [64] *((char *)CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) = CIA_INTERRUPT_CLEAR_ALL
   [65] *VICII_CONTROL1 = *VICII_CONTROL1 | $80
   [66] *RASTER = 0
   [67] *IRQ_ENABLE = IRQ_RASTER
@@ -1493,7 +1493,7 @@ Statement [51] bitmap_init::yoffs#1 = bitmap_init::yoffs#2 + (unsigned int)$28*8
 Removing always clobbered register reg byte a as potential for zp[1]:9 [ bitmap_init::y#2 bitmap_init::y#1 ]
 Statement [62] *PROCPORT_DDR = PROCPORT_DDR_MEMORY_MASK [ ] ( main:3::init_irq:18 [ frame_cnt ] { }  ) always clobbers reg byte a 
 Statement [63] *PROCPORT = PROCPORT_RAM_IO [ ] ( main:3::init_irq:18 [ frame_cnt ] { }  ) always clobbers reg byte a 
-Statement [64] *((char *)CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) = CIA_INTERRUPT_CLEAR [ ] ( main:3::init_irq:18 [ frame_cnt ] { }  ) always clobbers reg byte a 
+Statement [64] *((char *)CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) = CIA_INTERRUPT_CLEAR_ALL [ ] ( main:3::init_irq:18 [ frame_cnt ] { }  ) always clobbers reg byte a 
 Statement [65] *VICII_CONTROL1 = *VICII_CONTROL1 | $80 [ ] ( main:3::init_irq:18 [ frame_cnt ] { }  ) always clobbers reg byte a 
 Statement [66] *RASTER = 0 [ ] ( main:3::init_irq:18 [ frame_cnt ] { }  ) always clobbers reg byte a 
 Statement [67] *IRQ_ENABLE = IRQ_RASTER [ ] ( main:3::init_irq:18 [ frame_cnt ] { }  ) always clobbers reg byte a 
@@ -1533,7 +1533,7 @@ Statement [44] bitmap_init::$7 = bitmap_init::y#2 & 7 [ bitmap_init::y#2 bitmap_
 Statement [51] bitmap_init::yoffs#1 = bitmap_init::yoffs#2 + (unsigned int)$28*8 [ bitmap_init::y#2 bitmap_init::yoffs#1 ] ( main:3::bitmap_init:12 [ frame_cnt bitmap_init::y#2 bitmap_init::yoffs#1 ] { }  ) always clobbers reg byte a 
 Statement [62] *PROCPORT_DDR = PROCPORT_DDR_MEMORY_MASK [ ] ( main:3::init_irq:18 [ frame_cnt ] { }  ) always clobbers reg byte a 
 Statement [63] *PROCPORT = PROCPORT_RAM_IO [ ] ( main:3::init_irq:18 [ frame_cnt ] { }  ) always clobbers reg byte a 
-Statement [64] *((char *)CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) = CIA_INTERRUPT_CLEAR [ ] ( main:3::init_irq:18 [ frame_cnt ] { }  ) always clobbers reg byte a 
+Statement [64] *((char *)CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) = CIA_INTERRUPT_CLEAR_ALL [ ] ( main:3::init_irq:18 [ frame_cnt ] { }  ) always clobbers reg byte a 
 Statement [65] *VICII_CONTROL1 = *VICII_CONTROL1 | $80 [ ] ( main:3::init_irq:18 [ frame_cnt ] { }  ) always clobbers reg byte a 
 Statement [66] *RASTER = 0 [ ] ( main:3::init_irq:18 [ frame_cnt ] { }  ) always clobbers reg byte a 
 Statement [67] *IRQ_ENABLE = IRQ_RASTER [ ] ( main:3::init_irq:18 [ frame_cnt ] { }  ) always clobbers reg byte a 
@@ -1649,7 +1649,7 @@ ASSEMBLER BEFORE OPTIMIZATION
 :BasicUpstart(__start)
   // Global Constants & labels
   /// Value that disables all CIA interrupts when stored to the CIA Interrupt registers
-  .const CIA_INTERRUPT_CLEAR = $7f
+  .const CIA_INTERRUPT_CLEAR_ALL = $7f
   /// $D011 Control Register #1  Bit#5: BMM Turn Bitmap Mode on/off
   .const VICII_BMM = $20
   /// $D011 Control Register #1  Bit#4: DEN Switch VIC-II output on/off
@@ -2101,9 +2101,9 @@ init_irq: {
     // [63] *PROCPORT = PROCPORT_RAM_IO -- _deref_pbuc1=vbuc2 
     lda #PROCPORT_RAM_IO
     sta.z PROCPORT
-    // [64] *((char *)CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) = CIA_INTERRUPT_CLEAR -- _deref_pbuc1=vbuc2 
+    // [64] *((char *)CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) = CIA_INTERRUPT_CLEAR_ALL -- _deref_pbuc1=vbuc2 
     // Disable CIA 1 Timer IRQ
-    lda #CIA_INTERRUPT_CLEAR
+    lda #CIA_INTERRUPT_CLEAR_ALL
     sta CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT
     // [65] *VICII_CONTROL1 = *VICII_CONTROL1 | $80 -- _deref_pbuc1=_deref_pbuc1_bor_vbuc2 
     // Set raster line to $100
@@ -2344,7 +2344,7 @@ __constant char * const BG_COLOR = (char *) 53281
 __constant char *BITMAP = (char *) 8192
 __constant const char BLACK = 0
 __constant struct MOS6526_CIA * const CIA1 = (struct MOS6526_CIA *) 56320
-__constant const char CIA_INTERRUPT_CLEAR = $7f
+__constant const char CIA_INTERRUPT_CLEAR_ALL = $7f
 __constant char * const D011 = (char *) 53265
 __constant char * const D018 = (char *) 53272
 __constant void (** const HARDWARE_IRQ)() = (void (**)()) 65534
@@ -2485,7 +2485,7 @@ Score: 3198
 :BasicUpstart(__start)
   // Global Constants & labels
   /// Value that disables all CIA interrupts when stored to the CIA Interrupt registers
-  .const CIA_INTERRUPT_CLEAR = $7f
+  .const CIA_INTERRUPT_CLEAR_ALL = $7f
   /// $D011 Control Register #1  Bit#5: BMM Turn Bitmap Mode on/off
   .const VICII_BMM = $20
   /// $D011 Control Register #1  Bit#4: DEN Switch VIC-II output on/off
@@ -2900,10 +2900,10 @@ init_irq: {
     // [63] *PROCPORT = PROCPORT_RAM_IO -- _deref_pbuc1=vbuc2 
     lda #PROCPORT_RAM_IO
     sta.z PROCPORT
-    // CIA1->INTERRUPT = CIA_INTERRUPT_CLEAR
-    // [64] *((char *)CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) = CIA_INTERRUPT_CLEAR -- _deref_pbuc1=vbuc2 
+    // CIA1->INTERRUPT = CIA_INTERRUPT_CLEAR_ALL
+    // [64] *((char *)CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) = CIA_INTERRUPT_CLEAR_ALL -- _deref_pbuc1=vbuc2 
     // Disable CIA 1 Timer IRQ
-    lda #CIA_INTERRUPT_CLEAR
+    lda #CIA_INTERRUPT_CLEAR_ALL
     sta CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT
     // *VICII_CONTROL1 |=$80
     // [65] *VICII_CONTROL1 = *VICII_CONTROL1 | $80 -- _deref_pbuc1=_deref_pbuc1_bor_vbuc2 

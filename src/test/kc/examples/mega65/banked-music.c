@@ -36,7 +36,7 @@ void main() {
 
     // Set up raster interrupts C64 style
     // Disable CIA 1 Timer IRQ
-    CIA1->INTERRUPT = CIA_INTERRUPT_CLEAR;
+    CIA1->INTERRUPT = CIA_INTERRUPT_CLEAR_ALL;
     // Set raster line to 0xff
     VICII->RASTER = 0xff;
     VICII->CONTROL1 &= 0x7f;

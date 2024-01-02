@@ -122,7 +122,7 @@ void part1_run() {
     *PROCPORT_DDR = PROCPORT_DDR_MEMORY_MASK;
     *PROCPORT = PROCPORT_RAM_IO;
     // Disable CIA 1 Timer IRQ
-    CIA1->INTERRUPT = CIA_INTERRUPT_CLEAR;
+    CIA1->INTERRUPT = CIA_INTERRUPT_CLEAR_ALL;
     // Acknowledge any timer IRQ
     asm { lda CIA1_INTERRUPT }
     // Acknowledge any VIC IRQ

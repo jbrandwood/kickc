@@ -40,7 +40,7 @@ void init() {
     }
     // enable the interrupt
     asm { sei }
-    CIA1->INTERRUPT = CIA_INTERRUPT_CLEAR;
+    CIA1->INTERRUPT = CIA_INTERRUPT_CLEAR_ALL;
     *IRQ_ENABLE = IRQ_RASTER;
     *IRQ_STATUS = IRQ_RASTER;
     *KERNEL_IRQ = &plex_irq;

@@ -18,7 +18,7 @@ void main() {
     asm { sei }
     (*musicInit)();
     // Disable CIA 1 Timer IRQ
-    CIA1->INTERRUPT = CIA_INTERRUPT_CLEAR;
+    CIA1->INTERRUPT = CIA_INTERRUPT_CLEAR_ALL;
     // Set raster line to $fd
     VICII->CONTROL1 &=$7f;
     VICII->RASTER = $fd;

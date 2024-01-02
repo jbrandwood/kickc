@@ -295,7 +295,7 @@ void part2_run() {
     // Enable & initialize sprites
     *SPRITES_ENABLE = 0xff;
     // Disable CIA 1 Timer IRQ
-    CIA1->INTERRUPT = CIA_INTERRUPT_CLEAR;
+    CIA1->INTERRUPT = CIA_INTERRUPT_CLEAR_ALL;
     // Acknowledge any timer IRQ
     asm { lda CIA1_INTERRUPT }
     // Acknowledge any VIC IRQ
